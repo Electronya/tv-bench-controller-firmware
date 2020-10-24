@@ -1,9 +1,6 @@
 # Find Zephyr. This also loads Zephyr's build system.
 cmake_minimum_required(VERSION 3.13.1)
 
-# Set board
-set(BOARD "stm32f072b_disco")
-
 # Adding common sources files
 list(APPEND SRC
   src/appCmd/appCmd.c
@@ -20,12 +17,18 @@ endif()
 
 # Setting up prod build environment
 if(ENYA_ENV STREQUAL "prod")
+  # Set board
+  set(BOARD "stm32f072b_disco")
+
   list(APPEND SRC
     src/main.c
   )
 
 # Setting up test build environment
 elseif(ENYA_ENV STREQUAL "test")
+  # Set board
+  set(BOARD "native_posix")
+
   list(APPEND SRC
     test/unity/unity.c
     test/test_main.c
