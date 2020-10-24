@@ -1,2 +1,2 @@
 # tv-bench-controller-firmware
-TV Bench Controller LED Coprocessor
+TV Bench Controller LED Coprocessor Firmware
