@@ -1,0 +1,18 @@
+# TV Bench Controller Firmware Manifest
+manifest:
+  remotes:
+    - name: electronya
+      url-base: git@github.com:Electronya
+    - name: test-framework
+      url-base: git@github.com:ThrowTheSwitch
+
+  self:
+    path: app
+
+  projects:
+    - name: zephyr
+      remote: electronya
+      repo-path: zephyr.git
+      path: zephir
+      revision: master
+      import: true
