@@ -4,10 +4,6 @@ cmake_minimum_required(VERSION 3.13.1)
 # Set board
 set(BOARD "stm32f072b_disco")
 
-# Set Zephyr environment
-find_package(Zephyr)
-project(tv_bench_ctlr_coprocessor)
-
 # Adding common sources files
 list(APPEND SRC
   src/appCmd/appCmd.c
@@ -15,7 +11,7 @@ list(APPEND SRC
 
 # Adding common include paths
 list(APPEND INC
-  src/appCmd
+  src
 )
 
 if(NOT DEFINED ENYA_ENV)
@@ -35,11 +31,14 @@ elseif(ENYA_ENV STREQUAL "test")
     test/test_main.c
   )
   list(APPEND INC
-    test/unity
-    test/appCmd
+    test
   )
   add_definitions(-DUNITY_EXCLUDE_SETJMP_H)
 endif()
+
+# Set Zephyr environment
+find_package(Zephyr)
+project(tv_bench_ctlr_coprocessor)
 
 # Add your source file to the "app" target. This must come after
 # find_package(Zephyr) which defines the target.
