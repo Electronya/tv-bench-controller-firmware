@@ -1,6 +1,6 @@
 tests:
   tv_bench_ctlr_coprocessor.dummy:
-    platform_allow: qemu_cortex_m3
+    platform_allow: native_posix
     tags: dummy
     extra_args: BUILD_ENV=test TEST_SUITE=dummy
     extra_configs:
