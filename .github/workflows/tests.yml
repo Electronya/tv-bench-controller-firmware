@@ -18,3 +18,5 @@ jobs:
       uses: docker://judebake/electronya-firm-builder:2.7.0
       with:
         args: test
+      env:
+        ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.13.2
