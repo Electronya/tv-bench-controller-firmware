@@ -15,6 +15,6 @@ jobs:
       with:
         submodules: recursive
     - name: tests
-      uses: docker://judebake/electronya-firm-builder:v2.7.0
+      uses: docker://judebake/electronya-firm-builder:2.7.0
       with:
         args: test
