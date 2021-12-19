@@ -3,16 +3,16 @@ manifest:
   remotes:
     - name: electronya
       url-base: git@github.com:Electronya
-    - name: test-framework
-      url-base: git@github.com:ThrowTheSwitch
+    - name: zephyr
+      url-base: https://github.com/zephyrproject-rtos
 
   self:
     path: app
 
   projects:
     - name: zephyr
-      remote: electronya
+      remote: zephyr
       repo-path: zephyr.git
-      path: zephir
-      revision: master
+      path: zephyr
+      revision: zephyr-v2.7.0
       import: true

@@ -1,0 +1,17 @@
+name: Test
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  test:
+    run-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+

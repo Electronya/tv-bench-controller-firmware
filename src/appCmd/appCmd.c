@@ -11,9 +11,9 @@
  * @addtogroup  appCmd
  */
 
-#include <appCmd/appCmd.h>
+#include <appCmd.h>
 
-#include <appInfo.h>
+#include "appInfo.h"
 
 /**
  * Execute the app name command
