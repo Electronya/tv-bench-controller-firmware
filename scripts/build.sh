@@ -68,8 +68,7 @@ function buildFirmware {
   docker run --name firmware-builder --rm -it \
   --privileged -v /dev/bus/usb:/dev/bus/usb \
   -v "${PWD}:/github/workspace" \
-  -e "BUILD_MODE=${BUILD_MODE}" \
-  judebake/electronya-firm-builder:2.7.0 \
+  judebake/electronya-firm-builder:2.7.0 ${BUILD_MODE}\
   || return 1
   greenPrint "Building DONE!!"
 }
