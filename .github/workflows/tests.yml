@@ -20,3 +20,8 @@ jobs:
         args: test
       env:
         ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.13.2
+    - name: upload results
+      uses: actions/upload-artifacts@v2
+      with:
+        name: tv-bench-crl-frim-test-results
+        path: twister-out/
