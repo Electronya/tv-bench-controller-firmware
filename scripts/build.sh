@@ -59,7 +59,7 @@ function validateOptions {
 
 function pullZephyrBuilderImage {
   greenPrint "Pulling electronya-firm-builder image..."
-  docker pull judebake/electronya-firm-builder:2.7.0 || return 1
+  docker pull judebake/electronya-firm-builder:3.2.0 || return 1
   greenPrint "electronya-firm-builder immage pull DONE!!"
 }
 
@@ -68,7 +68,7 @@ function buildFirmware {
   docker run --name firmware-builder --rm -it \
   --privileged -v /dev/bus/usb:/dev/bus/usb \
   -v "${PWD}:/github/workspace" \
-  judebake/electronya-firm-builder:2.7.0 ${BUILD_MODE}\
+  judebake/electronya-firm-builder:3.2.0 ${BUILD_MODE}\
   || return 1
   greenPrint "Building DONE!!"
 }

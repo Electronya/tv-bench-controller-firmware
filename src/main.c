@@ -9,9 +9,9 @@
  * This file is the entry point for the Electronya TV Bench Controller LED driving coprocessor.
  */
 
-#include <zephyr.h>
-// #include <logging/log.h>
-#include <sys/printk.h>
+#include <zephyr/kernel.h>
+// #include <zephyr/logging/log.h>
+#include <zephyr/sys/printk.h>
 
 void main(void)
 {

@@ -16,7 +16,7 @@
 #ifndef APP_CMD_H_
 #define APP_CMD_H_
 
-#include <shell/shell.h>
+#include <zephyr/shell/shell.h>
 
 /**
  * Execute the app name command
