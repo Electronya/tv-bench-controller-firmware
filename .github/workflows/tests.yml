@@ -24,7 +24,7 @@ jobs:
         ZEPHYR_BASE: /zephyr-project/zephyr
         # CLANG_ROOT_DIR: /usr/lib/llvm-12
     - name: upload results
-      uses: actions/upload-artifact@vv3.0.0
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: tv-bench-crl-frim-test-results
