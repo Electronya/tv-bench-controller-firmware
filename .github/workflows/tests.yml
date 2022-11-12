@@ -15,12 +15,12 @@ jobs:
       with:
         submodules: recursive
     - name: tests
-      uses: docker://judebake/electronya-firm-builder:2.7.0
+      uses: docker://judebake/electronya-firm-builder:3.2.0
       with:
         args: test
       env:
-        ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.13.2
-        ZEPHYR_BASE: /zephyr-project/zephyr
+        # ZEPHYR_SDK_INSTALL_DIR: /opt/toolchains/zephyr-sdk-0.13.2
+        # ZEPHYR_BASE: /zephyr-project/zephyr
       #   CLANG_ROOT_DIR: /usr/lib/llvm-12
     - name: upload results
       uses: actions/upload-artifact@v2
