@@ -12,7 +12,7 @@ jobs:
     container:
       image: docker://judebake/electronya-firm-builder:3.2.0
       volumes:
-        - ${{ github.workspace }}:/github/workspace/
+        - ${{ github.workspace }}:/zephyr-project/app
     steps:
     - name: checkout
       uses: actions/checkout@v3
