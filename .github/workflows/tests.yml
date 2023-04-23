@@ -9,20 +9,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: docker://judebake/electronya-firm-builder:3.2.0
-      volumes:
-        - ${{ github.workspace }}:/zephyr-project/app
     steps:
     - name: checkout
       uses: actions/checkout@v3
       with:
         submodules: recursive
     - name: tests
-      run: cd /zephyr-project && zephyr/scripts/twister -T app/
-    # - name: upload results
-    #   uses: actions/upload-artifact@v3
-    #   if: always()
-    #   with:
-    #     name: tv-bench-crl-frim-test-results
-    #     path: twister-out/
+      uses: docker://judebake/electronya-firm-builder:3.2.0
+      # with:
+      #   args: test
+      # env:
+      #   CMAKE_PREFIX_PATH: /opt/toolchains
+    - name: upload results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: tv-bench-crl-frim-test-results
+        path: twister-out/
