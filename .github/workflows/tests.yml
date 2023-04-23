@@ -19,7 +19,7 @@ jobs:
       with:
         submodules: recursive
     - name: tests
-      run: ls ../../../
+      run: ls
     # - name: upload results
     #   uses: actions/upload-artifact@v3
     #   if: always()
