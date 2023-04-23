@@ -16,7 +16,8 @@ jobs:
         submodules: recursive
     - name: tests
       uses: docker://judebake/electronya-firm-builder:3.2.0
-      run: find / -iname zephyr-sdk*
+      # with:
+      #   args: test
       env:
         CMAKE_PREFIX_PATH: /opt/toolchains
     - name: upload results
