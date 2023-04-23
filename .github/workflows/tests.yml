@@ -19,7 +19,7 @@ jobs:
       with:
         submodules: recursive
     - name: tests
-      run: ./script/build -m test
+      run: ../entrypoint.sh test
     - name: upload results
       uses: actions/upload-artifact@v3
       if: always()
