@@ -9,17 +9,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: docker://judebake/electronya-firm-builder:3.2.0
+      volumes:
+        - ${{ github.workspace }}:/github/workspace/
     steps:
     - name: checkout
       uses: actions/checkout@v3
       with:
         submodules: recursive
     - name: tests
-      uses: docker://judebake/electronya-firm-builder:3.2.0
-      with:
-        args: test
-      env:
-        CMAKE_PREFIX_PATH: /opt/toolchains
+      run: ./script/build -m test
     - name: upload results
       uses: actions/upload-artifact@v3
       if: always()
