@@ -16,10 +16,11 @@ jobs:
         submodules: recursive
     - name: tests
       uses: docker://judebake/electronya-firm-builder:3.2.0
-      # with:
-      #   args: test
+      with:
+        args: test
       env:
-        CMAKE_PREFIX_PATH: /opt/toolchains
+        CMAKE_PREFIX_PATH: /opt/toolchains/zephyr-sdk-0.15.1/
+        Zephyr-sdk_DIR: /opt/toolchains/zephyr-sdk-0.15.1/cmake/
     - name: upload results
       uses: actions/upload-artifact@v3
       if: always()
