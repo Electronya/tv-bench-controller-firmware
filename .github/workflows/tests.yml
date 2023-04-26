@@ -20,7 +20,7 @@ jobs:
         args: test
       env:
         CMAKE_PREFIX_PATH: /opt/toolchains/zephyr-sdk-0.15.1/
-        Zephyr-sdk_DIR: /opt/toolchains/zephyr-sdk-0.15.1/cmake/
+        ZEPHYR_SDK_DIR: /root/.cmake/packages/
     - name: upload results
       uses: actions/upload-artifact@v3
       if: always()
