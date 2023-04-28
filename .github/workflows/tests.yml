@@ -28,7 +28,7 @@ jobs:
         ls ../../
     - name: tests
       working-directory: app
-      run: west build . -- -DBUILD_ENV=prod
+      run: ../zephyr/scripts/twister -T .
     # - name: upload results
     #   uses: actions/upload-artifact@v3
     #   if: always()
