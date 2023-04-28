@@ -34,7 +34,7 @@ jobs:
     - name: upload results
       run: |
         echo $PWD
-        ls
+        ls app/
       # uses: actions/upload-artifact@v3
       # if: always()
       # with:
