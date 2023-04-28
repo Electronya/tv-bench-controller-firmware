@@ -27,7 +27,6 @@ jobs:
       working-directory: app
       run: zephyr/scripts/twister -T .
     - name: upload results
-      working-directory: app
       uses: actions/upload-artifact@v3
       if: always()
       with:
