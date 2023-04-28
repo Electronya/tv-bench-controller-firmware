@@ -32,8 +32,10 @@ jobs:
       working-directory: app
       run: ../zephyr/scripts/twister -W -T .
     - name: upload results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: tv-bench-crl-frim-test-results
-        path: twister-out/
+      run: |
+        echo $PWD
+      # uses: actions/upload-artifact@v3
+      # if: always()
+      # with:
+      #   name: tv-bench-crl-frim-test-results
+      #   path: twister-out/
