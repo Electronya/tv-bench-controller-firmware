@@ -27,7 +27,7 @@ jobs:
         ls ../../
     - name: tests
       working-directory: app
-      run: build . -- -DBUILD_ENV=${BUILD_ENV}
+      run: west build . -- -DBUILD_ENV=${BUILD_ENV}
     # - name: upload results
     #   uses: actions/upload-artifact@v3
     #   if: always()
