@@ -9,22 +9,27 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:latest
     steps:
     - name: checkout
       uses: actions/checkout@v3
       with:
+        path: app
         submodules: recursive
+    - name: initialize
+      working-directory: app
+      run: |
+        pip3 install -U west
+        west init -l
+        west update
+        pip3 install -r ../zephyr/scripts/requirements.txt
     - name: tests
-      uses: docker://judebake/electronya-firm-builder:3.2.0
-      with:
-        args: test
-      env:
-        CMAKE_PREFIX_PATH: "/opt/toolchains/zephyr-sdk-0.16.0/;/root/.cmake/"
-        ZEPHYR_DIR: /zephyr-project/zephyr/share/zephyr-package/cmake/
-        ZEPHYR_SDK_DIR: /opt/toolchains/zephyr-sdk-0.16.0/cmake/
+      working-directory: app
+      run: zephyr/scripts/twister -T .
     - name: upload results
+      working-directory: app
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: tv-bench-crl-frim-test-results
-        path: twister-out/
+        path: ../twister-out/
