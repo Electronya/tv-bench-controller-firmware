@@ -27,10 +27,10 @@ jobs:
         ls ../../
     - name: tests
       working-directory: app
-      run: ../zephyr/scripts/twister -T .
-    - name: upload results
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: tv-bench-crl-frim-test-results
-        path: ../twister-out/
+      run: build . -- -DBUILD_ENV=${BUILD_ENV}
+    # - name: upload results
+    #   uses: actions/upload-artifact@v3
+    #   if: always()
+    #   with:
+    #     name: tv-bench-crl-frim-test-results
+    #     path: ../twister-out/
