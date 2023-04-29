@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ 'main' ]
 
-obs:
+jobs:
   built:
     runs-on: ubuntu-latest
     container: zephyrprojectrtos/ci:latest
