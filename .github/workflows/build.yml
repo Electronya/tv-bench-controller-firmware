@@ -10,6 +10,8 @@ jobs:
   built:
     runs-on: ubuntu-latest
     container: zephyrprojectrtos/ci:latest
+    env:
+      CMAKE_PREFIX_PATH: /opt/toolchains
     steps:
     - name: checkout
       uses: actions/checkout@v3
@@ -26,7 +28,7 @@ jobs:
         pip3 install -r ../zephyr/scripts/requirements.txt
         ls ../
         ls ../../
-    - name: tests
+    - name: build
       working-directory: app
       run: west build . -- -DBUILD_ENV=prod
     - name: upload results
