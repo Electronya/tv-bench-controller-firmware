@@ -30,13 +30,15 @@ jobs:
         ls ../../
     - name: build
       working-directory: app
-      run: west build . -- -DBUILD_ENV=prod
-    - name: upload results
       run: |
-        echo $PWD
-        ls app/
-      # uses: actions/upload-artifact@v3
-      # if: always()
-      # with:
-      #   name: tv-bench-crl-frim-test-results
-      #   path: twister-out/
+        west build . -- -DBUILD_ENV=prod
+        mkdir -p build-out
+        cp build/zephyr/zephyr.bin build-out/tv-bench-ctrl-firm_update_${{ GITHUB_REF }}.bin
+        cp build/zephyr/zephyr.hex build-out/tv-bench-ctrl-firm_hex_${{ GITHUB_REF }}.hex
+        cp build/zephyr/zephyr.hex build-out/tv-bench-ctrl-firm_elf_${{ GITHUB_REF }}.elf
+    - name: upload results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: tv-bench-crl-frim-builds
+        path: app/build-out/
