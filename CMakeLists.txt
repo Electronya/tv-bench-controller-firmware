@@ -8,7 +8,7 @@ endif()
 
 # Setting target board
 if((BUILD_ENV STREQUAL "prod") OR (BUILD_ENV STREQUAL "dev"))
-  set(BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+  # set(BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
   set(BOARD "nucleo_f070rb")
 elseif(BUILD_ENV STREQUAL "qemu")
   set(BOARD "qemu_cortex_m0")

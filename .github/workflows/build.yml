@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ 'main' ]
+
+obs:
+  built:
+    runs-on: ubuntu-latest
+    container: zephyrprojectrtos/ci:latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+      with:
+        path: app
+        submodules: recursive
+    - name: initialize
+      working-directory: app
+      run: |
+        pip3 install -U west
+        west init -l
+        west update
+        west zephyr-export
+        pip3 install -r ../zephyr/scripts/requirements.txt
+        ls ../
+        ls ../../
+    - name: tests
+      working-directory: app
+      run: west build . -- -DBUILD_ENV=prod
+    - name: upload results
+      run: |
+        echo $PWD
+        ls
+        ls aap/
+      # uses: actions/upload-artifact@v3
+      # if: always()
+      # with:
+      #   name: tv-bench-crl-frim-test-results
+      #   path: twister-out/
