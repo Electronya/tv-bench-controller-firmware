@@ -33,9 +33,9 @@ jobs:
       run: |
         west build . -- -DBUILD_ENV=prod
         mkdir -p build-out
-        cp build/zephyr/zephyr.bin build-out/tv-bench-ctrl-firm_update_${{ GITHUB_REF }}.bin
-        cp build/zephyr/zephyr.hex build-out/tv-bench-ctrl-firm_hex_${{ GITHUB_REF }}.hex
-        cp build/zephyr/zephyr.hex build-out/tv-bench-ctrl-firm_elf_${{ GITHUB_REF }}.elf
+        cp build/zephyr/zephyr.bin build-out/tv-bench-ctrl-firm_update_${{ env.GITHUB_REF }}.bin
+        cp build/zephyr/zephyr.hex build-out/tv-bench-ctrl-firm_hex_${{ env.GITHUB_REF }}.hex
+        cp build/zephyr/zephyr.hex build-out/tv-bench-ctrl-firm_elf_${{ env.GITHUB_REF }}.elf
     - name: upload results
       uses: actions/upload-artifact@v3
       if: always()
