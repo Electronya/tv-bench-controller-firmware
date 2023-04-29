@@ -35,5 +35,5 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: tv-bench-crl-frim-test-results
+        name: tv-bench-ctrl-frim-test-results
         path: app/twister-out/
