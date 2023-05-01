@@ -5,6 +5,12 @@
  * @author    jbacon
  * @date      2020-10-24
  * @brief     Application information strings
+ *
+ * @defgroup  appCmd appCmd
+ * @brief     app Command Module
+ *
+ * This module is the implementation of the app information
+ * @{
  */
 
 #ifndef APP_INFO_H
@@ -32,3 +38,5 @@
 #define APP_VER_UAGE      "Display application version.\nUsage: app version"
 
 #endif    /* APP_INFO_H */
+
+/** @} */
