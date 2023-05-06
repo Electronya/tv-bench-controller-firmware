@@ -1,0 +1,7 @@
+# Electronya TV Bench Controller board configuration
+
+# Copyright (c) 2018 Electronya
+
+config BOARD_ENYA_TV_BENCH_CTRLR
+	bool "Electronya TV Bench Controller"
+	depends on SOC_STM32F070XB
