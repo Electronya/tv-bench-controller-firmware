@@ -73,11 +73,14 @@ function buildFirmware {
   greenPrint "Building DONE!!"
 }
 
-while getopts ":m:d:" option
+while getopts ":m:p" option
 do
   case "${option}" in
     m)
       BUILD_MODE=${OPTARG}
+      ;;
+    p)
+      pullZephyrBuilderImage || exitError "ERROR: Unable to pull electronya-firm-builder image."
       ;;
     :)
       exitError "ERROR: -${OPTARG} requires an argument."
@@ -89,5 +92,4 @@ do
 done
 
 validateOptions
-pullZephyrBuilderImage || exitError "ERROR: Unable to pull electronya-firm-builder image."
 buildFirmware || exitError "ERROR: Unable to build the firmware."
