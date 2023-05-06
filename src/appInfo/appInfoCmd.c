@@ -4,16 +4,17 @@
  * @file      appCmd.c
  * @author    jbacon
  * @date      2020-10-07
- * @brief     app Command Inplementation
+ * @brief     App Info Command Implementation
  *
- * This file is the emplementation of the app command.
+ * This file is the implementation of the app info command.
  *
- * @addtogroup  appCmd
+ * @ingroup  appInfo
+ * @{
  */
 
-#include <appCmd/appCmd.h>
+#include <zephyr/shell/shell.h>
 
-#include <appInfo.h>
+#include "appInfo.h"
 
 /**
  * Execute the app name command
@@ -82,3 +83,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(app_sub,
 	SHELL_CMD(info, NULL, APP_INFO_USAGE, execInfo),
 	SHELL_SUBCMD_SET_END);
 SHELL_CMD_REGISTER(app, &app_sub, APP_CMD_USAGE,	NULL);
+
+/** @} */
