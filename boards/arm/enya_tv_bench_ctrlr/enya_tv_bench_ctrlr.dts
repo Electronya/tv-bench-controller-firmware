@@ -109,7 +109,7 @@
 		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
 
 		/* B1414 */
-		chain-length = <18>; /* arbitrary; change at will */
+		chain-length = <5>; /* arbitrary; change at will */
 		spi-one-frame = <B1414_ONE_FRAME>;
 		spi-zero-frame = <B1414_ZERO_FRAME>;
 		color-mapping = <LED_COLOR_ID_BLUE
