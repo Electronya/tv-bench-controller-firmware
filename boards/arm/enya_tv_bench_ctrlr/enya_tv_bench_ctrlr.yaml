@@ -1,0 +1,16 @@
+identifier: enya_tv_bench_ctrlr
+name: Electronya TV Bench Controller
+type: mcu
+arch: arm
+ram: 16
+flash: 128
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - console
+  - shell
+  - 3x switch for door open detection
+  - addressable RGB LEDs
+  - watchdog
