@@ -10,10 +10,15 @@
  */
 
 #include <zephyr/kernel.h>
-// #include <zephyr/logging/log.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/sys/printk.h>
+
+#define MAIN_MODULE_NAME main_module
+
+/* Setting module logging */
+LOG_MODULE_REGISTER(MAIN_MODULE_NAME);
 
 void main(void)
 {
-  printk("Hello World!");
+  LOG_INF("booting tv bench controller");
 }
