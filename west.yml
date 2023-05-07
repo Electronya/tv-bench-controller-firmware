@@ -16,3 +16,7 @@ manifest:
       path: zephyr
       revision: zephyr-v3.3.0
       import: true
+    - name: zephyr-wrapper
+      remote: electronya
+      repo-path: zephyr-wrapper.git
+      path: modules/lib/electronya
