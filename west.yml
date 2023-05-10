@@ -2,7 +2,7 @@
 manifest:
   remotes:
     - name: electronya
-      url-base: git@github.com:Electronya
+      url-base: https://github.com/Electronya
     - name: zephyr
       url-base: https://github.com/zephyrproject-rtos
 
@@ -20,3 +20,4 @@ manifest:
       remote: electronya
       repo-path: zephyr-wrapper.git
       path: modules/lib/electronya
+      revision: adding-led-strip
