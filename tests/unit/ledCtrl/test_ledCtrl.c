@@ -16,13 +16,42 @@
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
 
-#include "ledCtrlHw.h"
+#include "LedCtrl.h"
+#include "LedCtrl.c"
 
+#include "zephyrLedStrip.h"
+
+DEFINE_FFF_GLOBALS;
 ZTEST_SUITE(ledCtrl_suite, NULL, NULL, NULL, NULL, NULL);
 
-ZTEST(ledCtrl_suite, test_ledCtrlIsDeviceReady)
+#define LED_CTRL_IS_DEV_READY_TEST_CNT  3
+FAKE_VALUE_FUNC(int, zephyrLedStripInit, ZephyrLedStrip*, ZephyrLedStripClrFmt,
+  uint32_t);
+/**
+ * @test  ledCtrlInit must try to initialize the LED strip and return
+ *        the error code if the operation fails.
+*/
+ZTEST(ledCtrl_suite, test_ledCtrlInit_Fail)
 {
-  zassert_true(true);
+  int returnVals[LED_CTRL_IS_DEV_READY_TEST_CNT] = {-ENODEV, -ENOSPC, -EINVAL};
+  int pixelCounts[LED_CTRL_IS_DEV_READY_TEST_CNT] = {1, 24, 250};
+  int result;
+  for(uint8_t i = 0; i < LED_CTRL_IS_DEV_READY_TEST_CNT; ++i)
+  {
+    ledStrip.pixelCount = pixelCounts[i];
+    RESET_FAKE(zephyrLedStripInit);
+    zephyrLedStripInit_fake.return_val = returnVals[i];
+    result = ledCtrlInit();
+    zassert_equal(zephyrLedStripInit_fake.call_count, 1,
+      "ledCtrlInit failed to initialize the LED strip");
+    zassert_equal(zephyrLedStripInit_fake.arg0_val, &ledStrip,
+      "ledCtrlInit failed to initialize the right LED strip");
+    zassert_equal(zephyrLedStripInit_fake.arg1_val, LED_STRIP_COLOR_RGB,
+      "ledCtrlInit failed to initialize the LED strip with the right color format");
+    zassert_equal(zephyrLedStripInit_fake.arg2_val, pixelCounts[i],
+      "ledCtrlInit failed to initialize the LED strip with the right pixel count");
+  }
+
 }
 
 
