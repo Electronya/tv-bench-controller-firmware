@@ -7,7 +7,7 @@
 #include <st/f0/stm32f070Xb.dtsi>
 #include <st/f0/stm32f070rbtx-pinctrl.dtsi>
 #include <zephyr/dt-bindings/led/led.h>
-#include "../../../src/ledCtrl/f070rb-bindings.h"
+#include "./f070rb-bindings.h"
 
 / {
 	model = "STMicroelectronics NUCLEO-F070RB board";
@@ -97,26 +97,28 @@
 	pinctrl-names = "default";
 	status = "okay";
 
-  dmas = <&dma1 3 0x20440>, <&dma1 2 0x20480>;
+  dmas = <&dma1 3 (STM32_DMA_PERIPH_TX | STM32_DMA_PRIORITY_HIGH)>,
+		<&dma1 2 (STM32_DMA_PERIPH_RX | STM32_DMA_PRIORITY_HIGH)>;
 	dma-names = "tx", "rx";
 
-	led_strip: b1414@0 {
+	led_strip: sk6812@0 {
 		compatible = "everlight,b1414", "worldsemi,ws2812-spi";
 
 		/* SPI */
 		reg = <0>; /* ignored, but necessary for SPI bindings */
-		spi-max-frequency = <B1414_SPI_FREQ>;
+		spi-max-frequency = <SK6812_SPI_FREQ>;
 		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
 
 		/* B1414 */
 		chain-length = <5>; /* arbitrary; change at will */
-		spi-one-frame = <B1414_ONE_FRAME>;
-		spi-zero-frame = <B1414_ZERO_FRAME>;
-		color-mapping = <LED_COLOR_ID_BLUE
-				 LED_COLOR_ID_GREEN
-				 LED_COLOR_ID_RED>;
+		spi-one-frame = <SK6812_ONE_FRAME>;
+		spi-zero-frame = <SK6812_ZERO_FRAME>;
+		color-mapping = <LED_COLOR_ID_GREEN
+				 LED_COLOR_ID_RED
+         LED_COLOR_ID_BLUE
+         LED_COLOR_ID_WHITE>;
 
-		reset-delay = <250>;
+		reset-delay = <SK6812_RST_DELAY>;
 		status = "okay";
 	};
 };
