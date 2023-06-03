@@ -1,5 +1,6 @@
 # Zephyr Kernel Configuration
 CONFIG_SOC_SERIES_STM32F0X=y
+CONFIG_HEAP_MEM_POOL_SIZE=256
 
 # Platform Configuration
 CONFIG_SOC_STM32F070XB=y
