@@ -19,5 +19,5 @@ manifest:
     - name: zephyr-wrapper
       remote: electronya
       repo-path: zephyr-wrapper.git
-      path: modules/lib/electronya
+      path: modules/lib/electronya/zephyr-wrapper
       revision: adding-led-strip
