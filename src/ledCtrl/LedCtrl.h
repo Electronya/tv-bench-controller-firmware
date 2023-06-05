@@ -17,6 +17,17 @@
 #define LED_CTRL
 
 /**
+ * @brief   Base colors.
+*/
+typedef enum
+{
+  LED_CTRL_RED = 0,             /**< The RED base color. */
+  LED_CTRL_GRN,                 /**< The GREEN base color. */
+  LED_CTRL_BLU,                 /**< The BLUE base color. */
+  LED_CTRL_CLR_CNT,             /**< The count of supported base color. */
+} LedCtrlBaseColor;
+
+/**
  * @brief   Initialize the module.
  *
  * @return  0 if successful, the error code otherwise.

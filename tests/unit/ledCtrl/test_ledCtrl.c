@@ -50,8 +50,37 @@ ZTEST(ledCtrl_suite, test_ledCtrlInit_Fail)
       "ledCtrlInit failed to initialize the LED strip with the right color format");
     zassert_equal(zephyrLedStripInit_fake.arg2_val, pixelCounts[i],
       "ledCtrlInit failed to initialize the LED strip with the right pixel count");
+    zassert_equal(result, returnVals[i],
+      "ledCtrlInit failed to return the error code.");
   }
+}
 
+/**
+ * @test  ledCtrlInit must initialize the LED strip and return
+ *        the success code if the operation succeeds.
+*/
+ZTEST(ledCtrl_suite, test_ledCtrlInit_Success)
+{
+  int returnVals[LED_CTRL_IS_DEV_READY_TEST_CNT] = {0, 0, 0};
+  int pixelCounts[LED_CTRL_IS_DEV_READY_TEST_CNT] = {1, 24, 250};
+  int result;
+  for(uint8_t i = 0; i < LED_CTRL_IS_DEV_READY_TEST_CNT; ++i)
+  {
+    ledStrip.pixelCount = pixelCounts[i];
+    RESET_FAKE(zephyrLedStripInit);
+    zephyrLedStripInit_fake.return_val = returnVals[i];
+    result = ledCtrlInit();
+    zassert_equal(zephyrLedStripInit_fake.call_count, 1,
+      "ledCtrlInit failed to initialize the LED strip");
+    zassert_equal(zephyrLedStripInit_fake.arg0_val, &ledStrip,
+      "ledCtrlInit failed to initialize the right LED strip");
+    zassert_equal(zephyrLedStripInit_fake.arg1_val, LED_STRIP_COLOR_RGB,
+      "ledCtrlInit failed to initialize the LED strip with the right color format");
+    zassert_equal(zephyrLedStripInit_fake.arg2_val, pixelCounts[i],
+      "ledCtrlInit failed to initialize the LED strip with the right pixel count");
+    zassert_equal(result, returnVals[i],
+      "ledCtrlInit failed to return the success code.");
+  }
 }
 
 

@@ -14,10 +14,16 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 #include "LedCtrl.h"
 #include "zephyrCommon.h"
 #include "zephyrLedStrip.h"
+
+#define LED_CTRL_MODULE_NAME led_ctrl_module
+
+/* Setting module logging */
+LOG_MODULE_REGISTER(LED_CTRL_MODULE_NAME);
 
 #ifndef CONFIG_ZTEST
 static ZephyrLedStrip ledStrip = {
@@ -28,11 +34,21 @@ static ZephyrLedStrip ledStrip = {
 static ZephyrLedStrip ledStrip;
 #endif
 
+/**
+ * @brief   The base colors pixel values.
+*/
+static const ZephyrRgbLed colors[] = {
+  RGB(0xff, 0x00, 0x00),                /**< The red base color. */
+  RGB(0x00, 0xff, 0x00),                /**< The green base color. */
+  RGB(0x00, 0x00, 0xff),                /**< The blue base color. */
+};
+
 int ledCtrlInit(void)
 {
   int rc;
 
   rc = zephyrLedStripInit(&ledStrip, LED_STRIP_COLOR_RGB, ledStrip.pixelCount);
+  return rc;
   return 0;
 }
 
