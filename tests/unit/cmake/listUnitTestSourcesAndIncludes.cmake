@@ -11,7 +11,7 @@ macro(getFileListForSuite sourceList includeList)
   # List files and dirs for the test suite
   if(TEST_SUITE STREQUAL "ledCtrl")
     listSources(${CMAKE_CURRENT_SOURCE_DIR}/ledCtrl testSrc)
-    # listSources(${CMAKE_CURRENT_SOURCE_DIR}/../../src/ledCtrl modSrc)
+    listSources(${CMAKE_CURRENT_SOURCE_DIR}/../../src/ledCtrl modSrc)
     listIncludesDir(${CMAKE_CURRENT_SOURCE_DIR}/ledCtrl testInc)
     listIncludesDir(${CMAKE_CURRENT_SOURCE_DIR}/../../src modInc)
   endif()
