@@ -49,7 +49,23 @@ int ledCtrlInit(void)
 
   rc = zephyrLedStripInit(&ledStrip, LED_STRIP_COLOR_RGB, ledStrip.pixelCount);
   return rc;
-  return 0;
+}
+
+int ledCtrlSetColor(LedCtrlBaseColor color)
+{
+  int rc = 0;
+
+  LOG_DBG("Setting strip color to %d color index.", color);
+
+  for(uint32_t i = 0; i < ledStrip.pixelCount && rc < 0; ++i)
+    rc = zephyrLedStripSetRgbColor(&ledStrip, i, colors + color);
+
+  if(rc < 0)
+    return rc;
+
+  rc = zephyrLedStripUpdate(&ledStrip);
+
+  return rc;
 }
 
 /** @} */

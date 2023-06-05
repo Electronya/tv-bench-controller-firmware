@@ -102,7 +102,7 @@
 	dma-names = "tx", "rx";
 
 	led_strip: sk6812@0 {
-		compatible = "everlight,b1414", "worldsemi,ws2812-spi";
+		compatible = "worldsemi,ws2812-spi";
 
 		/* SPI */
 		reg = <0>; /* ignored, but necessary for SPI bindings */

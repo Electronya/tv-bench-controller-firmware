@@ -34,6 +34,8 @@ typedef enum
 */
 int ledCtrlInit(void);
 
+int ledCtrlSetColor(LedCtrlBaseColor color);
+
 #endif    /* LED_CTRL */
 
 /** @} */
