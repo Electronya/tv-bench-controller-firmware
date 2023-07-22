@@ -83,5 +83,4 @@ ZTEST(ledCtrl_suite, test_ledCtrlInit_Success)
   }
 }
 
-
 /** @} */

@@ -58,7 +58,7 @@ int ledCtrlSetColor(LedCtrlBaseColor color)
   LOG_DBG("Setting strip color to %d color index.", color);
 
   for(uint32_t i = 0; i < ledStrip.pixelCount && rc < 0; ++i)
-    rc = zephyrLedStripSetRgbColor(&ledStrip, i, colors + color);
+    rc = zephyrLedStripSetPixelRgbColor(&ledStrip, i, colors + color);
 
   if(rc < 0)
     return rc;
