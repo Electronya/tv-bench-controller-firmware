@@ -7,7 +7,7 @@
 #include <st/f0/stm32f070Xb.dtsi>
 #include <st/f0/stm32f070rbtx-pinctrl.dtsi>
 #include <zephyr/dt-bindings/led/led.h>
-#include "./f070rb-bindings.h"
+#include "./ws2812b-bindings.h"
 
 / {
 	model = "STMicroelectronics NUCLEO-F070RB board";
@@ -20,13 +20,13 @@
 		zephyr,flash = &flash0;
 	};
 
-	leds {
-		compatible = "gpio-leds";
-		green_led_2: led_2 {
-			gpios = <&gpioa 5 GPIO_ACTIVE_HIGH>;
-			label = "User LD2";
-		};
-	};
+	// leds {
+	// 	compatible = "gpio-leds";
+	// 	green_led_2: led_2 {
+	// 		gpios = <&gpioa 5 GPIO_ACTIVE_HIGH>;
+	// 		label = "User LD2";
+	// 	};
+	// };
 
 	gpio_keys {
 		compatible = "gpio-keys";
@@ -37,7 +37,7 @@
 	};
 
 	aliases {
-		led0 = &green_led_2;
+		// led0 = &green_led_2;
 		sw0 = &user_button;
 		watchdog0 = &iwdg;
     led-strip = &led_strip;
@@ -106,19 +106,18 @@
 
 		/* SPI */
 		reg = <0>; /* ignored, but necessary for SPI bindings */
-		spi-max-frequency = <SK6812_SPI_FREQ>;
+		spi-max-frequency = <SPI_FREQ>;
 		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
 
 		/* B1414 */
 		chain-length = <5>; /* arbitrary; change at will */
-		spi-one-frame = <SK6812_ONE_FRAME>;
-		spi-zero-frame = <SK6812_ZERO_FRAME>;
+		spi-one-frame = <ONE_FRAME>;
+		spi-zero-frame = <ZERO_FRAME>;
 		color-mapping = <LED_COLOR_ID_GREEN
-				 LED_COLOR_ID_RED
-         LED_COLOR_ID_BLUE
-         LED_COLOR_ID_WHITE>;
+				             LED_COLOR_ID_RED
+                     LED_COLOR_ID_BLUE>;
 
-		reset-delay = <SK6812_RST_DELAY>;
+		reset-delay = <60>;
 		status = "okay";
 	};
 };
