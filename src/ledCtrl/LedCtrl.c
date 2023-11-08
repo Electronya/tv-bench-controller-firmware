@@ -27,8 +27,19 @@ LOG_MODULE_REGISTER(LED_CTRL_MODULE_NAME);
 
 #ifndef CONFIG_ZTEST
 static ZephyrLedStrip ledStrip = {
-  .dev = DEVICE_DT_GET(DT_ALIAS(led_strip)),
-  .pixelCount = DT_PROP(DT_ALIAS(led_strip), chain_length),
+  .timingCntr = {
+    .dev = DEVICE_DT_GET(DT_ALIAS(strip_counter)),
+  },
+  .dataLine = {
+    .label = DT_PROP(DT_ALIAS(strip_dataline), label),
+    .dev = GPIO_DT_SPEC_GET_OR(DT_ALIAS(strip_dataline), gpios, {0}),
+  },
+  .pixelCount = 5,
+  .t0h = 300,
+  .t0l = 800,
+  .t1h = 750,
+  .t1l = 200,
+  .rst = 200000,
 };
 #else
 static ZephyrLedStrip ledStrip;
@@ -37,29 +48,35 @@ static ZephyrLedStrip ledStrip;
 /**
  * @brief   The base colors pixel values.
 */
-static const ZephyrRgbLed colors[] = {
+static const ZephyrGrbPixel colors[] = {
   RGB(0xff, 0x00, 0x00),                /**< The red base color. */
   RGB(0x00, 0xff, 0x00),                /**< The green base color. */
   RGB(0x00, 0x00, 0xff),                /**< The blue base color. */
+  RGB(0x00, 0xff, 0x00),
 };
 
 int ledCtrlInit(void)
 {
   int rc;
 
-  rc = zephyrLedStripInit(&ledStrip, LED_STRIP_COLOR_RGB, ledStrip.pixelCount);
+  rc = zephyrLedStripInit(&ledStrip, LED_STRIP_COLOR_GRB, ledStrip.pixelCount);
+  if(rc < 0)
+    LOG_ERR("unable to initialize the led strip: ERR %d", rc);
   return rc;
 }
 
 int ledCtrlSetColor(LedCtrlBaseColor color)
 {
   int rc = 0;
+  ZephyrGrbPixel colors[5] = {RGB(0xaa, 0xaa, 0xaa),
+                              RGB(0xaa, 0xaa, 0xaa),
+                              RGB(0xaa, 0xaa, 0xaa),
+                              RGB(0xaa, 0xaa, 0xaa),
+                              RGB(0xaa, 0xaa, 0xaa)};
 
   LOG_DBG("Setting strip color to %d color index.", color);
 
-  for(uint32_t i = 0; i < ledStrip.pixelCount && rc < 0; ++i)
-    rc = zephyrLedStripSetPixelRgbColor(&ledStrip, i, colors + color);
-
+  rc = zephyrLedStripSetGrbPixels(&ledStrip, 0, ledStrip.pixelCount, colors);
   if(rc < 0)
     return rc;
 

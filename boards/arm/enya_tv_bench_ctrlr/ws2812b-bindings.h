@@ -8,13 +8,10 @@
 #define ZEPHYR_SAMPLES_DRIVERS_LED_WS2812_H_
 
 /*
- * At 4 MHz, 1 bit is 250 ns, so 3 bits is 750 ns.
- *
- * That's cutting it a bit close to the edge of the timing parameters,
- * but it seems to work on AdaFruit LED rings.
+ * At 6 MHz, 1 bit is 167 ns.
  */
-#define SPI_FREQ    4000000
-#define ZERO_FRAME  0x40
-#define ONE_FRAME   0x70
+#define SPI_FREQ    6000000
+#define ZERO_FRAME  0x60
+#define ONE_FRAME   0x7c
 
 #endif

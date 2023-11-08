@@ -20,13 +20,18 @@
 		zephyr,flash = &flash0;
 	};
 
-	// leds {
-	// 	compatible = "gpio-leds";
-	// 	green_led_2: led_2 {
-	// 		gpios = <&gpioa 5 GPIO_ACTIVE_HIGH>;
-	// 		label = "User LD2";
-	// 	};
-	// };
+	leds {
+		compatible = "gpio-leds";
+		ledalive: aliveled {
+			gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
+			label = "ALIVE LED";
+		};
+    /* the following are mearely outputs */
+    stripdataline: dataline {
+      gpios = <&gpioa 7 GPIO_ACTIVE_HIGH>;
+			label = "LED Strip Data Line";
+    };
+	};
 
 	gpio_keys {
 		compatible = "gpio-keys";
@@ -37,10 +42,13 @@
 	};
 
 	aliases {
-		// led0 = &green_led_2;
-		sw0 = &user_button;
+    /* watchdog */
 		watchdog0 = &iwdg;
-    led-strip = &led_strip;
+    /* alive LED */
+    alive = &ledalive;
+    /* LED strip devices */
+    strip-counter = &stripcounter;
+    strip-dataline = &stripdataline;
 	};
 };
 
@@ -95,31 +103,7 @@
 &spi1 {
 	pinctrl-0 = <&spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
 	pinctrl-names = "default";
-	status = "okay";
-
-  dmas = <&dma1 3 (STM32_DMA_PERIPH_TX | STM32_DMA_PRIORITY_HIGH)>,
-		<&dma1 2 (STM32_DMA_PERIPH_RX | STM32_DMA_PRIORITY_HIGH)>;
-	dma-names = "tx", "rx";
-
-	led_strip: sk6812@0 {
-		compatible = "worldsemi,ws2812-spi";
-
-		/* SPI */
-		reg = <0>; /* ignored, but necessary for SPI bindings */
-		spi-max-frequency = <SPI_FREQ>;
-		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
-
-		/* B1414 */
-		chain-length = <5>; /* arbitrary; change at will */
-		spi-one-frame = <ONE_FRAME>;
-		spi-zero-frame = <ZERO_FRAME>;
-		color-mapping = <LED_COLOR_ID_GREEN
-				             LED_COLOR_ID_RED
-                     LED_COLOR_ID_BLUE>;
-
-		reset-delay = <60>;
-		status = "okay";
-	};
+  // status = "okay";
 };
 
 &spi2 {
@@ -134,4 +118,16 @@
 
 &dma1 {
 	status = "okay";
+};
+
+&timers6 {
+  /* Timer freq: ~6000000Hz */
+  st,prescaler = <8>; // TODO: remove when working from real hardware.
+	// st,prescaler = <6>;
+	status = "okay";
+  stripcounter: counter {
+		compatible = "st,stm32-counter";
+		status = "okay";
+		label = "LED strip counter";
+	};
 };

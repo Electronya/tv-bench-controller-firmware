@@ -37,6 +37,6 @@ void main(void)
     ++color;
     if(color == LED_CTRL_CLR_CNT)
       color = LED_CTRL_RED;
-    k_sleep(K_SECONDS(1));
+    k_sleep(K_SECONDS(5));
   }
 }
