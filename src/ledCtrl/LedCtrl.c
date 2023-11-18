@@ -31,7 +31,6 @@ static ZephyrLedStrip ledStrip = {
     .dev = DEVICE_DT_GET(DT_ALIAS(strip_counter)),
   },
   .dataLine = {
-    .label = DT_PROP(DT_ALIAS(strip_dataline), label),
     .dev = GPIO_DT_SPEC_GET_OR(DT_ALIAS(strip_dataline), gpios, {0}),
   },
   .pixelCount = 5,
