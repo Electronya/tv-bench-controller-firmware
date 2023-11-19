@@ -27,18 +27,8 @@ LOG_MODULE_REGISTER(LED_CTRL_MODULE_NAME);
 
 #ifndef CONFIG_ZTEST
 static ZephyrLedStrip ledStrip = {
-  .timingCntr = {
-    .dev = DEVICE_DT_GET(DT_ALIAS(strip_counter)),
-  },
-  .dataLine = {
-    .dev = GPIO_DT_SPEC_GET_OR(DT_ALIAS(strip_dataline), gpios, {0}),
-  },
-  .pixelCount = 5,
-  .t0h = 300,
-  .t0l = 800,
-  .t1h = 750,
-  .t1l = 200,
-  .rst = 200000,
+  .dev = DEVICE_DT_GET(DT_ALIAS(led_strip)),
+  .pixelCount = DT_PROP(DT_ALIAS(led_strip), chain_length),
 };
 #else
 static ZephyrLedStrip ledStrip;
@@ -47,18 +37,17 @@ static ZephyrLedStrip ledStrip;
 /**
  * @brief   The base colors pixel values.
 */
-static const ZephyrGrbPixel colors[] = {
-  RGB(0xff, 0x00, 0x00),                /**< The red base color. */
-  RGB(0x00, 0xff, 0x00),                /**< The green base color. */
-  RGB(0x00, 0x00, 0xff),                /**< The blue base color. */
-  RGB(0x00, 0xff, 0x00),
+static const ZephyrRgbLed baseColors[] = {
+  RGB(0x0f, 0x00, 0x00),                /**< The red base color. */
+  RGB(0x00, 0x0f, 0x00),                /**< The green base color. */
+  RGB(0x00, 0x00, 0x0f),                /**< The blue base color. */
 };
 
 int ledCtrlInit(void)
 {
   int rc;
 
-  rc = zephyrLedStripInit(&ledStrip, LED_STRIP_COLOR_GRB, ledStrip.pixelCount);
+  rc = zephyrLedStripInit(&ledStrip, ledStrip.pixelCount);
   if(rc < 0)
     LOG_ERR("unable to initialize the led strip: ERR %d", rc);
   return rc;
@@ -67,15 +56,14 @@ int ledCtrlInit(void)
 int ledCtrlSetColor(LedCtrlBaseColor color)
 {
   int rc = 0;
-  ZephyrGrbPixel colors[5] = {RGB(0xaa, 0xaa, 0xaa),
-                              RGB(0xaa, 0xaa, 0xaa),
-                              RGB(0xaa, 0xaa, 0xaa),
-                              RGB(0xaa, 0xaa, 0xaa),
-                              RGB(0xaa, 0xaa, 0xaa)};
+  ZephyrRgbLed colors[8];
+
+  for( uint8_t i = 0; i < 8; ++i)
+    colors[i] = baseColors[color];
 
   LOG_DBG("Setting strip color to %d color index.", color);
 
-  rc = zephyrLedStripSetGrbPixels(&ledStrip, 0, ledStrip.pixelCount, colors);
+  rc = zephyrLedStripSetPixels(&ledStrip, 0, ledStrip.pixelCount, colors);
   if(rc < 0)
     return rc;
 

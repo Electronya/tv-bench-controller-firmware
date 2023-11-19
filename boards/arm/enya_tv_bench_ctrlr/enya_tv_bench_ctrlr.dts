@@ -47,8 +47,7 @@
     /* alive LED */
     alive = &ledalive;
     /* LED strip devices */
-    strip-counter = &stripcounter;
-    strip-dataline = &stripdataline;
+    led-strip = &led_strip;
 	};
 };
 
@@ -103,7 +102,31 @@
 &spi1 {
 	pinctrl-0 = <&spi1_sck_pa5 &spi1_miso_pa6 &spi1_mosi_pa7>;
 	pinctrl-names = "default";
-  // status = "okay";
+  status = "okay";
+
+  dmas = <&dma1 3 (STM32_DMA_PERIPH_TX | STM32_DMA_PRIORITY_HIGH)>,
+		     <&dma1 2 (STM32_DMA_PERIPH_RX | STM32_DMA_PRIORITY_HIGH)>;
+	dma-names = "tx", "rx";
+
+  led_strip: led_strip@0 {
+    compatible = "everlight,b1414", "worldsemi,ws2812-spi";
+
+		/* SPI */
+		reg = <0>; /* ignored, but necessary for SPI bindings */
+		spi-max-frequency = <SPI_FREQ>;
+		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
+
+		/* LED strip */
+		chain-length = <18>; /* arbitrary; change at will */
+		spi-one-frame = <ONE_FRAME>;
+		spi-zero-frame = <ZERO_FRAME>;
+		color-mapping = <LED_COLOR_ID_GREEN
+				             LED_COLOR_ID_RED
+                     LED_COLOR_ID_BLUE>;
+
+		reset-delay = <250>;
+		status = "okay";
+	};
 };
 
 &spi2 {
@@ -118,16 +141,4 @@
 
 &dma1 {
 	status = "okay";
-};
-
-&timers6 {
-  /* Timer freq: ~6000000Hz */
-  st,prescaler = <8>; // TODO: remove when working from real hardware.
-	// st,prescaler = <6>;
-	status = "okay";
-  stripcounter: counter {
-		compatible = "st,stm32-counter";
-		status = "okay";
-		label = "LED strip counter";
-	};
 };
