@@ -26,11 +26,6 @@
 			gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
 			label = "ALIVE LED";
 		};
-    /* the following are mearely outputs */
-    stripdataline: dataline {
-      gpios = <&gpioa 7 GPIO_ACTIVE_HIGH>;
-			label = "LED Strip Data Line";
-    };
 	};
 
 	gpio_keys {
