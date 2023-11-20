@@ -14,6 +14,7 @@
 #include <zephyr/sys/printk.h>
 
 #include "LedCtrl.h"
+#include "zephyrLedStrip.h"
 
 #define MAIN_MODULE_NAME main_module
 
@@ -23,7 +24,8 @@ LOG_MODULE_REGISTER(MAIN_MODULE_NAME);
 void main(void)
 {
   int rc = 0;
-  LedCtrlBaseColor color = LED_CTRL_RED;
+  LedCtrlBaseColor color = LED_COLOR_RED;
+  ZephyrRgbLed pixels[8];
 
   LOG_INF("booting tv bench controller");
 
@@ -31,12 +33,15 @@ void main(void)
 
   while(!(rc < 0))
   {
-    rc = ledCtrlSetColor(color);
+    rc = ledCtrlSetToBaseColor(pixels, 0, 8, color);
     if(rc < 0)
-      LOG_ERR("Unable to set the led strip color.");
+      LOG_ERR("Unable to set the pixels base color.");
+    rc = ledCtrlUpdatePixels(pixels, 0, 8);
+    if(rc < 0)
+      LOG_ERR("Unable to update the pixels.");
     ++color;
-    if(color == LED_CTRL_CLR_CNT)
-      color = LED_CTRL_RED;
+    if(color == LED_COLOR_CNT)
+      color = LED_COLOR_RED;
     k_sleep(K_SECONDS(1));
   }
 }

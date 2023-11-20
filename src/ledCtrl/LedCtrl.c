@@ -18,7 +18,6 @@
 
 #include "LedCtrl.h"
 #include "zephyrCommon.h"
-#include "zephyrLedStrip.h"
 
 #define LED_CTRL_MODULE_NAME led_ctrl_module
 
@@ -38,9 +37,13 @@ static ZephyrLedStrip ledStrip;
  * @brief   The base colors pixel values.
 */
 static const ZephyrRgbLed baseColors[] = {
-  RGB(0x0f, 0x00, 0x00),                /**< The red base color. */
-  RGB(0x00, 0x0f, 0x00),                /**< The green base color. */
-  RGB(0x00, 0x00, 0x0f),                /**< The blue base color. */
+  RGB(0xff, 0x00, 0x00),                /**< The red base color. */
+  RGB(0x00, 0xff, 0x00),                /**< The green base color. */
+  RGB(0x00, 0x00, 0xff),                /**< The blue base color. */
+  RGB(0xff, 0xff, 0x00),                /**< The yellow base color. */
+  RGB(0xff, 0x00, 0xff),                /**< The magenta base color. */
+  RGB(0x00, 0xff, 0xff),                /**< The cyan base color. */
+  RGB(0xff, 0xff, 0xff),                /**< The white base color. */
 };
 
 int ledCtrlInit(void)
@@ -53,22 +56,42 @@ int ledCtrlInit(void)
   return rc;
 }
 
-int ledCtrlSetColor(LedCtrlBaseColor color)
+size_t ledCtrlGetMaxPixelCount(void)
+{
+  return zephyrLedStripGetPixelCnt(&ledStrip);
+}
+
+int ledCtrlSetToBaseColor(ZephyrRgbLed *pixels, size_t start, size_t end,
+                          LedCtrlBaseColor color)
+{
+  size_t maxPixelCount = zephyrLedStripGetPixelCnt(&ledStrip);
+
+  if(start > end || start >= maxPixelCount || end > maxPixelCount)
+    return -EINVAL;
+
+  for(uint8_t i = start; i < end; ++i)
+  {
+    pixels[i].r = baseColors[color].r;
+    pixels[i].g = baseColors[color].g;
+    pixels[i].b = baseColors[color].b;
+  }
+
+  return 0;
+}
+
+int ledCtrlUpdatePixels(ZephyrRgbLed *pixels, size_t start, size_t end)
 {
   int rc = 0;
-  ZephyrRgbLed colors[8];
+  size_t maxPixelCount = zephyrLedStripGetPixelCnt(&ledStrip);
 
-  for( uint8_t i = 0; i < 8; ++i)
-    colors[i] = baseColors[color];
+  if(start > end || start >= maxPixelCount || end > maxPixelCount)
+    return -EINVAL;
 
-  LOG_DBG("Setting strip color to %d color index.", color);
-
-  rc = zephyrLedStripSetPixels(&ledStrip, 0, ledStrip.pixelCount, colors);
+  rc = zephyrLedStripSetPixels(&ledStrip, start, end, pixels);
   if(rc < 0)
     return rc;
 
   rc = zephyrLedStripUpdate(&ledStrip);
-
   return rc;
 }
 
