@@ -17,6 +17,7 @@
 #include <zephyr/logging/log.h>
 
 #include "messages.h"
+#include "zephyrCommon.h"
 #include "zephyrMsgQueue.h"
 
 #define MESSAGES_MODULE_NAME messages_module
@@ -57,6 +58,18 @@ int msgInit(void)
   }
 
   return rc;
+}
+
+int msgPushLedSequence(LedMngmtMsg *msg)
+{
+  return zephyrMsgQueuePush(queues + LED_MNGMT_QUEUE, (void*)msg,
+    ZEPHYR_TIME_FOREVER, MILLI_SEC);
+}
+
+int msgPopLedSequence(LedMngmtMsg *msg)
+{
+  return zephyrMsgQueuePop(queues + LED_MNGMT_QUEUE, (void*)msg,
+    ZEPHYR_TIME_NO_WAIT, MILLI_SEC);
 }
 
 /** @} */

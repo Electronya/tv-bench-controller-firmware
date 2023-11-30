@@ -19,15 +19,22 @@
 #include "messages.h"
 #include "messages.c"
 
+#include "zephyrCommon.h"
 #include "zephyrMsgQueue.h"
 
 DEFINE_FFF_GLOBALS;
 
 FAKE_VALUE_FUNC(int, zephyrMsgQueueInit, ZephyrMsgQueue*, size_t, size_t);
+FAKE_VALUE_FUNC(int, zephyrMsgQueuePush, ZephyrMsgQueue*, const void*, uint32_t,
+  ZephyrTimeUnit);
+FAKE_VALUE_FUNC(int, zephyrMsgQueuePop, ZephyrMsgQueue*, void*, uint32_t,
+  ZephyrTimeUnit);
 
 static void messagesCaseSetup(void *f)
 {
   RESET_FAKE(zephyrMsgQueueInit);
+  RESET_FAKE(zephyrMsgQueuePush);
+  RESET_FAKE(zephyrMsgQueuePop);
 }
 
 ZTEST_SUITE(messages_suite, NULL, NULL, messagesCaseSetup, NULL, NULL);
@@ -69,8 +76,8 @@ ZTEST(messages_suite, test_msgInit_QueueInitFail)
 }
 
 /**
- * @test  msgInit must initalize all the message queues and return the success
- *        code.
+ * @test  msgInit must return the success code when all the queue intialization
+ *        succeed.
 */
 ZTEST(messages_suite, test_msgInit_Success)
 {
@@ -95,6 +102,106 @@ ZTEST(messages_suite, test_msgInit_Success)
     zassert_equal(expectedDepths[i], zephyrMsgQueueInit_fake.arg2_history[i],
       "msgInit failed to initalize all the message queues.");
   }
+}
+
+/**
+ * @test  msgPushLedSequence must return any error code raised by pushing
+ *        the message to the LED management queue.
+*/
+ZTEST(messages_suite, test_msgPushLedSequence_PushFail)
+{
+  int failRet = -ENOSPC;
+  LedMngmtMsg msg;
+
+  zephyrMsgQueuePush_fake.return_val = failRet;
+
+  zassert_equal(failRet, msgPushLedSequence(&msg),
+    "msgPushLedSequence failed to return the error code.");
+  zassert_equal(1, zephyrMsgQueuePush_fake.call_count,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal(queues + LED_MNGMT_QUEUE, zephyrMsgQueuePush_fake.arg0_val,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal((void*)(&msg), zephyrMsgQueuePush_fake.arg1_val,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal(ZEPHYR_TIME_FOREVER, zephyrMsgQueuePush_fake.arg2_val,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal(MILLI_SEC, zephyrMsgQueuePush_fake.arg3_val,
+    "msgPushLedSequence failed to push the LED management message.");
+}
+
+/**
+ * @test  msgPushLedSequence must return the success code when the push
+ *        push operation succeeds.
+*/
+ZTEST(messages_suite, test_msgPushLedSequence_Success)
+{
+  int successRet = 0;
+  LedMngmtMsg msg;
+
+  zephyrMsgQueuePush_fake.return_val = successRet;
+
+  zassert_equal(successRet, msgPushLedSequence(&msg),
+    "msgPushLedSequence failed to return the success code.");
+  zassert_equal(1, zephyrMsgQueuePush_fake.call_count,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal(queues + LED_MNGMT_QUEUE, zephyrMsgQueuePush_fake.arg0_val,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal((void*)(&msg), zephyrMsgQueuePush_fake.arg1_val,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal(ZEPHYR_TIME_FOREVER, zephyrMsgQueuePush_fake.arg2_val,
+    "msgPushLedSequence failed to push the LED management message.");
+  zassert_equal(MILLI_SEC, zephyrMsgQueuePush_fake.arg3_val,
+    "msgPushLedSequence failed to push the LED management message.");
+}
+
+/**
+ * @test  msgPopLedSequence must return any error code raise by the message pop
+ *        operation.
+*/
+ZTEST(messages_suite, test_msgPopLedSequence_PopFail)
+{
+  int failRet = -ENOMSG;
+  LedMngmtMsg msg;
+
+  zephyrMsgQueuePop_fake.return_val = failRet;
+
+  zassert_equal(failRet, msgPopLedSequence(&msg),
+    "msgPopLedSequence failed to return the error code.");
+  zassert_equal(1, zephyrMsgQueuePop_fake.call_count,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal(queues + LED_MNGMT_QUEUE, zephyrMsgQueuePop_fake.arg0_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal((void*)(&msg), zephyrMsgQueuePop_fake.arg1_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal(ZEPHYR_TIME_NO_WAIT, zephyrMsgQueuePop_fake.arg2_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal(MILLI_SEC, zephyrMsgQueuePop_fake.arg3_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+}
+
+/**
+ * @test  msgPopLedSequence must return the success code when the pop operation
+ *        succeeds.
+*/
+ZTEST(messages_suite, test_msgPopLedSequence_Success)
+{
+  int successRet = 0;
+  LedMngmtMsg msg;
+
+  zephyrMsgQueuePop_fake.return_val = successRet;
+
+  zassert_equal(successRet, msgPopLedSequence(&msg),
+    "msgPopLedSequence failed to return the error code.");
+  zassert_equal(1, zephyrMsgQueuePop_fake.call_count,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal(queues + LED_MNGMT_QUEUE, zephyrMsgQueuePop_fake.arg0_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal((void*)(&msg), zephyrMsgQueuePop_fake.arg1_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal(ZEPHYR_TIME_NO_WAIT, zephyrMsgQueuePop_fake.arg2_val,
+    "msgPopLedSequence failed to pop the LED management message.");
+  zassert_equal(MILLI_SEC, zephyrMsgQueuePop_fake.arg3_val,
+    "msgPopLedSequence failed to pop the LED management message.");
 }
 
 /** @} */
