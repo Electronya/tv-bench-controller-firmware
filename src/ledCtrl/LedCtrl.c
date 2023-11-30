@@ -1,10 +1,10 @@
 /**
  * Copyright (C) 2023 by Electronya
  *
- * @file      ledCtrlHw.h
+ * @file      ledCtrl.h
  * @author    jbacon
  * @date      2023-05-06
- * @brief     Led Control Hardware
+ * @brief     Led Control Module
  *
  *            This file is the implementation of the LED control module.
  *
