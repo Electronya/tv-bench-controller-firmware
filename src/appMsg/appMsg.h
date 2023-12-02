@@ -73,7 +73,7 @@ typedef struct
  *
  * @return  o if successful, the error code otherwise.
  */
-int msgInit(void);
+int appMsgInit(void);
 
 /**
  * @brief   Push a LED management message in the queue.
@@ -82,7 +82,7 @@ int msgInit(void);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int msgPushLedSequence(LedSequence_t *msg);
+int appMsgPushLedSequence(LedSequence_t *msg);
 
 /**
  * @brief   Pop a LED management message from the queue.
@@ -91,7 +91,7 @@ int msgPushLedSequence(LedSequence_t *msg);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int msgPopLedSequence(LedSequence_t *msg);
+int appMsgPopLedSequence(LedSequence_t *msg);
 
 #endif    /* APP_MESSAGES */
 

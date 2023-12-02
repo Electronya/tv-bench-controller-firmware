@@ -44,7 +44,7 @@ enum
 */
 ZephyrMsgQueue_t queues[MSG_QUEUE_COUNT];
 
-int msgInit(void)
+int appMsgInit(void)
 {
   int rc = 0;
   size_t msgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence_t)};
@@ -60,13 +60,13 @@ int msgInit(void)
   return rc;
 }
 
-int msgPushLedSequence(LedSequence_t *msg)
+int appMsgPushLedSequence(LedSequence_t *msg)
 {
   return zephyrMsgQueuePush(queues + LED_MNGMT_QUEUE, (void*)msg,
     ZEPHYR_TIME_FOREVER, MILLI_SEC);
 }
 
-int msgPopLedSequence(LedSequence_t *msg)
+int appMsgPopLedSequence(LedSequence_t *msg)
 {
   return zephyrMsgQueuePop(queues + LED_MNGMT_QUEUE, (void*)msg,
     ZEPHYR_TIME_NO_WAIT, MILLI_SEC);
