@@ -25,18 +25,18 @@
 LOG_MODULE_REGISTER(LED_CTRL_MODULE_NAME);
 
 #ifndef CONFIG_ZTEST
-static ZephyrLedStrip ledStrip = {
+static ZephyrLedStrip_t ledStrip = {
   .dev = DEVICE_DT_GET(DT_ALIAS(led_strip)),
   .pixelCount = DT_PROP(DT_ALIAS(led_strip), chain_length),
 };
 #else
-static ZephyrLedStrip ledStrip;
+static ZephyrLedStrip_t ledStrip;
 #endif
 
 /**
  * @brief   The base colors pixel values.
 */
-static const ZephyrRgbLed baseColors[] = {
+static const ZephyrRgbLed_t baseColors[] = {
   RGB(0xff, 0x00, 0x00),                /**< The red base color. */
   RGB(0x00, 0xff, 0x00),                /**< The green base color. */
   RGB(0x00, 0x00, 0xff),                /**< The blue base color. */
@@ -61,8 +61,8 @@ size_t ledCtrlGetMaxPixelCount(void)
   return zephyrLedStripGetPixelCnt(&ledStrip);
 }
 
-int ledCtrlSetToBaseColor(ZephyrRgbLed *pixels, size_t start, size_t end,
-                          LedCtrlBaseColor color)
+int ledCtrlSetToBaseColor(ZephyrRgbLed_t *pixels, size_t start, size_t end,
+                          LedCtrlBaseColor_t color)
 {
   size_t maxPixelCount = zephyrLedStripGetPixelCnt(&ledStrip);
 
@@ -79,7 +79,7 @@ int ledCtrlSetToBaseColor(ZephyrRgbLed *pixels, size_t start, size_t end,
   return 0;
 }
 
-int ledCtrlUpdatePixels(ZephyrRgbLed *pixels, size_t start, size_t end)
+int ledCtrlUpdatePixels(ZephyrRgbLed_t *pixels, size_t start, size_t end)
 {
   int rc = 0;
   size_t maxPixelCount = zephyrLedStripGetPixelCnt(&ledStrip);

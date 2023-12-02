@@ -28,7 +28,7 @@ typedef enum
   SEQ_CHASER,                           /**< The chaser sequence. */
   SEQ_INVERT_CHASER,                    /**< The inverted chaser sequence. */
   SEQ_COUNT,                            /**< The sequence type count. */
-} SequenceType;
+} SequenceType_t;
 
 /**
  * @brief The color type.
@@ -38,7 +38,7 @@ typedef enum
   COLOR_SINGLE,                         /**< The single color type. */
   COLOR_RANGE,                          /**< The range color type (rainbow). */
   COLOR_COUNT,                          /**< The color type count. */
-} ColorType;
+} ColorType_t;
 
 /**
  * @brief The color union.
@@ -53,20 +53,20 @@ typedef union
     uint8_t r;                          /**< The red vaue. */
     uint8_t unused;                     /**< The unused byte */
   };
-} Color;
+} Color_t;
 
 /**
  * @brief The LED management message.
 */
 typedef struct
 {
-  SequenceType seqType;                 /**< The sequence type. */
+  SequenceType_t seqType;               /**< The sequence type. */
   uint32_t timeBase;                    /**< The sequence time base. */
-  ZephyrTimeUnit timeUnit;              /**< The sequence time unit. */
-  ColorType colorType;                  /**< The color type. */
-  Color startColor;                     /**< The solid color or the range start color. */
-  Color endColor;                       /**< The range end color. */
-} LedSequence;
+  ZephyrTimeUnit_t timeUnit;            /**< The sequence time unit. */
+  ColorType_t colorType;                /**< The color type. */
+  Color_t startColor;                   /**< The solid color or the range start color. */
+  Color_t endColor;                     /**< The range end color. */
+} LedSequence_t;
 
 /**
  * @brief   Intialize the message queues.
@@ -82,7 +82,7 @@ int msgInit(void);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int msgPushLedSequence(LedSequence *msg);
+int msgPushLedSequence(LedSequence_t *msg);
 
 /**
  * @brief   Pop a LED management message from the queue.
@@ -91,7 +91,7 @@ int msgPushLedSequence(LedSequence *msg);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int msgPopLedSequence(LedSequence *msg);
+int msgPopLedSequence(LedSequence_t *msg);
 
 #endif    /* APP_MESSAGES */
 

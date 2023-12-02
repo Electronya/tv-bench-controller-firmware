@@ -31,7 +31,7 @@ typedef enum
   LED_COLOR_CYAN,               /**< The CYAN base color. */
   LED_COLOR_WHT,                /**< The WHITE base color. */
   LED_COLOR_CNT,                /**< The count of supported base color. */
-} LedCtrlBaseColor;
+} LedCtrlBaseColor_t;
 
 /**
  * @brief   Initialize the module.
@@ -57,8 +57,8 @@ size_t ledCtrlGetMaxPixelCount(void);
  *
  * @return          0 if successful, the error code otherwise.
  */
-int ledCtrlSetToBaseColor(ZephyrRgbLed *pixels, size_t start, size_t end,
-                          LedCtrlBaseColor color);
+int ledCtrlSetToBaseColor(ZephyrRgbLed_t *pixels, size_t start, size_t end,
+                          LedCtrlBaseColor_t color);
 
 /**
  * @brief   Update a group of pixel to the given colors.
@@ -69,7 +69,7 @@ int ledCtrlSetToBaseColor(ZephyrRgbLed *pixels, size_t start, size_t end,
  *
  * @return  0 if successful, the error code otherwise.
  */
-int ledCtrlUpdatePixels(ZephyrRgbLed *pixels, size_t start, size_t end);
+int ledCtrlUpdatePixels(ZephyrRgbLed_t *pixels, size_t start, size_t end);
 
 #endif    /* LED_CTRL */
 

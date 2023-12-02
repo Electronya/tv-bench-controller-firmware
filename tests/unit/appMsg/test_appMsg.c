@@ -24,11 +24,11 @@
 
 DEFINE_FFF_GLOBALS;
 
-FAKE_VALUE_FUNC(int, zephyrMsgQueueInit, ZephyrMsgQueue*, size_t, size_t);
-FAKE_VALUE_FUNC(int, zephyrMsgQueuePush, ZephyrMsgQueue*, const void*, uint32_t,
-  ZephyrTimeUnit);
-FAKE_VALUE_FUNC(int, zephyrMsgQueuePop, ZephyrMsgQueue*, void*, uint32_t,
-  ZephyrTimeUnit);
+FAKE_VALUE_FUNC(int, zephyrMsgQueueInit, ZephyrMsgQueue_t*, size_t, size_t);
+FAKE_VALUE_FUNC(int, zephyrMsgQueuePush, ZephyrMsgQueue_t*, const void*,
+  uint32_t, ZephyrTimeUnit_t);
+FAKE_VALUE_FUNC(int, zephyrMsgQueuePop, ZephyrMsgQueue_t*, void*, uint32_t,
+  ZephyrTimeUnit_t);
 
 static void messagesCaseSetup(void *f)
 {
@@ -47,7 +47,7 @@ ZTEST(messages_suite, test_msgInit_QueueInitFail)
 {
   int failRet = -ENOSPC;
   int successRet = 0;
-  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence)};
+  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence_t)};
   size_t expectedDepths[MSG_QUEUE_COUNT] = {5};
   int retVals[MSG_QUEUE_COUNT] = {successRet};
 
@@ -82,7 +82,7 @@ ZTEST(messages_suite, test_msgInit_QueueInitFail)
 ZTEST(messages_suite, test_msgInit_Success)
 {
   int successRet = 0;
-  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence)};
+  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence_t)};
   size_t expectedDepths[MSG_QUEUE_COUNT] = {5};
   int retVals[MSG_QUEUE_COUNT] = {successRet};
 
@@ -111,7 +111,7 @@ ZTEST(messages_suite, test_msgInit_Success)
 ZTEST(messages_suite, test_msgPushLedSequence_PushFail)
 {
   int failRet = -ENOSPC;
-  LedSequence msg;
+  LedSequence_t msg;
 
   zephyrMsgQueuePush_fake.return_val = failRet;
 
@@ -136,7 +136,7 @@ ZTEST(messages_suite, test_msgPushLedSequence_PushFail)
 ZTEST(messages_suite, test_msgPushLedSequence_Success)
 {
   int successRet = 0;
-  LedSequence msg;
+  LedSequence_t msg;
 
   zephyrMsgQueuePush_fake.return_val = successRet;
 
@@ -161,7 +161,7 @@ ZTEST(messages_suite, test_msgPushLedSequence_Success)
 ZTEST(messages_suite, test_msgPopLedSequence_PopFail)
 {
   int failRet = -ENOMSG;
-  LedSequence msg;
+  LedSequence_t msg;
 
   zephyrMsgQueuePop_fake.return_val = failRet;
 
@@ -186,7 +186,7 @@ ZTEST(messages_suite, test_msgPopLedSequence_PopFail)
 ZTEST(messages_suite, test_msgPopLedSequence_Success)
 {
   int successRet = 0;
-  LedSequence msg;
+  LedSequence_t msg;
 
   zephyrMsgQueuePop_fake.return_val = successRet;
 

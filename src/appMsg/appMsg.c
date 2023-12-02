@@ -42,12 +42,12 @@ enum
 /**
  * @brief The message queues.
 */
-ZephyrMsgQueue queues[MSG_QUEUE_COUNT];
+ZephyrMsgQueue_t queues[MSG_QUEUE_COUNT];
 
 int msgInit(void)
 {
   int rc = 0;
-  size_t msgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence)};
+  size_t msgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence_t)};
   size_t maxDepths[MSG_QUEUE_COUNT] = {MAX_LED_MNGMT_MSG_COUNT};
 
   for(uint8_t i = 0; i < MSG_QUEUE_COUNT && rc == 0; ++i)
@@ -60,13 +60,13 @@ int msgInit(void)
   return rc;
 }
 
-int msgPushLedSequence(LedSequence *msg)
+int msgPushLedSequence(LedSequence_t *msg)
 {
   return zephyrMsgQueuePush(queues + LED_MNGMT_QUEUE, (void*)msg,
     ZEPHYR_TIME_FOREVER, MILLI_SEC);
 }
 
-int msgPopLedSequence(LedSequence *msg)
+int msgPopLedSequence(LedSequence_t *msg)
 {
   return zephyrMsgQueuePop(queues + LED_MNGMT_QUEUE, (void*)msg,
     ZEPHYR_TIME_NO_WAIT, MILLI_SEC);

@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(MAIN_MODULE_NAME);
 void main(void)
 {
   int rc = 0;
-  LedCtrlBaseColor color = LED_COLOR_RED;
+  LedCtrlBaseColor_t color = LED_COLOR_RED;
   ZephyrRgbLed pixels[8];
 
   LOG_INF("booting tv bench controller");

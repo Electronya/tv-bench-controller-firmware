@@ -23,11 +23,11 @@
 
 DEFINE_FFF_GLOBALS;
 
-FAKE_VALUE_FUNC(int, zephyrLedStripInit, ZephyrLedStrip*, uint32_t);
-FAKE_VALUE_FUNC(uint32_t, zephyrLedStripGetPixelCnt, ZephyrLedStrip*);
-FAKE_VALUE_FUNC(int, zephyrLedStripSetPixels, ZephyrLedStrip*, uint32_t,
-  uint32_t, const ZephyrRgbLed*);
-FAKE_VALUE_FUNC(int , zephyrLedStripUpdate, ZephyrLedStrip*);
+FAKE_VALUE_FUNC(int, zephyrLedStripInit, ZephyrLedStrip_t*, uint32_t);
+FAKE_VALUE_FUNC(uint32_t, zephyrLedStripGetPixelCnt, ZephyrLedStrip_t*);
+FAKE_VALUE_FUNC(int, zephyrLedStripSetPixels, ZephyrLedStrip_t*, uint32_t,
+  uint32_t, const ZephyrRgbLed_t*);
+FAKE_VALUE_FUNC(int , zephyrLedStripUpdate, ZephyrLedStrip_t*);
 
 /**
  * @brief The test max pixel count.
@@ -128,7 +128,7 @@ ZTEST(ledCtrl_suite, test_ledCtrlGetMaxPixelCount_MaxPixelCount)
 ZTEST(ledCtrl_suite, test_ledCtrlSetToBaseColor_InvalidIndexes)
 {
   int failRet = -EINVAL;
-  ZephyrRgbLed pixels[TEST_MAX_PIXEL_COUNT];
+  ZephyrRgbLed_t pixels[TEST_MAX_PIXEL_COUNT];
   size_t startIndexes[INVALID_INDEXES_TEST_COUNT] = {5, 0, 10};
   size_t endIndexes[INVALID_INDEXES_TEST_COUNT] = {4, 11, 20};
 
@@ -157,7 +157,7 @@ ZTEST(ledCtrl_suite, test_ledCtrlSetToBaseColor_Success)
   int successRet = 0;
   size_t startIndex = 2;
   size_t endIndex = TEST_MAX_PIXEL_COUNT;
-  ZephyrRgbLed pixels[TEST_MAX_PIXEL_COUNT];
+  ZephyrRgbLed_t pixels[TEST_MAX_PIXEL_COUNT];
 
   for(uint8_t i = 0; i < TEST_MAX_PIXEL_COUNT; ++i)
   {
@@ -195,7 +195,7 @@ ZTEST(ledCtrl_suite, test_ledCtrlSetToBaseColor_Success)
 ZTEST(ledCtrl_suite, test_ledCtrlUpdatePixels_InvalidIndexes)
 {
   int failRet = -EINVAL;
-  ZephyrRgbLed pixels[TEST_MAX_PIXEL_COUNT];
+  ZephyrRgbLed_t pixels[TEST_MAX_PIXEL_COUNT];
   size_t startIndexes[INVALID_INDEXES_TEST_COUNT] = {5, 0, 10};
   size_t endIndexes[INVALID_INDEXES_TEST_COUNT] = {4, 11, 20};
 
@@ -223,7 +223,7 @@ ZTEST(ledCtrl_suite, test_ledCtrlUpdatePixels_SetPixelFail)
   int failRet = -EINVAL;
   size_t startIndex = 2;
   size_t endIndex = TEST_MAX_PIXEL_COUNT;
-  ZephyrRgbLed pixels[TEST_MAX_PIXEL_COUNT];
+  ZephyrRgbLed_t pixels[TEST_MAX_PIXEL_COUNT];
 
   zephyrLedStripGetPixelCnt_fake.return_val = TEST_MAX_PIXEL_COUNT;
   zephyrLedStripSetPixels_fake.return_val = failRet;
@@ -256,7 +256,7 @@ ZTEST(ledCtrl_suite, test_ledCtrlUpdatePixels_UpdatePixelFail)
   int failRet = -EINVAL;
   size_t startIndex = 2;
   size_t endIndex = TEST_MAX_PIXEL_COUNT - 1;
-  ZephyrRgbLed pixels[TEST_MAX_PIXEL_COUNT];
+  ZephyrRgbLed_t pixels[TEST_MAX_PIXEL_COUNT];
 
   zephyrLedStripGetPixelCnt_fake.return_val = TEST_MAX_PIXEL_COUNT;
   zephyrLedStripSetPixels_fake.return_val = successRet;
@@ -293,7 +293,7 @@ ZTEST(ledCtrl_suite, test_ledCtrlUpdatePixels_Success)
   int successRet = 0;
   size_t startIndex = 2;
   size_t endIndex = TEST_MAX_PIXEL_COUNT - 1;
-  ZephyrRgbLed pixels[TEST_MAX_PIXEL_COUNT];
+  ZephyrRgbLed_t pixels[TEST_MAX_PIXEL_COUNT];
 
   zephyrLedStripGetPixelCnt_fake.return_val = TEST_MAX_PIXEL_COUNT;
   zephyrLedStripSetPixels_fake.return_val = successRet;
