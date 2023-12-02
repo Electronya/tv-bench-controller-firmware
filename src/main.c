@@ -25,7 +25,7 @@ void main(void)
 {
   int rc = 0;
   LedCtrlBaseColor_t color = LED_COLOR_RED;
-  ZephyrRgbLed pixels[8];
+  ZephyrRgbLed_t pixels[8];
 
   LOG_INF("booting tv bench controller");
 
