@@ -1,20 +1,20 @@
 /**
  * Copyright (C) 2023 by Electronya
  *
- * @file      messages.h
+ * @file      appMsg.h
  * @author    jbacon
  * @date      2023-11-22
- * @brief     Led Manager Module
+ * @brief     Application Messages Module
  *
- *            This file is the declaration of the messages module.
+ *            This file is the declaration of the application messages module.
  *
- * @defgroup  messages messages
+ * @defgroup  appMsg appMsg
  *
  * @{
  */
 
-#ifndef MESSAGES
-#define MESSAGES
+#ifndef APP_MESSAGES
+#define APP_MESSAGES
 
 #include "zephyrCommon.h"
 #include "zephyrLedStrip.h"
@@ -66,7 +66,7 @@ typedef struct
   ColorType colorType;                  /**< The color type. */
   Color startColor;                     /**< The solid color or the range start color. */
   Color endColor;                       /**< The range end color. */
-} LedMngmtMsg;
+} LedSequence;
 
 /**
  * @brief   Intialize the message queues.
@@ -82,7 +82,7 @@ int msgInit(void);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int msgPushLedSequence(LedMngmtMsg *msg);
+int msgPushLedSequence(LedSequence *msg);
 
 /**
  * @brief   Pop a LED management message from the queue.
@@ -91,8 +91,8 @@ int msgPushLedSequence(LedMngmtMsg *msg);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int msgPopLedSequence(LedMngmtMsg *msg);
+int msgPopLedSequence(LedSequence *msg);
 
-#endif    /* MESSAGES */
+#endif    /* APP_MESSAGES */
 
 /** @} */

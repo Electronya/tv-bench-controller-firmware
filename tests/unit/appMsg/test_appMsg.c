@@ -1,14 +1,14 @@
 /**
  * Copyright (C) 2023 by Electronya
  *
- * @file      test_messages.h
+ * @file      test_appMsg.h
  * @author    jbacon
  * @date      2023-11-20
- * @brief     Messages Module Test Cases
+ * @brief     Aplication Messages Module Test Cases
  *
- *            This file is the test cases of the messages module.
+ *            This file is the test cases of the application messages module.
  *
- * @ingroup  messages
+ * @ingroup  appMsg
  *
  * @{
  */
@@ -16,8 +16,8 @@
 #include <zephyr/ztest.h>
 #include <zephyr/fff.h>
 
-#include "messages.h"
-#include "messages.c"
+#include "appMsg.h"
+#include "appMsg.c"
 
 #include "zephyrCommon.h"
 #include "zephyrMsgQueue.h"
@@ -47,7 +47,7 @@ ZTEST(messages_suite, test_msgInit_QueueInitFail)
 {
   int failRet = -ENOSPC;
   int successRet = 0;
-  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedMngmtMsg)};
+  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence)};
   size_t expectedDepths[MSG_QUEUE_COUNT] = {5};
   int retVals[MSG_QUEUE_COUNT] = {successRet};
 
@@ -82,7 +82,7 @@ ZTEST(messages_suite, test_msgInit_QueueInitFail)
 ZTEST(messages_suite, test_msgInit_Success)
 {
   int successRet = 0;
-  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedMngmtMsg)};
+  size_t expectedMsgSizes[MSG_QUEUE_COUNT] = {sizeof(LedSequence)};
   size_t expectedDepths[MSG_QUEUE_COUNT] = {5};
   int retVals[MSG_QUEUE_COUNT] = {successRet};
 
@@ -111,7 +111,7 @@ ZTEST(messages_suite, test_msgInit_Success)
 ZTEST(messages_suite, test_msgPushLedSequence_PushFail)
 {
   int failRet = -ENOSPC;
-  LedMngmtMsg msg;
+  LedSequence msg;
 
   zephyrMsgQueuePush_fake.return_val = failRet;
 
@@ -136,7 +136,7 @@ ZTEST(messages_suite, test_msgPushLedSequence_PushFail)
 ZTEST(messages_suite, test_msgPushLedSequence_Success)
 {
   int successRet = 0;
-  LedMngmtMsg msg;
+  LedSequence msg;
 
   zephyrMsgQueuePush_fake.return_val = successRet;
 
@@ -161,7 +161,7 @@ ZTEST(messages_suite, test_msgPushLedSequence_Success)
 ZTEST(messages_suite, test_msgPopLedSequence_PopFail)
 {
   int failRet = -ENOMSG;
-  LedMngmtMsg msg;
+  LedSequence msg;
 
   zephyrMsgQueuePop_fake.return_val = failRet;
 
@@ -186,7 +186,7 @@ ZTEST(messages_suite, test_msgPopLedSequence_PopFail)
 ZTEST(messages_suite, test_msgPopLedSequence_Success)
 {
   int successRet = 0;
-  LedMngmtMsg msg;
+  LedSequence msg;
 
   zephyrMsgQueuePop_fake.return_val = successRet;
 
