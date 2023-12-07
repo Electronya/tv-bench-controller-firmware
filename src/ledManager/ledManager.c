@@ -17,6 +17,8 @@
 #include <zephyr/logging/log.h>
 
 #include "appMsg.h"
+#include "ledCtrl.h"
+#include "zephyrLedStrip.h"
 #include "zephyrThread.h"
 
 #define LED_Mngr_MODULE_NAME led_mngr_module
@@ -39,7 +41,18 @@ LOG_MODULE_REGISTER(LED_Mngr_MODULE_NAME);
 */
 #define LED_MNGR_PRIORITY                           1
 
+/**
+ * @brief The thread default sleep time.
+*/
+#define LED_MNGR_DEFAULT_SLEEP                      100
+
 K_THREAD_STACK_DEFINE(ledMngr_stack, LED_MNGR_STACK_SIZE);
+
+typedef struct
+{
+  uint32_t firstLed;            /**< The strip ID of the section first LED. */
+  uint32_t lastLed;             /**< The strip ID of the section last LED. */
+} LedSection_t;
 
 /**
  * @brief The Thread data structure.
@@ -50,20 +63,84 @@ ZephyrThread_t thread = {
   .priority = LED_MNGR_PRIORITY,
 };
 
+LedSection_t section;
+
+/**
+ * @brief   Process a solid color sequence.
+ *
+ * @param seq     The sequence data.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int processSolidSeq(LedSequence_t *seq)
+{
+  ZephyrRgbLed_t *pixels;
+  size_t pixelCount = section.lastLed - section.firstLed;
+
+  pixels = k_malloc(pixelCount * sizeof(ZephyrRgbLed_t));
+  if(!pixels)
+    return -ENOSPC;
+
+  for(uint8_t i = 0; i < pixelCount; i++)
+  {
+    pixels[i].r = seq->startColor.r;
+    pixels[i].g = seq->startColor.g;
+    pixels[i].b = seq->startColor.b;
+  }
+
+  return ledCtrlUpdatePixels(pixels, section.firstLed, section.lastLed);
+}
+
 /**
  * @brief   The LED manager thread.
  *
- * @param p1    First user parameter.
- * @param p2    Second user parameter.
- * @param p3    Third user parameter.
+ * @param p1      First user parameter.
+ * @param p2      Second user parameter.
+ * @param p3      Third user parameter.
  */
-void ledMngrThread(void *p1, void *p2, void *p3)
+static void ledMngrThread(void *p1, void *p2, void *p3)
 {
-  // LedSequence_t seq;
+  int rc;
+  LedSequence_t seq = {
+    .seqType = SEQ_SOLID,
+    .timeBase = ZEPHYR_TIME_FOREVER,
+    .colorType = COLOR_SINGLE,
+    .startColor.hexColor = 0x00000000,
+  };
 
   while(true)
   {
+    rc = appMsgPopLedSequence(&seq);
 
+    switch(seq.seqType)
+    {
+      case SEQ_SOLID:
+      break;
+      case SEQ_CHASER:
+      break;
+      case SEQ_INVERT_CHASER:
+      break;
+      default:
+        LOG_ERR("unsupported sequence type");
+        return;
+      break;
+    }
+
+    if(seq.timeBase != ZEPHYR_TIME_FOREVER)
+    {
+      rc = zephyrThreadSleep(seq.timeBase, seq.timeUnit);
+      if(rc < 0)
+        LOG_ERR("unable to sleep sequence time base");
+    }
+    else
+    {
+      rc = zephyrThreadSleep(LED_MNGR_DEFAULT_SLEEP, MILLI_SEC);
+      if(rc < 0)
+        LOG_ERR("unable to sleep default time");
+    }
+
+    if(rc < 0)
+      return;
   }
 }
 
