@@ -13,7 +13,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/printk.h>
 
-#include "LedCtrl.h"
+#include "ledCtrl.h"
 #include "zephyrLedStrip.h"
 
 #define MAIN_MODULE_NAME main_module

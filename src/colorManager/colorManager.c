@@ -15,6 +15,7 @@
 
 #include <zephyr/logging/log.h>
 
+#include "colorManager.h"
 #include "ledCtrl.h"
 #include "zephyrLedStrip.h"
 
