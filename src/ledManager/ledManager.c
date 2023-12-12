@@ -66,37 +66,11 @@ ZephyrThread_t thread = {
 LedSection_t section;
 
 /**
- * @brief   Process a solid color sequence.
- *
- * @param seq     The sequence data.
- *
- * @return  0 if successful, the error code otherwise.
- */
-static int processSolidSeq(LedSequence_t *seq)
-{
-  ZephyrRgbLed_t *pixels;
-  size_t pixelCount = section.lastLed - section.firstLed;
-
-  pixels = k_malloc(pixelCount * sizeof(ZephyrRgbLed_t));
-  if(!pixels)
-    return -ENOSPC;
-
-  for(uint8_t i = 0; i < pixelCount; i++)
-  {
-    pixels[i].r = seq->startColor.r;
-    pixels[i].g = seq->startColor.g;
-    pixels[i].b = seq->startColor.b;
-  }
-
-  return ledCtrlUpdatePixels(pixels, section.firstLed, section.lastLed);
-}
-
-/**
  * @brief   The LED manager thread.
  *
- * @param p1      First user parameter.
- * @param p2      Second user parameter.
- * @param p3      Third user parameter.
+ * @param p1          First user parameter.
+ * @param p2          Second user parameter.
+ * @param p3          Third user parameter.
  */
 static void ledMngrThread(void *p1, void *p2, void *p3)
 {
