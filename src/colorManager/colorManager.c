@@ -25,6 +25,7 @@ LOG_MODULE_REGISTER(COLOR_MNGR_MODULE_NAME);
 
 int colorMngrSetSingle(Color_t *color, size_t firstLed, size_t lastLed)
 {
+  int rc;
   ZephyrRgbLed_t *pixels;
   size_t pixelCount = lastLed - firstLed;
 
@@ -39,12 +40,16 @@ int colorMngrSetSingle(Color_t *color, size_t firstLed, size_t lastLed)
     pixels[i].b = color->b;
   }
 
-  return ledCtrlUpdatePixels(pixels, firstLed, lastLed);
+  rc = ledCtrlUpdatePixels(pixels, firstLed, lastLed);
+  k_free(pixels);
+
+  return rc;
 }
 
 int colorMngrSetFade(Color_t *color, uint32_t fadeLvl, uint32_t fadeStart,
                      uint32_t firstLed, uint32_t lastLed, bool isAscending)
 {
+  int rc;
   ZephyrRgbLed_t *pixels;
   size_t pixelCount = lastLed - firstLed;
   size_t pixelCntr = 0;
@@ -77,7 +82,10 @@ int colorMngrSetFade(Color_t *color, uint32_t fadeLvl, uint32_t fadeStart,
     }
   }
 
-  return ledCtrlUpdatePixels(pixels, firstLed, lastLed);
+  rc = ledCtrlUpdatePixels(pixels, firstLed, lastLed);
+  k_free(pixels);
+
+  return rc;
 }
 
 /** @} */

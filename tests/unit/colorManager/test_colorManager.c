@@ -28,11 +28,13 @@
 DEFINE_FFF_GLOBALS;
 
 FAKE_VALUE_FUNC(void*, k_malloc, size_t);
+FAKE_VOID_FUNC(k_free, void*);
 FAKE_VALUE_FUNC(int, ledCtrlUpdatePixels, ZephyrRgbLed_t*, size_t, size_t);
 
 static void colorMngrCaseSetup(void *f)
 {
   RESET_FAKE(k_malloc);
+  RESET_FAKE(k_free);
   RESET_FAKE(ledCtrlUpdatePixels);
 }
 
@@ -90,6 +92,10 @@ ZTEST(colorMngr_suite, test_colorMngrSetSingle_PixelUpdateFail)
     "colorMngrSetSingle failed to update the LED pixels.");
   zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
     "colorMngrSetSingle failed to update the LED pixels.");
+  zassert_equal(1, k_free_fake.call_count,
+    "colorMngrSetSingle failed to deallocate the pixels.");
+  zassert_equal(&pixels, k_free_fake.arg0_val,
+    "colorMngrSetSingle failed to deallocate the pixels.");
 }
 
 /**
@@ -123,6 +129,10 @@ ZTEST(colorMngr_suite, test_colorMngrSetSingle_Sucess)
     "colorMngrSetSingle failed to update the LED pixels.");
   zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
     "colorMngrSetSingle failed to update the LED pixels.");
+  zassert_equal(1, k_free_fake.call_count,
+    "colorMngrSetSingle failed to deallocate the pixels.");
+  zassert_equal(&pixels, k_free_fake.arg0_val,
+    "colorMngrSetSingle failed to deallocate the pixels.");
 
   for(uint8_t i = 0; i < lastLed - firstLed; i++)
   {
@@ -191,6 +201,10 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_PixelUpdateFail)
     "colorMngrSetFade failed to update the LED pixels.");
   zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
     "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(1, k_free_fake.call_count,
+    "colorMngrSetFade failed to deallocate the pixels.");
+  zassert_equal(&pixels, k_free_fake.arg0_val,
+    "colorMngrSetFade failed to deallocate the pixels.");
 }
 
 /**
@@ -232,6 +246,10 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_AscendingSuccess)
     "colorMngrSetFade failed to update the LED pixels.");
   zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
     "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(1, k_free_fake.call_count,
+    "colorMngrSetFade failed to deallocate the pixels.");
+  zassert_equal(&pixels, k_free_fake.arg0_val,
+    "colorMngrSetFade failed to deallocate the pixels.");
 
   pixelIdx = fadeStart;
   while(pixelCntr < lastLed - firstLed)
