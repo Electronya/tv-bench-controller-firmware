@@ -135,3 +135,186 @@ ZTEST(colorMngr_suite, test_colorMngrSetSingle_Sucess)
   }
 }
 
+/**
+ * @test  colorMngrSetFade must return an error code when the temporary pixels
+ *        allocation fails.
+*/
+ZTEST(colorMngr_suite, test_colorMngrSetFade_PixelAllocationFail)
+{
+  int failRet = -ENOSPC;
+  uint32_t fadeLvl = 2;
+  uint32_t fadeStart = 5;
+  uint32_t firstLed = 0;
+  uint32_t lastLed = 10;
+  size_t expectedSize = (lastLed - firstLed) * 3;
+  Color_t color;
+
+  k_malloc_fake.return_val = NULL;
+
+  zassert_equal(failRet, colorMngrSetFade(&color, fadeLvl, fadeStart, firstLed, lastLed, true),
+    "colorMngrSetFade failed to retunr the error code.");
+  zassert_equal(1, k_malloc_fake.call_count,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(expectedSize, k_malloc_fake.arg0_val,
+    "colorMngrSetFade failed to allocate the required pixels.");
+}
+
+/**
+ * @test  colorMngrSetFade must return an error code when the temporary pixels
+ *        allocation fails.
+*/
+ZTEST(colorMngr_suite, test_colorMngrSetFade_PixelUpdateFail)
+{
+  int failRet = -EIO;
+  ZephyrRgbLed_t pixels[10];
+  uint32_t fadeLvl = 2;
+  uint32_t fadeStart = 5;
+  uint32_t firstLed = 0;
+  uint32_t lastLed = 10;
+  size_t expectedSize = (lastLed - firstLed) * 3;
+  Color_t color;
+
+  k_malloc_fake.return_val = &pixels;
+  ledCtrlUpdatePixels_fake.return_val = failRet;
+
+  zassert_equal(failRet, colorMngrSetFade(&color, fadeLvl, fadeStart, firstLed, lastLed, true),
+    "colorMngrSetFade failed to retunr the error code.");
+  zassert_equal(1, k_malloc_fake.call_count,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(expectedSize, k_malloc_fake.arg0_val,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(1, ledCtrlUpdatePixels_fake.call_count,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(pixels, ledCtrlUpdatePixels_fake.arg0_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(firstLed, ledCtrlUpdatePixels_fake.arg1_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+}
+
+/**
+ * @test  colorMngrSetFade must set the allocated pixels to the appropriate
+ *        color in an ascending fashon, update the strip LED and return the
+ *        success code.
+*/
+ZTEST(colorMngr_suite, test_colorMngrSetFade_AscendingSuccess)
+{
+  int successRet = 0;
+  uint32_t pixelIdx;
+  uint32_t pixelCntr = 0;
+  ZephyrRgbLed_t pixels[10];
+  uint32_t fadeLvl = 2;
+  uint32_t fadeStart = 5;
+  uint32_t firstLed = 0;
+  uint32_t lastLed = 10;
+  size_t expectedSize = (lastLed - firstLed) * 3;
+  Color_t color;
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  color.hexColor = 0x00eeccff;
+  k_malloc_fake.return_val = &pixels;
+  ledCtrlUpdatePixels_fake.return_val = successRet;
+
+  zassert_equal(successRet, colorMngrSetFade(&color, fadeLvl, fadeStart, firstLed, lastLed, true),
+    "colorMngrSetFade failed to retunr the error code.");
+  zassert_equal(1, k_malloc_fake.call_count,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(expectedSize, k_malloc_fake.arg0_val,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(1, ledCtrlUpdatePixels_fake.call_count,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(pixels, ledCtrlUpdatePixels_fake.arg0_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(firstLed, ledCtrlUpdatePixels_fake.arg1_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+
+  pixelIdx = fadeStart;
+  while(pixelCntr < lastLed - firstLed)
+  {
+    expectedRed = (int32_t)(0xee - pixelCntr * fadeLvl) <= 0 ? 0 :
+      0xee - pixelCntr * fadeLvl;
+    expectedGrn = (int32_t)(0xcc - pixelCntr * fadeLvl) <= 0 ? 0 :
+      0xcc - pixelCntr * fadeLvl;
+    expectedBlu = (int32_t)(0xff - pixelCntr * fadeLvl) <= 0 ? 0 :
+      0xff - pixelCntr * fadeLvl;
+    zassert_equal(expectedRed, pixels[pixelIdx].r,
+      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+    zassert_equal(expectedGrn, pixels[pixelIdx].g,
+      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+    zassert_equal(expectedBlu, pixels[pixelIdx].b,
+      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+    pixelCntr++;
+    pixelIdx++;
+    if(pixelIdx == lastLed + 1)
+      pixelIdx = firstLed;
+  }
+}
+
+/**
+ * @test  colorMngrSetFade must set the allocated pixels to the appropriate
+ *        color in a descending fashon, update the strip LED and return the
+ *        success code.
+*/
+ZTEST(colorMngr_suite, test_colorMngrSetFade_DescendingSuccess)
+{
+  int successRet = 0;
+  uint32_t pixelIdx;
+  uint32_t pixelCntr = 0;
+  ZephyrRgbLed_t pixels[10];
+  uint32_t fadeLvl = 2;
+  uint32_t fadeStart = 5;
+  uint32_t firstLed = 0;
+  uint32_t lastLed = 10;
+  size_t expectedSize = (lastLed - firstLed) * 3;
+  Color_t color;
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  color.hexColor = 0x00eeccff;
+  k_malloc_fake.return_val = &pixels;
+  ledCtrlUpdatePixels_fake.return_val = successRet;
+
+  zassert_equal(successRet, colorMngrSetFade(&color, fadeLvl, fadeStart, firstLed, lastLed, false),
+    "colorMngrSetFade failed to retunr the error code.");
+  zassert_equal(1, k_malloc_fake.call_count,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(expectedSize, k_malloc_fake.arg0_val,
+    "colorMngrSetFade failed to allocate the required pixels.");
+  zassert_equal(1, ledCtrlUpdatePixels_fake.call_count,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(pixels, ledCtrlUpdatePixels_fake.arg0_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(firstLed, ledCtrlUpdatePixels_fake.arg1_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+  zassert_equal(lastLed, ledCtrlUpdatePixels_fake.arg2_val,
+    "colorMngrSetFade failed to update the LED pixels.");
+
+  pixelIdx = fadeStart;
+  while(pixelCntr < lastLed - firstLed)
+  {
+    expectedRed = (int32_t)(0xee - pixelCntr * fadeLvl) <= 0 ? 0 :
+      0xee - pixelCntr * fadeLvl;
+    expectedGrn = (int32_t)(0xcc - pixelCntr * fadeLvl) <= 0 ? 0 :
+      0xcc - pixelCntr * fadeLvl;
+    expectedBlu = (int32_t)(0xff - pixelCntr * fadeLvl) <= 0 ? 0 :
+      0xff - pixelCntr * fadeLvl;
+    zassert_equal(expectedRed, pixels[pixelIdx].r,
+      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+    zassert_equal(expectedGrn, pixels[pixelIdx].g,
+      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+    zassert_equal(expectedBlu, pixels[pixelIdx].b,
+      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+    pixelCntr++;
+    pixelIdx--;
+    if(pixelIdx == 0xffffffff)
+      pixelIdx = lastLed;
+  }
+}
+
+/** @} */

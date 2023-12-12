@@ -42,3 +42,42 @@ int colorMngrSetSingle(Color_t *color, size_t firstLed, size_t lastLed)
   return ledCtrlUpdatePixels(pixels, firstLed, lastLed);
 }
 
+int colorMngrSetFade(Color_t *color, uint32_t fadeLvl, uint32_t fadeStart,
+                     uint32_t firstLed, uint32_t lastLed, bool isAscending)
+{
+  ZephyrRgbLed_t *pixels;
+  size_t pixelCount = lastLed - firstLed;
+  size_t pixelCntr = 0;
+
+  pixels = k_malloc(pixelCount * sizeof(ZephyrRgbLed_t));
+  if(!pixels)
+    return -ENOSPC;
+
+  while(pixelCntr < lastLed - firstLed)
+  {
+    pixels[fadeStart].r = (int32_t)(color->r - pixelCntr * fadeLvl) <= 0 ? 0 :
+      color->r - pixelCntr * fadeLvl;
+    pixels[fadeStart].g = (int32_t)(color->g - pixelCntr * fadeLvl) <= 0 ? 0 :
+      color->g - pixelCntr * fadeLvl;
+    pixels[fadeStart].b = (int32_t)(color->b - pixelCntr * fadeLvl) <= 0 ? 0 :
+      color->b - pixelCntr * fadeLvl;
+
+    pixelCntr++;
+    if(isAscending)
+    {
+      fadeStart++;
+      if(fadeStart == lastLed + 1)
+        fadeStart = firstLed;
+    }
+    else
+    {
+      fadeStart--;
+      if(fadeStart == 0xffffffff)
+        fadeStart = lastLed;
+    }
+  }
+
+  return ledCtrlUpdatePixels(pixels, firstLed, lastLed);
+}
+
+/** @} */
