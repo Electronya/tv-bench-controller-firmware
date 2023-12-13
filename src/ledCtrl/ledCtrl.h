@@ -57,7 +57,7 @@ size_t ledCtrlGetMaxPixelCount(void);
  *
  * @return          0 if successful, the error code otherwise.
  */
-int ledCtrlSetToBaseColor(ZephyrRgbLed_t *pixels, size_t start, size_t end,
+int ledCtrlSetToBaseColor(ZephyrRgbPixel_t *pixels, size_t start, size_t end,
                           LedCtrlBaseColor_t color);
 
 /**
@@ -69,7 +69,7 @@ int ledCtrlSetToBaseColor(ZephyrRgbLed_t *pixels, size_t start, size_t end,
  *
  * @return  0 if successful, the error code otherwise.
  */
-int ledCtrlUpdatePixels(ZephyrRgbLed_t *pixels, size_t start, size_t end);
+int ledCtrlUpdatePixels(ZephyrRgbPixel_t *pixels, size_t start, size_t end);
 
 #endif    /* LED_CTRL */
 

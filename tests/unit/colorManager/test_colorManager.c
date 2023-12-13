@@ -29,7 +29,7 @@ DEFINE_FFF_GLOBALS;
 
 FAKE_VALUE_FUNC(void*, k_malloc, size_t);
 FAKE_VOID_FUNC(k_free, void*);
-FAKE_VALUE_FUNC(int, ledCtrlUpdatePixels, ZephyrRgbLed_t*, size_t, size_t);
+FAKE_VALUE_FUNC(int, ledCtrlUpdatePixels, ZephyrRgbPixel_t*, size_t, size_t);
 
 static void colorMngrCaseSetup(void *f)
 {
@@ -69,7 +69,7 @@ ZTEST(colorMngr_suite, test_colorMngrSetSingle_PixelAllocationFail)
 ZTEST(colorMngr_suite, test_colorMngrSetSingle_PixelUpdateFail)
 {
   int failRet = -EIO;
-  ZephyrRgbLed_t pixels[10];
+  ZephyrRgbPixel_t pixels[10];
   uint32_t firstLed = 0;
   uint32_t lastLed = 10;
   size_t expectedSize = (lastLed - firstLed) * 3;
@@ -105,7 +105,7 @@ ZTEST(colorMngr_suite, test_colorMngrSetSingle_PixelUpdateFail)
 ZTEST(colorMngr_suite, test_colorMngrSetSingle_Sucess)
 {
   int successRet = 0;
-  ZephyrRgbLed_t pixels[10];
+  ZephyrRgbPixel_t pixels[10];
   uint32_t firstLed = 0;
   uint32_t lastLed = 10;
   size_t expectedSize = (lastLed - firstLed) * 3;
@@ -176,7 +176,7 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_PixelAllocationFail)
 ZTEST(colorMngr_suite, test_colorMngrSetFade_PixelUpdateFail)
 {
   int failRet = -EIO;
-  ZephyrRgbLed_t pixels[10];
+  ZephyrRgbPixel_t pixels[10];
   uint32_t fadeLvl = 2;
   uint32_t fadeStart = 5;
   uint32_t firstLed = 0;
@@ -217,7 +217,7 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_AscendingSuccess)
   int successRet = 0;
   uint32_t pixelIdx;
   uint32_t pixelCntr = 0;
-  ZephyrRgbLed_t pixels[10];
+  ZephyrRgbPixel_t pixels[10];
   uint32_t fadeLvl = 2;
   uint32_t fadeStart = 5;
   uint32_t firstLed = 0;
@@ -283,7 +283,7 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_DescendingSuccess)
   int successRet = 0;
   uint32_t pixelIdx;
   uint32_t pixelCntr = 0;
-  ZephyrRgbLed_t pixels[10];
+  ZephyrRgbPixel_t pixels[10];
   uint32_t fadeLvl = 2;
   uint32_t fadeStart = 5;
   uint32_t firstLed = 0;

@@ -19,6 +19,15 @@
 #include "appMsg.h"
 
 /**
+ * @brief   Allocate an array of colors
+ *
+ * @param pixelCount
+ * @param colors
+ * @return int
+ */
+int colorMngrAllocateColors(size_t pixelCount, Color_t *colors);
+
+/**
  * @brief   Set the given LED to a single color.
  *
  * @param color       The LED color.
