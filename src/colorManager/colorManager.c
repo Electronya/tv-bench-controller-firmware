@@ -24,69 +24,47 @@
 /* Setting module logging */
 LOG_MODULE_REGISTER(COLOR_MNGR_MODULE_NAME);
 
-int colorMngrSetSingle(Color_t *color, size_t firstLed, size_t lastLed)
+void colorMngrSetSingle(Color_t *color, ZephyrRgbPixel_t *pixels,
+                        size_t pixelCnt)
 {
-  int rc;
-  ZephyrRgbPixel_t *pixels;
-  size_t pixelCount = lastLed - firstLed;
-
-  pixels = k_malloc(pixelCount * sizeof(ZephyrRgbPixel_t));
-  if(!pixels)
-    return -ENOSPC;
-
-  for(uint8_t i = 0; i < pixelCount; i++)
+  for(uint8_t i = 0; i < pixelCnt; i++)
   {
     pixels[i].r = color->r;
     pixels[i].g = color->g;
     pixels[i].b = color->b;
   }
-
-  rc = ledCtrlUpdatePixels(pixels, firstLed, lastLed);
-  k_free(pixels);
-
-  return rc;
 }
 
-int colorMngrSetFade(Color_t *color, uint32_t fadeLvl, uint32_t fadeStart,
-                     uint32_t firstLed, uint32_t lastLed, bool isAscending)
+void colorMngrSetFade(Color_t *color, uint32_t fadeLvl,
+                      uint32_t fadeStart, bool isAscending,
+                      ZephyrRgbPixel_t *pixels, size_t pixelCnt)
 {
-  int rc;
-  ZephyrRgbPixel_t *pixels;
-  size_t pixelCount = lastLed - firstLed;
+  ZephyrRgbPixel_t *pixelPntr = pixels + fadeStart;
   size_t pixelCntr = 0;
 
-  pixels = k_malloc(pixelCount * sizeof(ZephyrRgbPixel_t));
-  if(!pixels)
-    return -ENOSPC;
-
-  while(pixelCntr < lastLed - firstLed)
+  while(pixelCntr < pixelCnt)
   {
-    pixels[fadeStart].r = (int32_t)(color->r - pixelCntr * fadeLvl) <= 0 ? 0 :
+    pixelPntr->r = (int32_t)(color->r - pixelCntr * fadeLvl) <= 0 ? 0 :
       color->r - pixelCntr * fadeLvl;
-    pixels[fadeStart].g = (int32_t)(color->g - pixelCntr * fadeLvl) <= 0 ? 0 :
+    pixelPntr->g = (int32_t)(color->g - pixelCntr * fadeLvl) <= 0 ? 0 :
       color->g - pixelCntr * fadeLvl;
-    pixels[fadeStart].b = (int32_t)(color->b - pixelCntr * fadeLvl) <= 0 ? 0 :
+    pixelPntr->b = (int32_t)(color->b - pixelCntr * fadeLvl) <= 0 ? 0 :
       color->b - pixelCntr * fadeLvl;
 
     pixelCntr++;
     if(isAscending)
     {
-      fadeStart++;
-      if(fadeStart == lastLed + 1)
-        fadeStart = firstLed;
+      pixelPntr++;
+      if(pixelPntr > pixels + pixelCnt)
+        pixelPntr = pixels;
     }
     else
     {
-      fadeStart--;
-      if(fadeStart == 0xffffffff)
-        fadeStart = lastLed;
+      pixelPntr--;
+      if(pixelPntr < pixels)
+        pixelPntr = pixels + pixelCnt;
     }
   }
-
-  rc = ledCtrlUpdatePixels(pixels, firstLed, lastLed);
-  k_free(pixels);
-
-  return rc;
 }
 
 /** @} */

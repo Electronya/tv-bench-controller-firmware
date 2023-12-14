@@ -17,26 +17,17 @@
 #define COLOR_MANAGER
 
 #include "appMsg.h"
-
-/**
- * @brief   Allocate an array of colors
- *
- * @param pixelCount
- * @param colors
- * @return int
- */
-int colorMngrAllocateColors(size_t pixelCount, Color_t *colors);
+#include "zephyrLedStrip.h"
 
 /**
  * @brief   Set the given LED to a single color.
  *
  * @param color       The LED color.
- * @param firstLed    The strip ID of the first LED.
- * @param lastLed     The strip ID of the last LED.
- *
- * @return  0 if successful, the error code otherwise.
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The count of pixel to manage.
  */
-int colorMngrSetSingle(Color_t *color, uint32_t firstLed, uint32_t lasLed);
+void colorMngrSetSingle(Color_t *color, ZephyrRgbPixel_t *pixels,
+                        size_t pixelCnt);
 
 /**
  * @brief   Set the given LEDs to a fading color.
@@ -44,14 +35,13 @@ int colorMngrSetSingle(Color_t *color, uint32_t firstLed, uint32_t lasLed);
  * @param color       The LED base color.
  * @param fadeLvl     The amount of fade to use.
  * @param fadeStart   The strip ID marking the fade starting point.
- * @param firstLed    The strip ID of the section first LED.
- * @param lastLed     The strip ID of the section last LED.
  * @param isAscending The ascending fade flag.
- *
- * @return  0 if successful, the error code otherwise.
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The count pixel to manage.
  */
-int colorMngrSetFade(Color_t *color, uint32_t fadeLvl, uint32_t fadeStart,
-                     uint32_t firstLed, uint32_t lastLed, bool isAscending);
+void colorMngrSetFade(Color_t *color, uint32_t fadeLvl,
+                      uint32_t fadeStart, bool isAscending,
+                      ZephyrRgbPixel_t *pixels, size_t pixelCnt);
 
 #endif    /* COLOR_MANAGER */
 
