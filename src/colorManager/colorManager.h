@@ -30,6 +30,16 @@ void colorMngrSetSingle(Color_t *color, ZephyrRgbPixel_t *pixels,
                         size_t pixelCnt);
 
 /**
+ * @brief   Apply a constant fade on a set of pixel.
+ *
+ * @param fadeLvl     The amount of fade to use,
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The count of pixel to manage.
+ */
+void colorMngrApplyFade(uint32_t fadeLvl, ZephyrRgbPixel_t *pixels,
+                        size_t pixelCnt);
+
+/**
  * @brief   Apply a fade trail on a set of pixels.
  *
  * @param fadeLvl     The amount of fade to use.
