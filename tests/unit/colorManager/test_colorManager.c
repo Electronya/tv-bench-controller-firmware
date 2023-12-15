@@ -80,8 +80,9 @@ ZTEST_F(colorMngr_suite, test_colorMngrSetSingle_SetColor)
 }
 
 /**
- * @test  colorMngrApplyFadeTrail must set the pixels to the appropriate color in an
- *        ascending fashon.
+ * @test  colorMngrApplyFadeTrail must apply a fading trail tothe given pixels.
+ *        The fade trail should start at the given pixel and extend in an
+ *        asending manner.
 */
 ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
 {
@@ -122,8 +123,9 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
 }
 
 /**
- * @test  colorMngrApplyFadeTrail must set the pixels to the appropriate color in a
- *        descending fashon.
+ * @test  colorMngrApplyFadeTrail must apply a fading trail tothe given pixels.
+ *        The fade trail should start at the given pixel and extend in an
+ *        descending manner.
 */
 ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
 {
