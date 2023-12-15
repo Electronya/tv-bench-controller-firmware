@@ -95,7 +95,7 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
   uint8_t expectedGrn;
   uint8_t expectedBlu;
 
-  color.hexColor = 0x00eeccff;
+  color.hexColor = 0x00ee08ff;
   colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
   colorMngrApplyFadeTrail(fadeLvl, fadeStart, true, fixture->pixels,
@@ -104,11 +104,11 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
   while(pixelCntr < TEST_MAX_PIXEL_COUNT)
   {
     expectedRed = (int32_t)(color.r - pixelCntr * fadeLvl) <= 0 ? 0 :
-      0xee - pixelCntr * fadeLvl;
+      color.r - pixelCntr * fadeLvl;
     expectedGrn = (int32_t)(color.g - pixelCntr * fadeLvl) <= 0 ? 0 :
-      0xcc - pixelCntr * fadeLvl;
+      color.g - pixelCntr * fadeLvl;
     expectedBlu = (int32_t)(color.b - pixelCntr * fadeLvl) <= 0 ? 0 :
-      0xff - pixelCntr * fadeLvl;
+      color.b - pixelCntr * fadeLvl;
     zassert_equal(expectedRed, pixelPntr->r,
       "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     zassert_equal(expectedGrn, pixelPntr->g,
@@ -138,7 +138,7 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
   uint8_t expectedGrn;
   uint8_t expectedBlu;
 
-  color.hexColor = 0x00eeccff;
+  color.hexColor = 0x00ee08ff;
   colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
   colorMngrApplyFadeTrail(fadeLvl, fadeStart, false, fixture->pixels,
@@ -147,11 +147,11 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
   while(pixelCntr < TEST_MAX_PIXEL_COUNT)
   {
     expectedRed = (int32_t)(color.r - pixelCntr * fadeLvl) <= 0 ? 0 :
-      0xee - pixelCntr * fadeLvl;
+      color.r - pixelCntr * fadeLvl;
     expectedGrn = (int32_t)(color.g - pixelCntr * fadeLvl) <= 0 ? 0 :
-      0xcc - pixelCntr * fadeLvl;
+      color.g - pixelCntr * fadeLvl;
     expectedBlu = (int32_t)(color.b - pixelCntr * fadeLvl) <= 0 ? 0 :
-      0xff - pixelCntr * fadeLvl;
+      color.b - pixelCntr * fadeLvl;
     zassert_equal(expectedRed, pixelPntr->r,
       "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     zassert_equal(expectedGrn, pixelPntr->g,
