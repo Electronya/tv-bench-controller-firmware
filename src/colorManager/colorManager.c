@@ -35,34 +35,34 @@ void colorMngrSetSingle(Color_t *color, ZephyrRgbPixel_t *pixels,
   }
 }
 
-void colorMngrSetFade(Color_t *color, uint32_t fadeLvl,
-                      uint32_t fadeStart, bool isAscending,
-                      ZephyrRgbPixel_t *pixels, size_t pixelCnt)
+void colorMngrApplyFadeTrail(uint32_t fadeLvl, uint32_t fadeStart,
+                             bool isAscending, ZephyrRgbPixel_t *pixels,
+                             size_t pixelCnt)
 {
   ZephyrRgbPixel_t *pixelPntr = pixels + fadeStart;
   size_t pixelCntr = 0;
 
   while(pixelCntr < pixelCnt)
   {
-    pixelPntr->r = (int32_t)(color->r - pixelCntr * fadeLvl) <= 0 ? 0 :
-      color->r - pixelCntr * fadeLvl;
-    pixelPntr->g = (int32_t)(color->g - pixelCntr * fadeLvl) <= 0 ? 0 :
-      color->g - pixelCntr * fadeLvl;
-    pixelPntr->b = (int32_t)(color->b - pixelCntr * fadeLvl) <= 0 ? 0 :
-      color->b - pixelCntr * fadeLvl;
+    pixelPntr->r = (int32_t)(pixelPntr->r - pixelCntr * fadeLvl) <= 0 ? 0 :
+      pixelPntr->r - pixelCntr * fadeLvl;
+    pixelPntr->g = (int32_t)(pixelPntr->g - pixelCntr * fadeLvl) <= 0 ? 0 :
+      pixelPntr->g - pixelCntr * fadeLvl;
+    pixelPntr->b = (int32_t)(pixelPntr->b - pixelCntr * fadeLvl) <= 0 ? 0 :
+      pixelPntr->b - pixelCntr * fadeLvl;
 
     pixelCntr++;
     if(isAscending)
     {
       pixelPntr++;
-      if(pixelPntr > pixels + pixelCnt)
+      if(pixelPntr == pixels + pixelCnt)
         pixelPntr = pixels;
     }
     else
     {
       pixelPntr--;
       if(pixelPntr < pixels)
-        pixelPntr = pixels + pixelCnt;
+        pixelPntr = pixels + pixelCnt - 1;
     }
   }
 }

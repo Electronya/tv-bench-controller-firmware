@@ -20,9 +20,9 @@
 #include "zephyrLedStrip.h"
 
 /**
- * @brief   Set the given LED to a single color.
+ * @brief   Set the given pixels to a single color.
  *
- * @param color       The LED color.
+ * @param color       The pixel color.
  * @param pixels      The pixel buffer.
  * @param pixelCnt    The count of pixel to manage.
  */
@@ -30,18 +30,17 @@ void colorMngrSetSingle(Color_t *color, ZephyrRgbPixel_t *pixels,
                         size_t pixelCnt);
 
 /**
- * @brief   Set the given LEDs to a fading color.
+ * @brief   Apply a fade trail on a set of pixels.
  *
- * @param color       The LED base color.
  * @param fadeLvl     The amount of fade to use.
  * @param fadeStart   The strip ID marking the fade starting point.
  * @param isAscending The ascending fade flag.
  * @param pixels      The pixel buffer.
  * @param pixelCnt    The count pixel to manage.
  */
-void colorMngrSetFade(Color_t *color, uint32_t fadeLvl,
-                      uint32_t fadeStart, bool isAscending,
-                      ZephyrRgbPixel_t *pixels, size_t pixelCnt);
+void colorMngrApplyFadeTrail(uint32_t fadeLvl, uint32_t fadeStart,
+                             bool isAscending, ZephyrRgbPixel_t *pixels,
+                             size_t pixelCnt);
 
 #endif    /* COLOR_MANAGER */
 

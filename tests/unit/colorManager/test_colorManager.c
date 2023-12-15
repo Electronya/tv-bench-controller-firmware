@@ -25,49 +25,69 @@
 
 DEFINE_FFF_GLOBALS;
 
-static void colorMngrCaseSetup(void *f)
-{
+/**
+ * @brief The test max pixel count.
+*/
+#define TEST_MAX_PIXEL_COUNT            10
 
+struct colorMngr_suite_fixture
+{
+  ZephyrRgbPixel_t pixels[TEST_MAX_PIXEL_COUNT];
+};
+
+static void *colorMngrSuiteSetup(void)
+{
+  struct colorMngr_suite_fixture *fixture =
+    k_malloc(sizeof(struct colorMngr_suite_fixture));
+  zassume_not_null(fixture, NULL);
+
+  return (void *)fixture;
 }
 
-ZTEST_SUITE(colorMngr_suite, NULL, NULL, colorMngrCaseSetup, NULL, NULL);
+static void colorMngrSuiteTeardown(void *f)
+{
+  k_free(f);
+}
 
-#define TEST_MAX_PIXEL_COUNT                10
+static void colorMngrCaseSetup(void *f)
+{
+  memset(f, 0x00, TEST_MAX_PIXEL_COUNT);
+}
+
+ZTEST_SUITE(colorMngr_suite, NULL, colorMngrSuiteSetup, colorMngrCaseSetup,
+  NULL, colorMngrSuiteTeardown);
+
 /**
  * @test  colorMngrSetSingle must set the pixels to the sequence color.
 */
-ZTEST(colorMngr_suite, test_colorMngrSetSingle_SetColor)
+ZTEST_F(colorMngr_suite, test_colorMngrSetSingle_SetColor)
 {
-  ZephyrRgbPixel_t pixels[TEST_MAX_PIXEL_COUNT];
-  size_t pixelCnt = TEST_MAX_PIXEL_COUNT;
   Color_t color;
 
   color.hexColor = 0x00eeccff;
 
-  colorMngrSetSingle(&color, pixels, pixelCnt);
+  colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  for(uint8_t i = 0; i < pixelCnt; i++)
+  for(uint8_t i = 0; i < TEST_MAX_PIXEL_COUNT; i++)
   {
-    zassert_equal(0xee, pixels[i].r,
+    zassert_equal(0xee, fixture->pixels[i].r,
       "colorMngrSetSingle failed to set the pixels to the sequence color.");
-    zassert_equal(0xcc, pixels[i].g,
+    zassert_equal(0xcc, fixture->pixels[i].g,
       "colorMngrSetSingle failed to set the pixels to the sequence color.");
-    zassert_equal(0xff, pixels[i].b,
+    zassert_equal(0xff, fixture->pixels[i].b,
       "colorMngrSetSingle failed to set the pixels to the sequence color.");
   }
 }
 
 /**
- * @test  colorMngrSetFade must set the pixels to the appropriate color in an
+ * @test  colorMngrApplyFadeTrail must set the pixels to the appropriate color in an
  *        ascending fashon.
 */
-ZTEST(colorMngr_suite, test_colorMngrSetFade_SetColorAscending)
+ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
 {
-  ZephyrRgbPixel_t pixels[TEST_MAX_PIXEL_COUNT];
-  uint32_t pixelCnt = TEST_MAX_PIXEL_COUNT;
   uint32_t fadeLvl = 2;
   uint32_t fadeStart = 5;
-  ZephyrRgbPixel_t *pixelPntr = pixels + fadeStart;
+  ZephyrRgbPixel_t *pixelPntr = fixture->pixels + fadeStart;
   uint32_t pixelCntr = 0;
   Color_t color;
   uint8_t expectedRed;
@@ -75,41 +95,41 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_SetColorAscending)
   uint8_t expectedBlu;
 
   color.hexColor = 0x00eeccff;
+  colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  colorMngrSetFade(&color, fadeLvl, fadeStart, true, pixels, pixelCnt);
+  colorMngrApplyFadeTrail(fadeLvl, fadeStart, true, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
 
-  while(pixelCntr < pixelCnt)
+  while(pixelCntr < TEST_MAX_PIXEL_COUNT)
   {
-    expectedRed = (int32_t)(0xee - pixelCntr * fadeLvl) <= 0 ? 0 :
+    expectedRed = (int32_t)(color.r - pixelCntr * fadeLvl) <= 0 ? 0 :
       0xee - pixelCntr * fadeLvl;
-    expectedGrn = (int32_t)(0xcc - pixelCntr * fadeLvl) <= 0 ? 0 :
+    expectedGrn = (int32_t)(color.g - pixelCntr * fadeLvl) <= 0 ? 0 :
       0xcc - pixelCntr * fadeLvl;
-    expectedBlu = (int32_t)(0xff - pixelCntr * fadeLvl) <= 0 ? 0 :
+    expectedBlu = (int32_t)(color.b - pixelCntr * fadeLvl) <= 0 ? 0 :
       0xff - pixelCntr * fadeLvl;
     zassert_equal(expectedRed, pixelPntr->r,
-      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+      "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     zassert_equal(expectedGrn, pixelPntr->g,
-      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+      "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     zassert_equal(expectedBlu, pixelPntr->b,
-      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+      "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     pixelCntr++;
     pixelPntr++;
-    if(pixelPntr > pixels + pixelCnt)
-      pixelPntr = pixels;
+    if(pixelPntr == fixture->pixels + TEST_MAX_PIXEL_COUNT)
+      pixelPntr = fixture->pixels;
   }
 }
 
 /**
- * @test  colorMngrSetFade must set the pixels to the appropriate color in a
+ * @test  colorMngrApplyFadeTrail must set the pixels to the appropriate color in a
  *        descending fashon.
 */
-ZTEST(colorMngr_suite, test_colorMngrSetFade_SetColorDescending)
+ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
 {
-  ZephyrRgbPixel_t pixels[TEST_MAX_PIXEL_COUNT];
-  uint32_t pixelCnt = TEST_MAX_PIXEL_COUNT;
   uint32_t fadeLvl = 2;
   uint32_t fadeStart = 5;
-  ZephyrRgbPixel_t *pixelPntr = pixels + fadeStart;
+  ZephyrRgbPixel_t *pixelPntr = fixture->pixels + fadeStart;
   uint32_t pixelCntr = 0;
   Color_t color;
   uint8_t expectedRed;
@@ -117,27 +137,29 @@ ZTEST(colorMngr_suite, test_colorMngrSetFade_SetColorDescending)
   uint8_t expectedBlu;
 
   color.hexColor = 0x00eeccff;
+  colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  colorMngrSetFade(&color, fadeLvl, fadeStart, false, pixels, pixelCnt);
+  colorMngrApplyFadeTrail(fadeLvl, fadeStart, false, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
 
-  while(pixelCntr < pixelCnt)
+  while(pixelCntr < TEST_MAX_PIXEL_COUNT)
   {
-    expectedRed = (int32_t)(0xee - pixelCntr * fadeLvl) <= 0 ? 0 :
+    expectedRed = (int32_t)(color.r - pixelCntr * fadeLvl) <= 0 ? 0 :
       0xee - pixelCntr * fadeLvl;
-    expectedGrn = (int32_t)(0xcc - pixelCntr * fadeLvl) <= 0 ? 0 :
+    expectedGrn = (int32_t)(color.g - pixelCntr * fadeLvl) <= 0 ? 0 :
       0xcc - pixelCntr * fadeLvl;
-    expectedBlu = (int32_t)(0xff - pixelCntr * fadeLvl) <= 0 ? 0 :
+    expectedBlu = (int32_t)(color.b - pixelCntr * fadeLvl) <= 0 ? 0 :
       0xff - pixelCntr * fadeLvl;
     zassert_equal(expectedRed, pixelPntr->r,
-      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+      "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     zassert_equal(expectedGrn, pixelPntr->g,
-      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+      "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     zassert_equal(expectedBlu, pixelPntr->b,
-      "colorMngrSetSingle failed to set the pixels to the sequence color.");
+      "colorMngrApplyFadeTrail failed to set the pixels to the sequence color.");
     pixelCntr++;
     pixelPntr--;
-    if(pixelPntr < pixels)
-      pixelPntr = pixels + pixelCnt;
+    if(pixelPntr < fixture->pixels)
+      pixelPntr = fixture->pixels + TEST_MAX_PIXEL_COUNT - 1;
   }
 }
 
