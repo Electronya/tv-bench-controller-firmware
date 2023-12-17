@@ -20,6 +20,21 @@
 #include "zephyrLedStrip.h"
 
 /**
+ * @brief The color wheel value from red to blue.
+*/
+#define COLOR_WHEEL_RED_TO_BLU                0
+
+/**
+ * @brief The color wheel value from blue to green.
+*/
+#define COLOR_WHEEL_BLU_TO_GRN                85
+
+/**
+ * @brief The color wheel value from green to red.
+*/
+#define COLOR_WHEEL_GRN_TO_RED                170
+
+/**
  * @brief   Set the given pixels to a single color.
  *
  * @param color       The pixel color.
@@ -51,6 +66,19 @@ void colorMngrApplyFade(uint8_t fadeLvl, ZephyrRgbPixel_t *pixels,
 void colorMngrApplyFadeTrail(uint8_t fadeLvl, uint32_t fadeStart,
                              bool isAscending, ZephyrRgbPixel_t *pixels,
                              size_t pixelCnt);
+
+/**
+ * @brief   Update the color of a set of pixel in the given color range by the
+ *          given step. The range is given by the color wheel start and end.
+ *
+ * @param wheelStart  The starting color of the color range.
+ * @param wheelEnd    The ending color of the range.
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The count of pixel to manage.
+ * @param reset       The reset flag.
+ */
+void colorMngrUpdateRange(uint8_t wheelStart, uint8_t wheelEnd,
+                          ZephyrRgbPixel_t *pixels, size_t pixelCnt, bool reset);
 
 #endif    /* COLOR_MANAGER */
 

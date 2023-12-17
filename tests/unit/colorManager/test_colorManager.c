@@ -195,4 +195,118 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
   }
 }
 
+#define COLOR_RANGE_TEST_COUNT                3
+/**
+ * @test  colorMngrUpdateRange must reset the color wheel when the flag is set
+ *        and update the pixel color to the wheel start.
+*/
+ZTEST_F(colorMngr_suite, test_colorMngrUpdateRange_ResettingRange)
+{
+  uint8_t wheelPos;
+  uint8_t wheelStarts[COLOR_RANGE_TEST_COUNT] = {0, 86, 170};
+  uint8_t wheelEnd = 255;
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  for(uint8_t i = 0; i < COLOR_RANGE_TEST_COUNT; ++i)
+  {
+    expectedRed = 0;
+    expectedGrn = 0;
+    expectedBlu = 0;
+
+    colorMngrUpdateRange(wheelStarts[i], wheelEnd, fixture->pixels,
+      TEST_MAX_PIXEL_COUNT, true);
+
+    if(wheelStarts[i] < 85)
+    {
+      expectedRed = 255 - wheelStarts[i] * 3;
+      expectedBlu = wheelStarts[i] * 3;
+    }
+    else if(wheelStarts[i] >= 85 && wheelStarts[i] < 170)
+    {
+      wheelPos = wheelStarts[i] - 85;
+      expectedBlu = 255 - wheelPos * 3;
+      expectedGrn = wheelPos * 3;
+    }
+    else
+    {
+      wheelPos = wheelStarts[i] - 170;
+      expectedGrn = 255 - wheelPos * 3;
+      expectedRed = wheelPos * 3;
+    }
+
+    for(uint8_t j = 0; j < TEST_MAX_PIXEL_COUNT; ++j)
+    {
+      zassert_equal(expectedRed, fixture->pixels[j].r,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      zassert_equal(expectedGrn, fixture->pixels[j].g,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      zassert_equal(expectedBlu, fixture->pixels[j].b,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+    }
+  }
+}
+
+#define TEST_UPDATE_COUNT                     260
+/**
+ * @test  colorMngrUpdateRange must increment color wheel position when the
+ *        reset flag is clear, wrap it arround when wheel end is reach and
+ *        update the pixel color to the wheel start.
+*/
+ZTEST_F(colorMngr_suite, test_colorMngrUpdateRange_UpdateAndWrappingRange)
+{
+  uint8_t wheelPos;
+  uint8_t wheelStarts[COLOR_RANGE_TEST_COUNT] = {0, 2, 200};
+  uint8_t wheelEnds[COLOR_RANGE_TEST_COUNT] = {255, 255, 26};
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  for(uint8_t i = 0; i < COLOR_RANGE_TEST_COUNT; ++i)
+  {
+    wheelPos = wheelStarts[i];
+
+    for(uint16_t j = 0; j < TEST_UPDATE_COUNT; ++j)
+    {
+      expectedRed = 0;
+      expectedGrn = 0;
+      expectedBlu = 0;
+
+      colorMngrUpdateRange(wheelStarts[i], wheelEnds[i], fixture->pixels,
+        TEST_MAX_PIXEL_COUNT, j == 0);
+
+      if(wheelPos < 85)
+      {
+        expectedRed = 255 - wheelPos * 3;
+        expectedBlu = wheelPos * 3;
+      }
+      else if(wheelPos >= 85 && wheelPos < 170)
+      {
+        expectedBlu = 255 - (wheelPos - 85) * 3;
+        expectedGrn = (wheelPos - 85) * 3;
+      }
+      else
+      {
+        expectedGrn = 255 - (wheelPos - 170) * 3;
+        expectedRed = (wheelPos - 170) * 3;
+      }
+
+      for(uint8_t k = 0; k < TEST_MAX_PIXEL_COUNT; ++k)
+      {
+        zassert_equal(expectedRed, fixture->pixels[k].r,
+          "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+        zassert_equal(expectedGrn, fixture->pixels[k].g,
+          "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+        zassert_equal(expectedBlu, fixture->pixels[k].b,
+          "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      }
+
+      ++wheelPos;
+      if(wheelPos > wheelEnds[i] && wheelPos < wheelStarts[i])
+        wheelPos = wheelStarts[i];
+    }
+  }
+}
+
 /** @} */
