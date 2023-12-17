@@ -84,7 +84,7 @@ ZTEST_F(colorMngr_suite, test_colorMngrSetSingle_SetColor)
 */
 ZTEST_F(colorMngr_suite, test_colorMngrApplyFade_SetFade)
 {
-  uint32_t fadeLvl = 2;
+  uint8_t fadeLvl = 2;
   Color_t color;
   uint8_t expectedRed;
   uint8_t expectedGrn;
@@ -116,7 +116,7 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFade_SetFade)
 */
 ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
 {
-  uint32_t fadeLvl = 2;
+  uint8_t fadeLvl = 2;
   uint32_t fadeStart = 5;
   ZephyrRgbPixel_t *pixelPntr = fixture->pixels + fadeStart;
   uint32_t pixelCntr = 0;

@@ -35,7 +35,7 @@ void colorMngrSetSingle(Color_t *color, ZephyrRgbPixel_t *pixels,
   }
 }
 
-void colorMngrApplyFade(uint32_t fadeLvl, ZephyrRgbPixel_t *pixels,
+void colorMngrApplyFade(uint8_t fadeLvl, ZephyrRgbPixel_t *pixels,
                         size_t pixelCnt)
 {
   for(uint8_t i = 0; i < pixelCnt; ++i)
@@ -49,7 +49,7 @@ void colorMngrApplyFade(uint32_t fadeLvl, ZephyrRgbPixel_t *pixels,
   }
 }
 
-void colorMngrApplyFadeTrail(uint32_t fadeLvl, uint32_t fadeStart,
+void colorMngrApplyFadeTrail(uint8_t fadeLvl, uint32_t fadeStart,
                              bool isAscending, ZephyrRgbPixel_t *pixels,
                              size_t pixelCnt)
 {
