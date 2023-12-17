@@ -81,8 +81,8 @@ void colorMngrApplyFadeTrail(uint8_t fadeLvl, uint32_t fadeStart,
   }
 }
 
-void colorMngrUpdateRange(uint8_t wheelStart, uint8_t wheelEnd,
-                          ZephyrRgbPixel_t *pixels, size_t pixelCnt, bool reset)
+void colorMngrUpdateRange(uint8_t wheelStart, uint8_t wheelEnd, bool reset,
+                          ZephyrRgbPixel_t *pixels, size_t pixelCnt)
 {
   static uint8_t wheelPos = 0;
   uint8_t red = 0;

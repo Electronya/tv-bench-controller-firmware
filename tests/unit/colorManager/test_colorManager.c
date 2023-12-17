@@ -215,8 +215,8 @@ ZTEST_F(colorMngr_suite, test_colorMngrUpdateRange_ResettingRange)
     expectedGrn = 0;
     expectedBlu = 0;
 
-    colorMngrUpdateRange(wheelStarts[i], wheelEnd, fixture->pixels,
-      TEST_MAX_PIXEL_COUNT, true);
+    colorMngrUpdateRange(wheelStarts[i], wheelEnd, true, fixture->pixels,
+      TEST_MAX_PIXEL_COUNT);
 
     if(wheelStarts[i] < 85)
     {
@@ -273,8 +273,8 @@ ZTEST_F(colorMngr_suite, test_colorMngrUpdateRange_UpdateAndWrappingRange)
       expectedGrn = 0;
       expectedBlu = 0;
 
-      colorMngrUpdateRange(wheelStarts[i], wheelEnds[i], fixture->pixels,
-        TEST_MAX_PIXEL_COUNT, j == 0);
+      colorMngrUpdateRange(wheelStarts[i], wheelEnds[i], j == 0,
+        fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
       if(wheelPos < 85)
       {
