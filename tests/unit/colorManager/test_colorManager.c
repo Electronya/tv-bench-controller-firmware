@@ -20,7 +20,6 @@
 #include "colorManager.c"
 
 #include "appMsg.h"
-#include "ledCtrl.h"
 #include "zephyrLedStrip.h"
 
 DEFINE_FFF_GLOBALS;

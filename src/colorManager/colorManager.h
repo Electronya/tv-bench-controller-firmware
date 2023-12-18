@@ -8,7 +8,7 @@
  *
  *            This file is the declaration of the color manager module.
  *
- * @defgroup  colorManager colorManger
+ * @defgroup  colorManager colorManager
  *
  * @{
  */

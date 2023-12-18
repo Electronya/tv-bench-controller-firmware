@@ -3,7 +3,7 @@
  *
  * @file      colorManager.h
  * @author    jbacon
- * @date      2023-11-20
+ * @date      2023-12-08
  * @brief     Color Manager Module
  *
  *            This file is the implementation of the color manager module.
@@ -16,7 +16,6 @@
 #include <zephyr/logging/log.h>
 
 #include "colorManager.h"
-#include "ledCtrl.h"
 #include "zephyrLedStrip.h"
 
 #define COLOR_MNGR_MODULE_NAME color_mngr_module
