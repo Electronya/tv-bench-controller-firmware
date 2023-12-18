@@ -49,11 +49,11 @@ void colorMngrApplyFade(uint8_t fadeLvl, ZephyrRgbPixel_t *pixels,
   }
 }
 
-void colorMngrApplyFadeTrail(uint8_t fadeLvl, uint32_t fadeStart,
+void colorMngrApplyFadeTrail(uint8_t fadeLvl, uint32_t trailStart,
                              bool isAscending, ZephyrRgbPixel_t *pixels,
                              size_t pixelCnt)
 {
-  ZephyrRgbPixel_t *pixelPntr = pixels + fadeStart;
+  ZephyrRgbPixel_t *pixelPntr = pixels + trailStart;
   size_t pixelCntr = 0;
 
   while(pixelCntr < pixelCnt)
@@ -119,6 +119,61 @@ void colorMngrUpdateRange(uint8_t wheelStart, uint8_t wheelEnd, bool reset,
   ++wheelPos;
   if(wheelPos > wheelEnd && wheelPos < wheelStart)
     wheelPos = wheelStart;
+}
+
+void colorMngrApplyRangeTrail(uint32_t trailStart, uint8_t wheelStart,
+                              uint8_t wheelEnd, bool isAscending,
+                              ZephyrRgbPixel_t *pixels, size_t pixelCnt)
+{
+  uint8_t red = 0;
+  uint8_t green = 0;
+  uint8_t blue = 0;
+  uint8_t step = (wheelEnd - wheelStart) / pixelCnt;
+  uint8_t wheelPos = wheelStart;
+  size_t pixelCntr = 0;
+  ZephyrRgbPixel_t *pixelPntr = pixels + trailStart;
+
+  while(pixelCntr < pixelCnt)
+  {
+    if(wheelPos < COLOR_WHEEL_BLU_TO_GRN)
+    {
+      red = 255 - wheelPos * 3;
+      blue = wheelPos * 3;
+    }
+    else if(wheelPos >= COLOR_WHEEL_BLU_TO_GRN &&
+      wheelPos < COLOR_WHEEL_GRN_TO_RED)
+    {
+      blue = 255 - (wheelPos - COLOR_WHEEL_BLU_TO_GRN) * 3;
+      green = (wheelPos - COLOR_WHEEL_BLU_TO_GRN) * 3;
+    }
+    else
+    {
+      green = 255 - (wheelPos - COLOR_WHEEL_GRN_TO_RED) * 3;
+      red = (wheelPos - COLOR_WHEEL_GRN_TO_RED) * 3;
+    }
+
+    pixelPntr->r = red;
+    pixelPntr->g = green;
+    pixelPntr->b = blue;
+
+    ++pixelCntr;
+    if(isAscending)
+    {
+      pixelPntr++;
+      if(pixelPntr == pixels + pixelCnt)
+        pixelPntr = pixels;
+    }
+    else
+    {
+      pixelPntr--;
+      if(pixelPntr < pixels)
+        pixelPntr = pixels + pixelCnt - 1;
+    }
+
+    wheelPos += step;
+    if(wheelPos > wheelEnd && wheelPos < wheelStart)
+      wheelPos = wheelStart;
+  }
 }
 
 /** @} */

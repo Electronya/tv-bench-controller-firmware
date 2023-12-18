@@ -110,15 +110,14 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFade_SetFade)
 }
 
 /**
- * @test  colorMngrApplyFadeTrail must apply a fading trail tothe given pixels.
- *        The fade trail should start at the given pixel and extend in an
- *        asending manner.
+ * @test  colorMngrApplyFadeTrail must apply an ascending fading trail to the
+ *        given pixels.
 */
-ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
+ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_ApplyAscendingTrail)
 {
   uint8_t fadeLvl = 2;
-  uint32_t fadeStart = 5;
-  ZephyrRgbPixel_t *pixelPntr = fixture->pixels + fadeStart;
+  uint32_t trailStart = 5;
+  ZephyrRgbPixel_t *pixelPntr = fixture->pixels + trailStart;
   uint32_t pixelCntr = 0;
   Color_t color;
   uint8_t expectedRed;
@@ -128,7 +127,7 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
   color.hexColor = 0x00ee08ff;
   colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  colorMngrApplyFadeTrail(fadeLvl, fadeStart, true, fixture->pixels,
+  colorMngrApplyFadeTrail(fadeLvl, trailStart, true, fixture->pixels,
     TEST_MAX_PIXEL_COUNT);
 
   while(pixelCntr < TEST_MAX_PIXEL_COUNT)
@@ -153,15 +152,14 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorAscending)
 }
 
 /**
- * @test  colorMngrApplyFadeTrail must apply a fading trail tothe given pixels.
- *        The fade trail should start at the given pixel and extend in an
- *        descending manner.
+ * @test  colorMngrApplyFadeTrail must apply a descending fading trail to the
+ *        given pixels.
 */
-ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
+ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_ApplyDescendingTrail)
 {
   uint32_t fadeLvl = 2;
-  uint32_t fadeStart = 5;
-  ZephyrRgbPixel_t *pixelPntr = fixture->pixels + fadeStart;
+  uint32_t trailStart = 5;
+  ZephyrRgbPixel_t *pixelPntr = fixture->pixels + trailStart;
   uint32_t pixelCntr = 0;
   Color_t color;
   uint8_t expectedRed;
@@ -171,7 +169,7 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFadeTrail_SetColorDescending)
   color.hexColor = 0x00ee08ff;
   colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  colorMngrApplyFadeTrail(fadeLvl, fadeStart, false, fixture->pixels,
+  colorMngrApplyFadeTrail(fadeLvl, trailStart, false, fixture->pixels,
     TEST_MAX_PIXEL_COUNT);
 
   while(pixelCntr < TEST_MAX_PIXEL_COUNT)
@@ -303,6 +301,140 @@ ZTEST_F(colorMngr_suite, test_colorMngrUpdateRange_UpdateAndWrappingRange)
       }
 
       ++wheelPos;
+      if(wheelPos > wheelEnds[i] && wheelPos < wheelStarts[i])
+        wheelPos = wheelStarts[i];
+    }
+  }
+}
+
+/**
+ * @test  colorMngrApplyRangeTrail must apply the color range given as an
+ *        ascending trail from the starting position.
+*/
+ZTEST_F(colorMngr_suite, test_colorMngrApplyRangeTrail_ApplyAscendingTrail)
+{
+  uint8_t wheelPos;
+  uint8_t step;
+  uint8_t wheelStarts[COLOR_RANGE_TEST_COUNT] = {0, 2, 200};
+  uint8_t wheelEnds[COLOR_RANGE_TEST_COUNT] = {255, 255, 26};
+  uint32_t trailStarts[COLOR_RANGE_TEST_COUNT] = {0, 5, TEST_MAX_PIXEL_COUNT - 1};
+  uint8_t pixelCntr = 0;
+  ZephyrRgbPixel_t *pixelPntr;
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  for(uint8_t i = 0; i < COLOR_RANGE_TEST_COUNT; ++i)
+  {
+    pixelPntr = fixture->pixels + trailStarts[i];
+    expectedRed = 0;
+    expectedGrn = 0;
+    expectedBlu = 0;
+
+    colorMngrApplyRangeTrail(trailStarts[i], wheelStarts[i], wheelEnds[i],
+      true, fixture->pixels, TEST_MAX_PIXEL_COUNT);
+
+    wheelPos = wheelStarts[i];
+    step = (wheelEnds[i] - wheelStarts[i]) / TEST_MAX_PIXEL_COUNT;
+    pixelPntr = fixture->pixels + trailStarts[i];
+    while(pixelCntr < TEST_MAX_PIXEL_COUNT)
+    {
+      if(wheelPos < 85)
+      {
+        expectedRed = 255 - wheelPos * 3;
+        expectedBlu = wheelPos * 3;
+      }
+      else if(wheelPos >= 85 && wheelPos < 170)
+      {
+        expectedBlu = 255 - (wheelPos - 85) * 3;
+        expectedGrn = (wheelPos - 85) * 3;
+      }
+      else
+      {
+        expectedGrn = 255 - (wheelPos - 170) * 3;
+        expectedRed = (wheelPos - 170) * 3;
+      }
+
+      zassert_equal(expectedRed, pixelPntr->r,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      zassert_equal(expectedGrn, pixelPntr->g,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      zassert_equal(expectedBlu, pixelPntr->b,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+
+      ++pixelCntr;
+      ++pixelPntr;
+      if(pixelPntr == fixture->pixels + TEST_MAX_PIXEL_COUNT)
+        pixelPntr = fixture->pixels;
+
+      wheelPos += step;
+      if(wheelPos > wheelEnds[i] && wheelPos < wheelStarts[i])
+        wheelPos = wheelStarts[i];
+    }
+  }
+}
+
+/**
+ * @test  colorMngrApplyRangeTrail must apply the color range given as an
+ *        descending trail from the starting position.
+*/
+ZTEST_F(colorMngr_suite, test_colorMngrApplyRangeTrail_ApplyDescendingTrail)
+{
+  uint8_t wheelPos;
+  uint8_t step;
+  uint8_t wheelStarts[COLOR_RANGE_TEST_COUNT] = {0, 2, 200};
+  uint8_t wheelEnds[COLOR_RANGE_TEST_COUNT] = {255, 255, 26};
+  uint32_t trailStarts[COLOR_RANGE_TEST_COUNT] = {0, 5, TEST_MAX_PIXEL_COUNT - 1};
+  uint8_t pixelCntr = 0;
+  ZephyrRgbPixel_t *pixelPntr;
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  for(uint8_t i = 0; i < COLOR_RANGE_TEST_COUNT; ++i)
+  {
+    pixelPntr = fixture->pixels + trailStarts[i];
+    expectedRed = 0;
+    expectedGrn = 0;
+    expectedBlu = 0;
+
+    colorMngrApplyRangeTrail(trailStarts[i], wheelStarts[i], wheelEnds[i],
+      false, fixture->pixels, TEST_MAX_PIXEL_COUNT);
+
+    wheelPos = wheelStarts[i];
+    step = (wheelEnds[i] - wheelStarts[i]) / TEST_MAX_PIXEL_COUNT;
+    pixelPntr = fixture->pixels + trailStarts[i];
+    while(pixelCntr < TEST_MAX_PIXEL_COUNT)
+    {
+      if(wheelPos < 85)
+      {
+        expectedRed = 255 - wheelPos * 3;
+        expectedBlu = wheelPos * 3;
+      }
+      else if(wheelPos >= 85 && wheelPos < 170)
+      {
+        expectedBlu = 255 - (wheelPos - 85) * 3;
+        expectedGrn = (wheelPos - 85) * 3;
+      }
+      else
+      {
+        expectedGrn = 255 - (wheelPos - 170) * 3;
+        expectedRed = (wheelPos - 170) * 3;
+      }
+
+      zassert_equal(expectedRed, pixelPntr->r,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      zassert_equal(expectedGrn, pixelPntr->g,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+      zassert_equal(expectedBlu, pixelPntr->b,
+        "colorMngrUpdateRange failed to set the pixels to the sequence color.");
+
+      ++pixelCntr;
+      --pixelPntr;
+      if(pixelPntr < fixture->pixels)
+        pixelPntr = fixture->pixels + TEST_MAX_PIXEL_COUNT - 1;
+
+      wheelPos += step;
       if(wheelPos > wheelEnds[i] && wheelPos < wheelStarts[i])
         wheelPos = wheelStarts[i];
     }
