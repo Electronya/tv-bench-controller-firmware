@@ -30,4 +30,31 @@ void seqMngrUpdateSolidFrame(Color_t *color, ZephyrRgbPixel_t *pixels,
   colorMngrSetSingle(color, pixels, pixelCnt);
 }
 
+void seqMngrUpdateSingleBreatherFrame(Color_t *color, uint8_t step, bool reset,
+                                      ZephyrRgbPixel_t *pixels, size_t pixelCnt)
+{
+  static uint16_t frameCntr = 0;
+  static bool exhale = true;
+
+  if(reset)
+  {
+    frameCntr = 0;
+    colorMngrSetSingle(color, pixels, pixelCnt);
+    frameCntr += step;
+  }
+  else
+  {
+    if(exhale)
+      colorMngrApplyFade(step, pixels, pixelCnt);
+    else
+      colorMngrApplyUnfade(step, pixels, pixelCnt);
+    frameCntr += step;
+    if(frameCntr > 255)
+    {
+      frameCntr = 0;
+      exhale = !exhale;
+    }
+  }
+}
+
 /** @} */

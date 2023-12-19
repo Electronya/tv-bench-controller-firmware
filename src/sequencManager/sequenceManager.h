@@ -29,6 +29,18 @@
 void seqMngrUpdateSolidFrame(Color_t *color, ZephyrRgbPixel_t *pixels,
                              size_t pixelCnt);
 
+/**
+ * @brief   Update the pixels for the next single color breather frame.
+ *
+ * @param color       The color of the sequence.
+ * @param step        The breather sequence step.
+ * @param reset       The reset flag of the sequence.
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The pixel count.
+ */
+void seqMngrUpdateSingleBreatherFrame(Color_t *color, uint8_t step, bool reset,
+                                      ZephyrRgbPixel_t *pixels, size_t pixelCnt);
+
 #endif    /* SEQUENCE_MANAGER */
 
 /** @} */
