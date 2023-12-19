@@ -109,6 +109,36 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyFade_SetFade)
 }
 
 /**
+ * @test  colorMngrApplyUnfade must apply a constant unfade to the given pixels.
+*/
+ZTEST_F(colorMngr_suite, test_colorMngrApplyFade_SetUnfade)
+{
+  uint8_t unfadeLvl = 2;
+  Color_t color;
+  uint8_t expectedRed;
+  uint8_t expectedGrn;
+  uint8_t expectedBlu;
+
+  color.hexColor = 0x00aa00ff;
+  expectedRed = (uint32_t)(color.r + unfadeLvl) >= 255 ? 255 : color.r + unfadeLvl;
+  expectedGrn = (uint32_t)(color.g + unfadeLvl) >= 255 ? 255 : color.g + unfadeLvl;
+  expectedBlu = (uint32_t)(color.b + unfadeLvl) >= 255 ? 255 : color.b + unfadeLvl;
+  colorMngrSetSingle(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
+
+  colorMngrApplyUnfade(unfadeLvl, fixture->pixels, TEST_MAX_PIXEL_COUNT);
+
+  for(uint8_t i = 0; i < TEST_MAX_PIXEL_COUNT; ++i)
+  {
+    zassert_equal(expectedRed, fixture->pixels[i].r,
+      "colorMngrApplyFade failed to set the pixels to the sequence color.");
+    zassert_equal(expectedGrn, fixture->pixels[i].g,
+      "colorMngrApplyFade failed to set the pixels to the sequence color.");
+    zassert_equal(expectedBlu, fixture->pixels[i].b,
+      "colorMngrApplyFade failed to set the pixels to the sequence color.");
+  }
+}
+
+/**
  * @test  colorMngrApplyFadeTrail must apply an ascending fading trail to the
  *        given pixels.
 */
