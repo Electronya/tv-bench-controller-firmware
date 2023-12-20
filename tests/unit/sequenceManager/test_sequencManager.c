@@ -28,6 +28,8 @@ DEFINE_FFF_GLOBALS;
 FAKE_VOID_FUNC(colorMngrSetSingle, Color_t*, ZephyrRgbPixel_t*, size_t);
 FAKE_VOID_FUNC(colorMngrApplyFade, uint8_t, ZephyrRgbPixel_t*, size_t);
 FAKE_VOID_FUNC(colorMngrApplyUnfade, uint8_t, ZephyrRgbPixel_t*, size_t);
+FAKE_VOID_FUNC(colorMngrApplyFadeTrail, uint8_t, uint32_t, bool,
+               ZephyrRgbPixel_t*, size_t);
 
 /**
  * @brief The test max pixel count.
@@ -60,6 +62,7 @@ static void seqMngrCaseSetup(void *f)
   RESET_FAKE(colorMngrSetSingle);
   RESET_FAKE(colorMngrApplyFade);
   RESET_FAKE(colorMngrApplyUnfade);
+  RESET_FAKE(colorMngrApplyFadeTrail);
 }
 
 ZTEST_SUITE(seqMngr_suite, NULL, seqMngrSuiteSetup, seqMngrCaseSetup,
@@ -170,6 +173,174 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateSingleBreatherFrame_InhaleUnfade)
       "seqMngrUpdateSolidFrame failed to fade the pixels.");
 
     RESET_FAKE(colorMngrApplyUnfade);
+  }
+}
+
+/**
+ * @test  seqMngrUpdateFadeChaserFrame must set the color and set the first
+ *        fade trail from the first pixel in the buffer when the reset
+ *        flag is set and the invertion flag is clear.
+*/
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_ResetNotInvertedFrame)
+{
+  Color_t color;
+  uint8_t step;
+
+  color.hexColor = 0x00ffffff;
+  step = color.r / TEST_MAX_PIXEL_COUNT;
+
+  seqMngrUpdateFadeChaserFrame(&color, false, true, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
+
+  zassert_equal(1, colorMngrSetSingle_fake.call_count,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(0, colorMngrApplyFadeTrail_fake.arg1_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(true, colorMngrApplyFadeTrail_fake.arg2_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+}
+
+/**
+ * @test  seqMngrUpdateFadeChaserFrame must set the color and set the first
+ *        fade trail from the last pixel in the buffer when both the reset
+ *        and invertion flags are set.
+*/
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_ResetInvertedFrame)
+{
+  Color_t color;
+  uint8_t step;
+
+  color.hexColor = 0x00ffffff;
+  step = color.r / TEST_MAX_PIXEL_COUNT;
+
+  seqMngrUpdateFadeChaserFrame(&color, true, true, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
+
+  zassert_equal(1, colorMngrSetSingle_fake.call_count,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val,
+    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
+  zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT - 1, colorMngrApplyFadeTrail_fake.arg1_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(false, colorMngrApplyFadeTrail_fake.arg2_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
+    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+}
+
+/**
+ * @test  seqMngrUpdateFadeChaserFrame must move the fade trail of one pixel
+ *        at each call and wrap back to the first pixel when not inverted.
+*/
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_NotInvertedWrapFrame)
+{
+  Color_t color;
+  uint8_t step;
+  uint32_t chaserPoint = 1;
+
+  color.hexColor = 0x00ffffff;
+  step = color.r / TEST_MAX_PIXEL_COUNT;
+
+  seqMngrUpdateFadeChaserFrame(&color, false, true, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
+
+  RESET_FAKE(colorMngrSetSingle);
+  RESET_FAKE(colorMngrApplyFadeTrail);
+
+  for(uint8_t i = 0; i < TEST_MAX_PIXEL_COUNT; ++i)
+  {
+    seqMngrUpdateFadeChaserFrame(&color, false, false, fixture->pixels,
+      TEST_MAX_PIXEL_COUNT);
+
+    zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(chaserPoint, colorMngrApplyFadeTrail_fake.arg1_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(true, colorMngrApplyFadeTrail_fake.arg2_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+
+    ++chaserPoint;
+    if(chaserPoint == TEST_MAX_PIXEL_COUNT)
+      chaserPoint = 0;
+
+    RESET_FAKE(colorMngrSetSingle);
+    RESET_FAKE(colorMngrApplyFadeTrail);
+  }
+}
+
+/**
+ * @test  seqMngrUpdateFadeChaserFrame must move the fade trail of one pixel
+ *        at each call and wrap back to the last pixel when inverted.
+*/
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_InvertedWrapFrame)
+{
+  Color_t color;
+  uint8_t step;
+  int32_t chaserPoint = 8;
+
+  color.hexColor = 0x00ffffff;
+  step = color.r / TEST_MAX_PIXEL_COUNT;
+
+  seqMngrUpdateFadeChaserFrame(&color, true, true, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
+
+  RESET_FAKE(colorMngrSetSingle);
+  RESET_FAKE(colorMngrApplyFadeTrail);
+
+  for(uint8_t i = 0; i < TEST_MAX_PIXEL_COUNT; ++i)
+  {
+    seqMngrUpdateFadeChaserFrame(&color, true, false, fixture->pixels,
+      TEST_MAX_PIXEL_COUNT);
+
+    zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(chaserPoint, colorMngrApplyFadeTrail_fake.arg1_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(false, colorMngrApplyFadeTrail_fake.arg2_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
+      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+
+    --chaserPoint;
+    if(chaserPoint < 0)
+      chaserPoint = TEST_MAX_PIXEL_COUNT - 1;
+
+    RESET_FAKE(colorMngrSetSingle);
+    RESET_FAKE(colorMngrApplyFadeTrail);
   }
 }
 

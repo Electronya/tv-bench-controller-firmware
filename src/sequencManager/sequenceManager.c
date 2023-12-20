@@ -57,4 +57,39 @@ void seqMngrUpdateSingleBreatherFrame(Color_t *color, uint8_t step, bool reset,
   }
 }
 
+void seqMngrUpdateFadeChaserFrame(Color_t *color, bool isInverted, bool reset,
+                                  ZephyrRgbPixel_t *pixels, size_t pixelCnt)
+{
+  static ZephyrRgbPixel_t *chaserPoint = NULL;
+  uint8_t step;
+
+  if(color->r < color->g && color->r < color->b)
+    step = color->r / pixelCnt;
+  else if(color->g < color->r && color->g < color->b)
+    step = color->g / pixelCnt;
+  else
+    step = color->b / pixelCnt;
+
+  if(reset)
+    chaserPoint = isInverted ? pixels + pixelCnt - 1 : pixels;
+
+  colorMngrSetSingle(color, pixels, pixelCnt);
+  colorMngrApplyFadeTrail(step, chaserPoint - pixels, !isInverted, pixels,
+    pixelCnt);
+
+  if(isInverted)
+  {
+    --chaserPoint;
+    if(chaserPoint < pixels)
+      chaserPoint = pixels + pixelCnt - 1;
+  }
+  else
+  {
+    ++chaserPoint;
+    if(chaserPoint == pixels + pixelCnt)
+      chaserPoint = pixels;
+  }
+
+}
+
 /** @} */
