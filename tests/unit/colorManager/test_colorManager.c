@@ -470,4 +470,33 @@ ZTEST_F(colorMngr_suite, test_colorMngrApplyRangeTrail_ApplyDescendingTrail)
   }
 }
 
+#define COLOR_CONVERTION_TEST_CNT                   6
+/**
+ * @test  colorMngrConvertColor must return the wheel position by converting the
+ *        RGB HEX color. The following algorithm is used to do the convertion:
+ *        - Assuming only 2 color components that are complementatry weighted.
+ *        - If red: the color wheel position is 0.
+ *        - If red and blue: the color wheel position is 84 * blue ratio.
+ *        - If blue: the color wheel position is 85
+ *        - If blue and green: the color wheel position is 84 * green ratio + 85.
+ *        - If green: the color wheel position is 170.
+ *        - if green and red: the color wheel position is 84 * red ratio + 170
+*/
+ZTEST(colorMngr_suite, test_colorMngrConvertColor_Convertion)
+{
+  Color_t colors[COLOR_CONVERTION_TEST_CNT] = {{.hexColor = 0xff0000},
+                                               {.hexColor = 0x5400ab},
+                                               {.hexColor = 0x0000ff},
+                                               {.hexColor = 0x0051ae},
+                                               {.hexColor = 0x00ff00},
+                                               {.hexColor = 0x44bb00}};
+  uint8_t expectWheelPos[COLOR_CONVERTION_TEST_CNT] = {0, 56, 85, 111, 170, 192};
+
+  for(uint8_t i = 0; i < COLOR_CONVERTION_TEST_CNT; ++i)
+  {
+    zassert_equal(expectWheelPos[i], colorMngrConvertColor(colors[i]),
+      "colorMngrConvertColor failed to convert the color into a wheel position.");
+  }
+}
+
 /** @} */

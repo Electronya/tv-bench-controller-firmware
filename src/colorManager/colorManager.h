@@ -105,6 +105,15 @@ void colorMngrApplyRangeTrail(uint32_t trailStart, uint8_t wheelStart,
                               uint8_t wheelEnd, bool isAscending,
                               ZephyrRgbPixel_t *pixels, size_t pixelCnt);
 
+/**
+ * @brief   Convert a RGB HEX color to a color wheel position.
+ *
+ * @param color       The color to convert.
+ *
+ * @return  The color wheel position corresponding to the color.
+ */
+uint8_t colorMngrConvertColor(Color_t color);
+
 #endif    /* COLOR_MANAGER */
 
 /** @} */
