@@ -494,7 +494,7 @@ ZTEST(colorMngr_suite, test_colorMngrConvertColor_Convertion)
 
   for(uint8_t i = 0; i < COLOR_CONVERTION_TEST_CNT; ++i)
   {
-    zassert_equal(expectWheelPos[i], colorMngrConvertColor(colors[i]),
+    zassert_equal(expectWheelPos[i], colorMngrConvertColor(colors + i),
       "colorMngrConvertColor failed to convert the color into a wheel position.");
   }
 }

@@ -112,7 +112,7 @@ void colorMngrApplyRangeTrail(uint32_t trailStart, uint8_t wheelStart,
  *
  * @return  The color wheel position corresponding to the color.
  */
-uint8_t colorMngrConvertColor(Color_t color);
+uint8_t colorMngrConvertColor(Color_t *color);
 
 #endif    /* COLOR_MANAGER */
 

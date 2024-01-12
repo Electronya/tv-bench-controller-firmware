@@ -188,22 +188,22 @@ void colorMngrApplyRangeTrail(uint32_t trailStart, uint8_t wheelStart,
   }
 }
 
-uint8_t colorMngrConvertColor(Color_t color)
+uint8_t colorMngrConvertColor(Color_t *color)
 {
   uint8_t wheelPos;
 
-  if(color.hexColor == 0xff0000)
+  if(color->hexColor == 0xff0000)
     wheelPos = 0;
-  else if(color.r && color.b)
-    wheelPos = ((float)color.b / 255) * 84;
-  else if(color.hexColor == 0x0000ff)
+  else if(color->r && color->b)
+    wheelPos = ((float)color->b / 255) * 84;
+  else if(color->hexColor == 0x0000ff)
     wheelPos = 85;
-  else if(color.b && color.g)
-    wheelPos = ((float)color.g / 255) * 84 + 85;
-  else if(color.hexColor == 0x00ff00)
+  else if(color->b && color->g)
+    wheelPos = ((float)color->g / 255) * 84 + 85;
+  else if(color->hexColor == 0x00ff00)
     wheelPos = 170;
   else
-    wheelPos = ((float)color.r / 255) * 84 + 170;
+    wheelPos = ((float)color->r / 255) * 84 + 170;
 
   return wheelPos;
 }
