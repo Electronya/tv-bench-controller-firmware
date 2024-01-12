@@ -92,4 +92,13 @@ void seqMngrUpdateFadeChaserFrame(Color_t *color, bool isInverted, bool reset,
 
 }
 
+void seqMngrUpdateColorRangeFrame(Color_t *startClr, Color_t *endClr, bool reset,
+                                  ZephyrRgbPixel_t *pixels, size_t pixelCnt)
+{
+  uint8_t startColor = colorMngrConvertColor(startClr);
+  uint8_t endColor = colorMngrConvertColor(endClr);
+
+  colorMngrUpdateRange(startColor, endColor, reset, pixels, pixelCnt);
+}
+
 /** @} */

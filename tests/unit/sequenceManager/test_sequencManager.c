@@ -30,6 +30,9 @@ FAKE_VOID_FUNC(colorMngrApplyFade, uint8_t, ZephyrRgbPixel_t*, size_t);
 FAKE_VOID_FUNC(colorMngrApplyUnfade, uint8_t, ZephyrRgbPixel_t*, size_t);
 FAKE_VOID_FUNC(colorMngrApplyFadeTrail, uint8_t, uint32_t, bool,
                ZephyrRgbPixel_t*, size_t);
+FAKE_VOID_FUNC(colorMngrUpdateRange, uint8_t, uint8_t, bool,
+               ZephyrRgbPixel_t*, size_t);
+FAKE_VALUE_FUNC(uint8_t, colorMngrConvertColor, Color_t*);
 
 /**
  * @brief The test max pixel count.
@@ -63,6 +66,8 @@ static void seqMngrCaseSetup(void *f)
   RESET_FAKE(colorMngrApplyFade);
   RESET_FAKE(colorMngrApplyUnfade);
   RESET_FAKE(colorMngrApplyFadeTrail);
+  RESET_FAKE(colorMngrUpdateRange);
+  RESET_FAKE(colorMngrConvertColor);
 }
 
 ZTEST_SUITE(seqMngr_suite, NULL, seqMngrSuiteSetup, seqMngrCaseSetup,
@@ -342,6 +347,77 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_InvertedWrapFrame)
     RESET_FAKE(colorMngrSetSingle);
     RESET_FAKE(colorMngrApplyFadeTrail);
   }
+}
+
+#define COLOR_CONVERT_CALL_CNT      2
+/**
+ * @test  seqMngrUpdateColorRangeFrame must convert the start and end colors
+ *        and update the color range by resetting it if the sequence is resetted.
+*/
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_Reset)
+{
+  Color_t startColor = {.hexColor = 0xff0000};
+  Color_t endColor = {.hexColor = 0x00ff00};
+  uint8_t wheelPos[COLOR_CONVERT_CALL_CNT] = {0, 170};
+
+  SET_RETURN_SEQ(colorMngrConvertColor, wheelPos, COLOR_CONVERT_CALL_CNT);
+
+  seqMngrUpdateColorRangeFrame(&startColor, &endColor, true, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
+
+  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
+    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
+  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
+    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
+  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
+    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
+  zassert_equal(1, colorMngrUpdateRange_fake.call_count,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(wheelPos[0], colorMngrUpdateRange_fake.arg0_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(wheelPos[1], colorMngrUpdateRange_fake.arg1_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_true(colorMngrUpdateRange_fake.arg2_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(fixture->pixels, colorMngrUpdateRange_fake.arg3_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrUpdateRange_fake.arg4_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+}
+
+/**
+ * @test  seqMngrUpdateColorRangeFrame must convert the start and end colors
+ *        and update the color range if the sequence is not resetted.
+*/
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_NotResetted)
+{
+  Color_t startColor = {.hexColor = 0xff0000};
+  Color_t endColor = {.hexColor = 0x00ff00};
+  uint8_t wheelPos[COLOR_CONVERT_CALL_CNT] = {0, 170};
+
+  SET_RETURN_SEQ(colorMngrConvertColor, wheelPos, COLOR_CONVERT_CALL_CNT);
+
+  seqMngrUpdateColorRangeFrame(&startColor, &endColor, false, fixture->pixels,
+    TEST_MAX_PIXEL_COUNT);
+
+  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
+    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
+  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
+    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
+  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
+    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
+  zassert_equal(1, colorMngrUpdateRange_fake.call_count,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(wheelPos[0], colorMngrUpdateRange_fake.arg0_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(wheelPos[1], colorMngrUpdateRange_fake.arg1_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_false(colorMngrUpdateRange_fake.arg2_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(fixture->pixels, colorMngrUpdateRange_fake.arg3_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrUpdateRange_fake.arg4_val,
+    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
 }
 
 /** @} */

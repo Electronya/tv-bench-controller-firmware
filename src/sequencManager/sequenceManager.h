@@ -53,6 +53,18 @@ void seqMngrUpdateSingleBreatherFrame(Color_t *color, uint8_t step, bool reset,
 void seqMngrUpdateFadeChaserFrame(Color_t *color, bool isInverted, bool reset,
                                   ZephyrRgbPixel_t *pixels, size_t pixelCnt);
 
+/**
+ * @brief   Update the pixels for the next color range frame.
+ *
+ * @param startClr    The range starting color.
+ * @param endClr      The range ending color.
+ * @param reset       The reset flag.
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The pixel count.
+ */
+void seqMngrUpdateColorRangeFrame(Color_t *startClr, Color_t *endClr, bool reset,
+                                  ZephyrRgbPixel_t *pixels, size_t pixelCnt);
+
 #endif    /* SEQUENCE_MANAGER */
 
 /** @} */
