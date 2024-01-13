@@ -101,4 +101,33 @@ void seqMngrUpdateColorRangeFrame(Color_t *startClr, Color_t *endClr, bool reset
   colorMngrUpdateRange(startColor, endColor, reset, pixels, pixelCnt);
 }
 
+void seqMngrUpdateColorRangeChaserFrame(Color_t *stratClr, Color_t *endClr,
+                                        bool isInverted, bool reset,
+                                        ZephyrRgbPixel_t *pixels,
+                                        size_t pixelCnt)
+{
+  static ZephyrRgbPixel_t *chaserPoint = NULL;
+  uint8_t startColor = colorMngrConvertColor(stratClr);
+  uint8_t endColor = colorMngrConvertColor(endClr);
+
+  if(reset)
+    chaserPoint = isInverted ? pixels + pixelCnt - 1 : pixels;
+
+  colorMngrApplyRangeTrail(chaserPoint - pixels, startColor, endColor,
+    !isInverted, pixels, pixelCnt);
+
+  if(isInverted)
+  {
+    --chaserPoint;
+    if(chaserPoint < pixels)
+      chaserPoint = pixels + pixelCnt - 1;
+  }
+  else
+  {
+    ++chaserPoint;
+    if(chaserPoint == pixels + pixelCnt)
+      chaserPoint = pixels;
+  }
+}
+
 /** @} */

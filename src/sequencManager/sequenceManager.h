@@ -65,6 +65,21 @@ void seqMngrUpdateFadeChaserFrame(Color_t *color, bool isInverted, bool reset,
 void seqMngrUpdateColorRangeFrame(Color_t *startClr, Color_t *endClr, bool reset,
                                   ZephyrRgbPixel_t *pixels, size_t pixelCnt);
 
+/**
+ * @brief   Update the pixels for the next color range chaser frame.
+ *
+ * @param stratClr    The range starting color.
+ * @param endClr      The range ending color.
+ * @param isInverted  The inverted flag.
+ * @param reset       The reset flag.
+ * @param pixels      The pixel buffer.
+ * @param pixelCnt    The pixel count.
+ */
+void seqMngrUpdateColorRangeChaserFrame(Color_t *stratClr, Color_t *endClr,
+                                        bool isInverted, bool reset,
+                                        ZephyrRgbPixel_t *pixels,
+                                        size_t pixelCnt);
+
 #endif    /* SEQUENCE_MANAGER */
 
 /** @} */
