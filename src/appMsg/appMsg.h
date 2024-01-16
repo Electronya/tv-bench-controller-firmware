@@ -25,20 +25,14 @@
 typedef enum
 {
   SEQ_SOLID,                            /**< The solid sequence. */
-  SEQ_CHASER,                           /**< The chaser sequence. */
-  SEQ_INVERT_CHASER,                    /**< The inverted chaser sequence. */
+  SEQ_SOLID_BREATHER,                   /**< The solid breather sequence. */
+  SEQ_FADE_CHASER,                      /**< The fade chaser sequence. */
+  SEQ_INVERT_FADE_CHASER,               /**< The inverted fade chaser sequence. */
+  SEQ_COLOR_RANGE,                      /**< The color range sequence. */
+  SEQ_RANGE_CHASER,                     /**< The color range chaser sequence. */
+  SEQ_INVERT_RANGE_CHASER,              /**< The inverted color range chaser sequence.*/
   SEQ_COUNT,                            /**< The sequence type count. */
 } SequenceType_t;
-
-/**
- * @brief The color type.
-*/
-typedef enum
-{
-  COLOR_SINGLE,                         /**< The single color type. */
-  COLOR_RANGE,                          /**< The range color type (rainbow). */
-  COLOR_COUNT,                          /**< The color type count. */
-} ColorType_t;
 
 /**
  * @brief The color union.
@@ -63,9 +57,9 @@ typedef struct
   SequenceType_t seqType;               /**< The sequence type. */
   uint32_t timeBase;                    /**< The sequence time base. */
   ZephyrTimeUnit_t timeUnit;            /**< The sequence time unit. */
-  ColorType_t colorType;                /**< The color type. */
   Color_t startColor;                   /**< The solid color or the range start color. */
   Color_t endColor;                     /**< The range end color. */
+  uint8_t sectionId;                    /**< The section ID to apply the sequence to. */
 } LedSequence_t;
 
 /**

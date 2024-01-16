@@ -18,8 +18,10 @@
 
 /**
  * @brief   Intialize the LED manager.
+ *
+ * @return  0 if successful, the error code otherwise.
  */
-void ledMngrInit(void);
+int ledMngrInit(void);
 
 #endif    /* LED_MANAGER */
 

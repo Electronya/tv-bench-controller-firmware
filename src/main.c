@@ -13,7 +13,8 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/printk.h>
 
-#include "ledCtrl.h"
+#include "appMsg.h"
+#include "ledManager.h"
 #include "zephyrLedStrip.h"
 
 #define MAIN_MODULE_NAME main_module
@@ -21,27 +22,25 @@
 /* Setting module logging */
 LOG_MODULE_REGISTER(MAIN_MODULE_NAME);
 
-void main(void)
+int main(void)
 {
-  int rc = 0;
-  LedCtrlBaseColor_t color = LED_COLOR_RED;
-  ZephyrRgbPixel_t pixels[8];
+  int rc;
 
   LOG_INF("booting tv bench controller");
 
-  rc = ledCtrlInit();
-
-  while(!(rc < 0))
+  rc = appMsgInit();
+  if(rc < 0)
   {
-    rc = ledCtrlSetToBaseColor(pixels, 0, 8, color);
-    if(rc < 0)
-      LOG_ERR("Unable to set the pixels base color.");
-    rc = ledCtrlUpdatePixels(pixels, 0, 8);
-    if(rc < 0)
-      LOG_ERR("Unable to update the pixels.");
-    ++color;
-    if(color == LED_COLOR_CNT)
-      color = LED_COLOR_RED;
-    k_sleep(K_SECONDS(1));
+    LOG_ERR("unable to initialize the application messages.");
+    return rc;
   }
+
+  rc = ledMngrInit();
+  if(rc < 0)
+  {
+    LOG_ERR("unable to initialize the LED manager.");
+    return rc;
+  }
+
+  return 0;
 }

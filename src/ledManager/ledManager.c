@@ -17,7 +17,7 @@
 #include <zephyr/logging/log.h>
 
 #include "appMsg.h"
-#include "ledCtrl.h"
+#include "sequenceManager.h"
 #include "zephyrLedStrip.h"
 #include "zephyrThread.h"
 
@@ -48,6 +48,15 @@ LOG_MODULE_REGISTER(LED_Mngr_MODULE_NAME);
 
 K_THREAD_STACK_DEFINE(ledMngr_stack, LED_MNGR_STACK_SIZE);
 
+#ifndef CONFIG_ZTEST
+static ZephyrLedStrip_t ledStrip = {
+  .dev = DEVICE_DT_GET(DT_ALIAS(led_strip)),
+  .pixelCount = DT_PROP(DT_ALIAS(led_strip), chain_length),
+};
+#else
+static ZephyrLedStrip_t ledStrip;
+#endif
+
 typedef struct
 {
   uint32_t firstLed;            /**< The strip ID of the section first LED. */
@@ -75,25 +84,51 @@ LedSection_t section;
 static void ledMngrThread(void *p1, void *p2, void *p3)
 {
   int rc;
+  bool reset = true;
   LedSequence_t seq = {
     .seqType = SEQ_SOLID,
     .timeBase = ZEPHYR_TIME_FOREVER,
-    .colorType = COLOR_SINGLE,
-    .startColor.hexColor = 0x00000000,
+    .startColor.hexColor = 0xffffff,
   };
 
   while(true)
   {
     rc = appMsgPopLedSequence(&seq);
+    if(rc == 0)
+      reset = true;
+    else
+      reset = false;
 
     switch(seq.seqType)
     {
       case SEQ_SOLID:
+        seqMngrUpdateSolidFrame(&seq.startColor, ledStrip.rgbPixels,
+          ledStrip.pixelCount);
       break;
-      case SEQ_CHASER:
+      case SEQ_SOLID_BREATHER:
+        seqMngrUpdateSingleBreatherFrame(&seq.startColor, 10, reset,
+          ledStrip.rgbPixels, ledStrip.pixelCount);
       break;
-      case SEQ_INVERT_CHASER:
+      case SEQ_FADE_CHASER:
+        seqMngrUpdateFadeChaserFrame(&seq.startColor, false, reset,
+          ledStrip.rgbPixels, ledStrip.pixelCount);
       break;
+      case SEQ_INVERT_FADE_CHASER:
+        seqMngrUpdateFadeChaserFrame(&seq.startColor, true, reset,
+          ledStrip.rgbPixels, ledStrip.pixelCount);
+      break;
+      case SEQ_COLOR_RANGE:
+        seqMngrUpdateColorRangeFrame(&seq.startColor, &seq.endColor, reset,
+          ledStrip.rgbPixels, ledStrip.pixelCount);
+      break;
+      case SEQ_RANGE_CHASER:
+        seqMngrUpdateColorRangeChaserFrame(&seq.startColor, &seq.endColor, false,
+          reset, ledStrip.rgbPixels, ledStrip.pixelCount);
+      break;
+      case SEQ_INVERT_RANGE_CHASER:
+        seqMngrUpdateColorRangeChaserFrame(&seq.startColor, &seq.endColor, true,
+          reset, ledStrip.rgbPixels, ledStrip.pixelCount);
+      break;;
       default:
         LOG_ERR("unsupported sequence type");
         return;
@@ -118,12 +153,19 @@ static void ledMngrThread(void *p1, void *p2, void *p3)
   }
 }
 
-void ledMngrInit(void)
+int ledMngrInit(void)
 {
-  thread.entry = ledMngrThread;
+  int rc;
 
+  rc = zephyrLedStripInit(&ledStrip, ledStrip.pixelCount);
+  if(rc < 0)
+    return rc;
+
+  thread.entry = ledMngrThread;
   zephyrThreadCreate(&thread, LED_MNGR_THREAD_NAME, ZEPHYR_TIME_NO_WAIT,
     MILLI_SEC);
+
+  return rc;
 }
 
 /** @} */
