@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2023 by Electronya
  *
- * @file      ledManager.h
+ * @file      ledManager.c
  * @author    jbacon
  * @date      2023-11-20
  * @brief     Led Manager Module
@@ -21,10 +21,10 @@
 #include "zephyrLedStrip.h"
 #include "zephyrThread.h"
 
-#define LED_Mngr_MODULE_NAME led_mngr_module
+#define LED_MNGR_MODULE_NAME led_mngr_module
 
 /* Setting module logging */
-LOG_MODULE_REGISTER(LED_Mngr_MODULE_NAME);
+LOG_MODULE_REGISTER(LED_MNGR_MODULE_NAME);
 
 /**
  * @brief The thread name.
