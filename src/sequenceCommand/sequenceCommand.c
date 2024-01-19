@@ -59,5 +59,21 @@ bool isSectionValid(char *arg, uint32_t *section)
   return true;
 }
 
+bool isColorValid(char *arg, Color_t *color)
+{
+  int rc = 0;
+  uint32_t convertColor;
+
+  convertColor = shell_strtoul(arg, 16, &rc);
+  if(rc < 0)
+    return false;
+
+  if(convertColor > 0xffffff)
+    return false;
+
+  color->hexColor = convertColor;
+
+  return true;
+}
 
 /** @} */
