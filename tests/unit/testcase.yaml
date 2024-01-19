@@ -41,3 +41,13 @@ tests:
       - CONFIG_LED_STRIP=y
       - CONFIG_ENYA_ZEPHYR_WRAPPER=y
       - CONFIG_ENYA_LED_STRIP=y
+  tv_bench_ctlr_coprocessor.seqCmd:
+    platform_allow: qemu_cortex_m0
+    tags: seqCmd
+    extra_args: TEST_SUITE=seqCmd
+    extra_configs:
+      - CONFIG_ZTEST=y
+      - CONFIG_ZTEST_NEW_API=y
+      - CONFIG_LED_STRIP=y
+      - CONFIG_ENYA_ZEPHYR_WRAPPER=y
+      - CONFIG_ENYA_LED_STRIP=y
