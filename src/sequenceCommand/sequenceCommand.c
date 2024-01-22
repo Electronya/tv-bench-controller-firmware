@@ -35,19 +35,29 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
 #define SEQ_SOLID_USAGE     "Set a solid color sequence: sequence solid <section> <HEX color>."
 
 /**
+ * @brief The breather sequence command usage.
+*/
+#define SEQ_BREATHER_USAGE  "Set a breather sequence: sequence breather <section> <HEX color>."
+
+/**
  * @brief The solid color sequence argment count
 */
 #define SOLID_SEQ_ARG_CNT                   2
 
 /**
+ * @brief The breather sequence argument count
+*/
+#define BREATHER_SEQ_ARG_CNT                2
+
+/**
  * @brief   Convert and check validity of the section.
  *
- * @param arg
- * @param section
- * @return true
- * @return false
+ * @param arg       The section string argument value.
+ * @param section   The converted section.
+ *
+ * @return  true if the section is valid, false otherwise.
  */
-bool isSectionValid(char *arg, uint32_t *section)
+static bool isSectionValid(char *arg, uint32_t *section)
 {
   int rc = 0;
 
@@ -59,7 +69,15 @@ bool isSectionValid(char *arg, uint32_t *section)
   return true;
 }
 
-bool isColorValid(char *arg, Color_t *color)
+/**
+ * @brief   Convert and check the validity of the color.
+ *
+ * @param arg     The color string argument.
+ * @param color   The converted color.
+ *
+ * @return  true if the color is valid, false otherwise.
+ */
+static bool isColorValid(char *arg, Color_t *color)
 {
   int rc = 0;
   uint32_t convertColor;
@@ -75,5 +93,85 @@ bool isColorValid(char *arg, Color_t *color)
 
   return true;
 }
+
+/**
+ * @brief   Push a solid color sequence in the sequence queue.
+ *
+ * @param section   The LED strip section.
+ * @param color     The solid color.
+ *
+ * @return  0 if successful, the error code othewise.
+ */
+static int pushSolidColorSequence(uint32_t section, Color_t *color)
+{
+  LedSequence_t sequence = {.sectionId = section,
+                            .seqType = SEQ_SOLID,
+                            .timeBase = ZEPHYR_TIME_FOREVER,
+                            .timeUnit = MILLI_SEC};
+
+  sequence.startColor.hexColor = color->hexColor;
+
+  return appMsgPushLedSequence(&sequence);
+}
+
+/**
+ * @brief   Execute the solid color sequence command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execSolidSeq(const struct shell *shell, size_t argc, char **argv)
+{
+  uint32_t section;
+  Color_t color;
+
+  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color))
+  {
+    shell_print(shell, "OK");
+    return 0;
+  }
+
+  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s",
+    argv[0], argv[1]);
+
+  return -EINVAL;
+}
+
+/**
+ * @brief   Execute the breather sequence command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
+{
+  uint32_t section;
+  Color_t color;
+
+  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color))
+  {
+    shell_print(shell, "OK");
+    return 0;
+  }
+
+  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s",
+    argv[0], argv[1]);
+
+  return -EINVAL;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(seq_sub,
+	SHELL_CMD_ARG(solid, NULL, SEQ_SOLID_USAGE, execSolidSeq,
+                SOLID_SEQ_ARG_CNT, 0),
+  SHELL_CMD_ARG(breather, NULL, SEQ_BREATHER_USAGE, execBreatherSeq,
+                BREATHER_SEQ_ARG_CNT, 0),
+	SHELL_SUBCMD_SET_END);
+SHELL_CMD_REGISTER(sequence, &seq_sub, SEQ_USAGE,	NULL);
 
 /** @} */

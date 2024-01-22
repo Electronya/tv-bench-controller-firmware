@@ -24,12 +24,38 @@
 
 DEFINE_FFF_GLOBALS;
 
+FAKE_VALUE_FUNC(int, appMsgPushLedSequence, LedSequence_t*);
+
 static void seqCommandCaseSetup(void *f)
 {
-
+  RESET_FAKE(appMsgPushLedSequence);
 }
 
 ZTEST_SUITE(seqCommand_suite, NULL, NULL, seqCommandCaseSetup, NULL, NULL);
+
+/**
+ * @brief The expected sequence.
+*/
+static LedSequence_t expectedSeq;
+
+/**
+ * @brief   The custom push solid sequence mock.
+ *
+ * @param sequence  The sequence to push.
+ *
+ * @return  since always successful, always 0.
+ */
+static int customPushSolidSequence(LedSequence_t *seq)
+{
+  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
+  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
+    "bad sequence pushed.");
+
+  return 0;
+}
 
 #define SECTION_CONVERT_TEST_COUNT                  3
 /**
@@ -117,6 +143,42 @@ ZTEST(seqCommand_suite, test_isColorValid_colorValid)
     zassert_equal(expectedColor[i].hexColor, color.hexColor,
       "isColorValid failed to set the color to the argument value.");
   }
+}
+
+/**
+ * @test  pushSolidColorSequence must return the error if the pushing
+ *        operation fails.
+*/
+ZTEST(seqCommand_suite, test_pushSolidColorSequence_pushFail)
+{
+  int failRet = -ENOSPC;
+  uint32_t section = 10;
+  Color_t color = {.hexColor = 0xffffff};
+
+  appMsgPushLedSequence_fake.return_val = failRet;
+
+  zassert_equal(failRet, pushSolidColorSequence(section, &color));
+}
+
+/**
+ * @test  pushSolidColorSequence must return the success code and push
+ *        the new sequence.
+*/
+ZTEST(seqCommand_suite, test_pushSolidColorSequence_success)
+{
+  int successRet = 0;
+  uint32_t section = 10;
+  Color_t color = {.hexColor = 0xffffff};
+
+  appMsgPushLedSequence_fake.custom_fake = customPushSolidSequence;
+
+  expectedSeq.seqType = SEQ_SOLID;
+  expectedSeq.sectionId = section;
+  expectedSeq.startColor.hexColor = color.hexColor;
+  expectedSeq.timeBase = ZEPHYR_TIME_FOREVER;
+  expectedSeq.timeUnit = MILLI_SEC;
+
+  zassert_equal(successRet, pushSolidColorSequence(section, &color));
 }
 
 /** @} */
