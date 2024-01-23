@@ -145,6 +145,41 @@ ZTEST(seqCommand_suite, test_isColorValid_colorValid)
   }
 }
 
+#define LENGTH_CONVERT_TEST_COUNT                  3
+/**
+ * @test  isLengthValid must return false if the convertion fails.
+*/
+ZTEST(seqCommand_suite, test_isLengthValid_convertFail)
+{
+  uint32_t length;
+  char *args[LENGTH_CONVERT_TEST_COUNT] = {"a", "1a", "a1"};
+
+  for(uint8_t i = 0; i < LENGTH_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_false(isLengthValid(args[i], &length),
+      "isLengthValid failed to flag the invalidity of the sequence length.");
+  }
+}
+
+/**
+ * @test  isLengthValid must return true if the convertion succeeds and
+ *        the converted value is valid.
+*/
+ZTEST(seqCommand_suite, test_isLengthValid_success)
+{
+  uint32_t length;
+  char *args[LENGTH_CONVERT_TEST_COUNT] = {"1", "54", "100"};
+  uint32_t expectedVals[LENGTH_CONVERT_TEST_COUNT] = {1, 54, 100};
+
+  for(uint8_t i = 0; i < LENGTH_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_true(isLengthValid(args[i], &length),
+      "isLengthValid failed to flag the validity of the sequence length.");
+    zassert_equal(expectedVals[i], length,
+      "isLengthValid failed to convert the sequence length argument.");
+  }
+}
+
 /**
  * @test  pushSolidColorSequence must return the error if the pushing
  *        operation fails.

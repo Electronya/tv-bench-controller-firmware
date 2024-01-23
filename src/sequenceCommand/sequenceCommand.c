@@ -95,6 +95,25 @@ static bool isColorValid(char *arg, Color_t *color)
 }
 
 /**
+ * @brief   Convert and check the validity of the sequence length.
+ *
+ * @param arg       The sequence length string argument.
+ * @param length    The converted sequence length.
+ *
+ * @return  true if the sequence length is valid, false otherwise.
+ */
+static bool isLengthValid(char *arg, uint32_t *length)
+{
+  int rc = 0;
+
+  *length = shell_strtoul(arg, 10, &rc);
+  if(rc < 0)
+    return false;
+
+  return true;
+}
+
+/**
  * @brief   Push a solid color sequence in the sequence queue.
  *
  * @param section   The LED strip section.
