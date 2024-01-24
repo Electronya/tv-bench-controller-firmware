@@ -37,7 +37,7 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
 /**
  * @brief The breather sequence command usage.
 */
-#define SEQ_BREATHER_USAGE  "Set a breather sequence: sequence breather <section> <HEX color>."
+#define SEQ_BREATHER_USAGE  "Set a breather sequence: sequence breather <section> <HEX color> <sequence length (sec)>."
 
 /**
  * @brief The solid color sequence argment count
@@ -47,7 +47,7 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
 /**
  * @brief The breather sequence argument count
 */
-#define BREATHER_SEQ_ARG_CNT                2
+#define BREATHER_SEQ_ARG_CNT                3
 
 /**
  * @brief   Convert and check validity of the section.
@@ -126,7 +126,20 @@ static int pushSolidColorSequence(uint32_t section, Color_t *color)
   LedSequence_t sequence = {.sectionId = section,
                             .seqType = SEQ_SOLID,
                             .timeBase = ZEPHYR_TIME_FOREVER,
-                            .timeUnit = MILLI_SEC};
+                            .timeUnit = SECONDS};
+
+  sequence.startColor.hexColor = color->hexColor;
+
+  return appMsgPushLedSequence(&sequence);
+}
+
+static int pushBreatherSequence(uint32_t section, Color_t *color,
+                                uint32_t length)
+{
+  LedSequence_t sequence = {.sectionId = section,
+                            .seqType = SEQ_SOLID_BREATHER,
+                            .timeBase = length,
+                            .timeUnit = SECONDS};
 
   sequence.startColor.hexColor = color->hexColor;
 
@@ -144,11 +157,19 @@ static int pushSolidColorSequence(uint32_t section, Color_t *color)
  */
 static int execSolidSeq(const struct shell *shell, size_t argc, char **argv)
 {
+  int rc;
   uint32_t section;
   Color_t color;
 
   if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color))
   {
+    rc = pushSolidColorSequence(section, &color);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to push the solid sequence");
+      return rc;
+    }
+
     shell_print(shell, "OK");
     return 0;
   }
@@ -172,15 +193,23 @@ static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
 {
   uint32_t section;
   Color_t color;
+  uint32_t length;
 
-  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color))
+  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color) &&
+    isLengthValid(arg[2], &length))
   {
+    rc = pushSolidColorSequence(section, &color);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to push the breather sequence");
+      return rc;
+    }
     shell_print(shell, "OK");
     return 0;
   }
 
-  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s",
-    argv[0], argv[1]);
+  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s",
+    argv[0], argv[1], arg[2]);
 
   return -EINVAL;
 }

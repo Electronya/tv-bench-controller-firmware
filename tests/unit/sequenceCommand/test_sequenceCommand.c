@@ -57,6 +57,26 @@ static int customPushSolidSequence(LedSequence_t *seq)
   return 0;
 }
 
+/**
+ * @brief   The custom push breather sequence mock.
+ *
+ * @param sequence  The sequence to push.
+ *
+ * @return  since always successful, always 0.
+ */
+static int customPushBreatherSequence(LedSequence_t *seq)
+{
+  printk("custom mock");
+  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
+  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
+    "bad sequence pushed.");
+
+  return 0;
+}
+
 #define SECTION_CONVERT_TEST_COUNT                  3
 /**
  * @test  isSectionValid must return false if the convertion fails.
@@ -211,9 +231,47 @@ ZTEST(seqCommand_suite, test_pushSolidColorSequence_success)
   expectedSeq.sectionId = section;
   expectedSeq.startColor.hexColor = color.hexColor;
   expectedSeq.timeBase = ZEPHYR_TIME_FOREVER;
-  expectedSeq.timeUnit = MILLI_SEC;
+  expectedSeq.timeUnit = SECONDS;
 
   zassert_equal(successRet, pushSolidColorSequence(section, &color));
+}
+
+/**
+ * @test  pushBreatherSequence must return the error if the pushing
+ *        operation fails.
+*/
+ZTEST(seqCommand_suite, test_pushBreatherSequence_pushFail)
+{
+  int failRet = -ENOSPC;
+  uint32_t section = 10;
+  Color_t color = {.hexColor = 0xffffff};
+  uint32_t length = 50;
+
+  appMsgPushLedSequence_fake.return_val = failRet;
+
+  zassert_equal(failRet, pushBreatherSequence(section, &color, length));
+}
+
+/**
+ * @test  pushBreatherSequence must return the success code and push
+ *        the new sequence.
+*/
+ZTEST(seqCommand_suite, test_pushBreatherSequence_success)
+{
+  int successRet = 0;
+  uint32_t section = 10;
+  Color_t color = {.hexColor = 0xffffff};
+  uint32_t length = 50;
+
+  appMsgPushLedSequence_fake.custom_fake = customPushBreatherSequence;
+
+  expectedSeq.seqType = SEQ_SOLID_BREATHER;
+  expectedSeq.sectionId = section;
+  expectedSeq.startColor.hexColor = color.hexColor;
+  expectedSeq.timeBase = length;
+  expectedSeq.timeUnit = SECONDS;
+
+  zassert_equal(successRet, pushBreatherSequence(section, &color, length));
 }
 
 /** @} */
