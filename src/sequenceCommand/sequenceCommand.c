@@ -191,14 +191,15 @@ static int execSolidSeq(const struct shell *shell, size_t argc, char **argv)
  */
 static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
 {
+  int rc;
   uint32_t section;
   Color_t color;
   uint32_t length;
 
   if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color) &&
-    isLengthValid(arg[2], &length))
+    isLengthValid(argv[2], &length))
   {
-    rc = pushSolidColorSequence(section, &color);
+    rc = pushBreatherSequence(section, &color, length);
     if(rc < 0)
     {
       LOG_ERR("unable to push the breather sequence");
@@ -209,7 +210,7 @@ static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
   }
 
   shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s",
-    argv[0], argv[1], arg[2]);
+    argv[0], argv[1], argv[2]);
 
   return -EINVAL;
 }

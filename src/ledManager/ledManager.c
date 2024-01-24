@@ -106,6 +106,7 @@ static void ledMngrThread(void *p1, void *p2, void *p3)
           ledStrip.pixelCount);
       break;
       case SEQ_SOLID_BREATHER:
+        /* TODO calculate the steps base on the sequence time base and the starting color */
         seqMngrUpdateSingleBreatherFrame(&seq.startColor, 10, reset,
           ledStrip.rgbPixels, ledStrip.pixelCount);
       break;
@@ -135,6 +136,7 @@ static void ledMngrThread(void *p1, void *p2, void *p3)
       break;
     }
 
+    /* TODO calculate the sleep from the sequence time base */
     if(seq.timeBase != ZEPHYR_TIME_FOREVER)
     {
       rc = zephyrThreadSleep(seq.timeBase, seq.timeUnit);
