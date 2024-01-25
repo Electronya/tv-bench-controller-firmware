@@ -66,7 +66,6 @@ static int customPushSolidSequence(LedSequence_t *seq)
  */
 static int customPushBreatherSequence(LedSequence_t *seq)
 {
-  printk("custom mock");
   zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
   zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
   zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
@@ -145,8 +144,7 @@ ZTEST(seqCommand_suite, test_isColorValid_colorOutOfRange)
 }
 
 /**
- * @test  isColorValid must return true if the converted color value
- *        is valid.
+ * @test  isColorValid must return true if the converted color value.
 */
 ZTEST(seqCommand_suite, test_isColorValid_colorValid)
 {
@@ -183,7 +181,7 @@ ZTEST(seqCommand_suite, test_isLengthValid_convertFail)
 
 /**
  * @test  isLengthValid must return true if the convertion succeeds and
- *        the converted value is valid.
+ *        the converted value.
 */
 ZTEST(seqCommand_suite, test_isLengthValid_success)
 {
@@ -200,6 +198,41 @@ ZTEST(seqCommand_suite, test_isLengthValid_success)
   }
 }
 
+#define DIRECTION_CONVERT_TEST_COUNT                  2
+/**
+ * @test  isDirectionValid must return false if the convertion fails.
+*/
+ZTEST(seqCommand_suite, test_isDirectionValid_convertFail)
+{
+  bool isInverted;
+  char *args[DIRECTION_CONVERT_TEST_COUNT] = {"norma", "inverte"};
+
+  for(uint8_t i = 0; i < DIRECTION_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_false(isDirectionValid(args[i], &isInverted),
+      "isDirectionValid failed to flag the invalidity of the sequence directoin.");
+  }
+}
+
+/**
+ * @test  isDirectionValid must return true if the convertion succeeds and
+ *        the converted value.
+*/
+ZTEST(seqCommand_suite, test_isDirectionValid_success)
+{
+  bool isInverted;
+  char *args[DIRECTION_CONVERT_TEST_COUNT] = {"normal", "inverted"};
+  bool expectedVals[DIRECTION_CONVERT_TEST_COUNT] = {false, true};
+
+  for(uint8_t i = 0; i < DIRECTION_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_true(isDirectionValid(args[i], &isInverted),
+      "isDirectionValid failed to flag the validity of the sequence direction.");
+    zassert_equal(expectedVals[i], isInverted,
+      "isDirectionValid failed to convert the sequence direction argument.");
+  }
+}
+
 /**
  * @test  pushSolidColorSequence must return the error if the pushing
  *        operation fails.
@@ -212,7 +245,8 @@ ZTEST(seqCommand_suite, test_pushSolidColorSequence_pushFail)
 
   appMsgPushLedSequence_fake.return_val = failRet;
 
-  zassert_equal(failRet, pushSolidColorSequence(section, &color));
+  zassert_equal(failRet, pushSolidColorSequence(section, &color),
+    "pushSolidColorSequence failed to return the error code.");
 }
 
 /**
@@ -233,7 +267,8 @@ ZTEST(seqCommand_suite, test_pushSolidColorSequence_success)
   expectedSeq.timeBase = ZEPHYR_TIME_FOREVER;
   expectedSeq.timeUnit = SECONDS;
 
-  zassert_equal(successRet, pushSolidColorSequence(section, &color));
+  zassert_equal(successRet, pushSolidColorSequence(section, &color),
+    "pushSolidColorSequence failed to return the success code.");
 }
 
 /**
@@ -249,7 +284,8 @@ ZTEST(seqCommand_suite, test_pushBreatherSequence_pushFail)
 
   appMsgPushLedSequence_fake.return_val = failRet;
 
-  zassert_equal(failRet, pushBreatherSequence(section, &color, length));
+  zassert_equal(failRet, pushBreatherSequence(section, &color, length),
+    "pushBreatherSequence failed to return the error code.");
 }
 
 /**
@@ -271,7 +307,8 @@ ZTEST(seqCommand_suite, test_pushBreatherSequence_success)
   expectedSeq.timeBase = length;
   expectedSeq.timeUnit = SECONDS;
 
-  zassert_equal(successRet, pushBreatherSequence(section, &color, length));
+  zassert_equal(successRet, pushBreatherSequence(section, &color, length),
+    "pushBreatherSequence failed to return the success code.");
 }
 
 /** @} */

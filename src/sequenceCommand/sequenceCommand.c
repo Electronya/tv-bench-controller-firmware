@@ -17,6 +17,8 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/shell/shell.h>
 
+#include <string.h>
+
 #include "appMsg.h"
 
 #define SEQUENCEL_COMMAND_MODULE_NAME sequence_command_module
@@ -48,12 +50,26 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
  * @brief The breather sequence argument count
 */
 #define BREATHER_SEQ_ARG_CNT                3
+/**
+ * @brief The fade chaser sequence argument count
+*/
+#define FADE_CHASER_SEQ_ARG_CNT             4
+
+/**
+ * @brief The normal direction argument value.
+*/
+#define NORMAL_DIRECTION                    "normal"
+
+/**
+ * @brief The inverted direction argument value.
+*/
+#define INVERTED_DIRECTION                  "inverted"
 
 /**
  * @brief   Convert and check validity of the section.
  *
- * @param arg       The section string argument value.
- * @param section   The converted section.
+ * @param arg         The section string argument value.
+ * @param section     The converted section.
  *
  * @return  true if the section is valid, false otherwise.
  */
@@ -72,8 +88,8 @@ static bool isSectionValid(char *arg, uint32_t *section)
 /**
  * @brief   Convert and check the validity of the color.
  *
- * @param arg     The color string argument.
- * @param color   The converted color.
+ * @param arg       The color string argument.
+ * @param color     The converted color.
  *
  * @return  true if the color is valid, false otherwise.
  */
@@ -97,8 +113,8 @@ static bool isColorValid(char *arg, Color_t *color)
 /**
  * @brief   Convert and check the validity of the sequence length.
  *
- * @param arg       The sequence length string argument.
- * @param length    The converted sequence length.
+ * @param arg         The sequence length string argument.
+ * @param length      The converted sequence length.
  *
  * @return  true if the sequence length is valid, false otherwise.
  */
@@ -114,10 +130,35 @@ static bool isLengthValid(char *arg, uint32_t *length)
 }
 
 /**
+ * @brief   Convert and check the validity of the sequence direction.
+ *
+ * @param arg         The sequence direction string argument.
+ * @param isInverted  The converted direction flag.
+ *
+ * @return  true if the sequence direction is valid, false otherwise.
+ */
+static bool isDirectionValid(char *arg, bool *isInverted)
+{
+  if(strcmp(arg, NORMAL_DIRECTION) == 0)
+  {
+    *isInverted = false;
+    return true;
+  }
+
+  if(strcmp(arg, INVERTED_DIRECTION) == 0)
+  {
+    *isInverted = true;
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * @brief   Push a solid color sequence in the sequence queue.
  *
- * @param section   The LED strip section.
- * @param color     The solid color.
+ * @param section     The LED strip section.
+ * @param color       The solid color.
  *
  * @return  0 if successful, the error code othewise.
  */
@@ -133,6 +174,15 @@ static int pushSolidColorSequence(uint32_t section, Color_t *color)
   return appMsgPushLedSequence(&sequence);
 }
 
+/**
+ * @brief   Push a breather sequence in the sequence queue.
+ *
+ * @param section     The LED strip section.
+ * @param color       The breather color.
+ * @param length      The length of the breath.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
 static int pushBreatherSequence(uint32_t section, Color_t *color,
                                 uint32_t length)
 {
