@@ -60,6 +60,8 @@ ZTEST(ledMngr_suite, test_ledMngrInit_LedStripInitFail)
 {
   int failRet = -EIO;
 
+  zephyrLedStripInit_fake.return_val = failRet;
+
   zassert_equal(failRet, ledMngrInit(),
     "ledMngrInit failed to return the error code.");
   zassert_equal(1, zephyrLedStripInit_fake.call_count,
@@ -77,6 +79,8 @@ ZTEST(ledMngr_suite, test_ledMngrInit_LedStripInitFail)
 ZTEST(ledMngr_suite, test_ledMngrInit_CreateThread)
 {
   int successRet = 0;
+
+  zephyrLedStripInit_fake.return_val = successRet;
 
   zassert_equal(successRet, ledMngrInit(),
     "ledMngrInit failed to return the success code.");

@@ -32,7 +32,7 @@ tests:
       - CONFIG_ENYA_LED_STRIP=y
       - CONFIG_HEAP_MEM_POOL_SIZE=256
   tv_bench_ctlr_coprocessor.ledMngr:
-    platform_allow: qemu_cortex_m0
+    platform_allow: qemu_cortex_m3
     tags: ledMngr
     extra_args: TEST_SUITE=ledMngr
     extra_configs:
