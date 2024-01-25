@@ -42,6 +42,11 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
 #define SEQ_BREATHER_USAGE  "Set a breather sequence: sequence breather <section> <HEX color> <sequence length (sec)>."
 
 /**
+ * @brief The breather sequence command usage.
+*/
+#define SEQ_FADE_CHASER_USAGE  "Set a fade chaser sequence: sequence fade_chaser <section> <HEX color> <sequence length (sec)> <direction>."
+
+/**
  * @brief The solid color sequence argment count
 */
 #define SOLID_SEQ_ARG_CNT                   2
@@ -50,6 +55,7 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
  * @brief The breather sequence argument count
 */
 #define BREATHER_SEQ_ARG_CNT                3
+
 /**
  * @brief The fade chaser sequence argument count
 */
@@ -197,6 +203,30 @@ static int pushBreatherSequence(uint32_t section, Color_t *color,
 }
 
 /**
+ * @brief   Push a fade chaser sequence in the sequence queue.
+ *
+ * @param section       The LED strip section.
+ * @param color         The chaser color.
+ * @param length        The chaser full travel time length.
+ * @param isinverted    The inversion flag.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int pushFadeChaserSequence(uint32_t section, Color_t *color,
+                                  uint32_t length, bool isinverted)
+{
+  LedSequence_t sequence = {.sectionId = section,
+                            .seqType = SEQ_FADE_CHASER,
+                            .timeBase = length,
+                            .timeUnit = SECONDS,
+                            .isInverted = isinverted};
+
+  sequence.startColor.hexColor = color->hexColor;
+
+  return appMsgPushLedSequence(&sequence);
+}
+
+/**
  * @brief   Execute the solid color sequence command.
  *
  * @param shell     The shell instance.
@@ -265,11 +295,49 @@ static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
   return -EINVAL;
 }
 
+/**
+ * @brief   Execute the fade chaser sequence command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execFadeChaserSeq(const struct shell *shell, size_t argc, char **argv)
+{
+  int rc;
+  uint32_t section;
+  Color_t color;
+  uint32_t length;
+  bool isInverted;
+
+  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color) &&
+    isLengthValid(argv[2], &length) && isDirectionValid(argv[3], &isInverted))
+  {
+    rc = pushFadeChaserSequence(section, &color, length, isInverted);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to push the breather sequence");
+      return rc;
+    }
+    shell_print(shell, "OK");
+    return 0;
+  }
+
+  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s",
+    argv[0], argv[1], argv[2]);
+
+  return -EINVAL;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(seq_sub,
 	SHELL_CMD_ARG(solid, NULL, SEQ_SOLID_USAGE, execSolidSeq,
                 SOLID_SEQ_ARG_CNT, 0),
   SHELL_CMD_ARG(breather, NULL, SEQ_BREATHER_USAGE, execBreatherSeq,
                 BREATHER_SEQ_ARG_CNT, 0),
+  SHELL_CMD_ARG(fade_chaser, NULL, SEQ_FADE_CHASER_USAGE, execFadeChaserSeq,
+                FADE_CHASER_SEQ_ARG_CNT, 0),
 	SHELL_SUBCMD_SET_END);
 SHELL_CMD_REGISTER(sequence, &seq_sub, SEQ_USAGE,	NULL);
 

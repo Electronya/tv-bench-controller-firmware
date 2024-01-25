@@ -60,6 +60,7 @@ typedef struct
   Color_t startColor;                   /**< The solid color or the range start color. */
   Color_t endColor;                     /**< The range end color. */
   uint8_t sectionId;                    /**< The section ID to apply the sequence to. */
+  bool isInverted;                      /**< The inverted flag. */
 } LedSequence_t;
 
 /**

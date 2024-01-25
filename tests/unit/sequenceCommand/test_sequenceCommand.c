@@ -76,6 +76,26 @@ static int customPushBreatherSequence(LedSequence_t *seq)
   return 0;
 }
 
+/**
+ * @brief   The custom push fade chase sequence mock.
+ *
+ * @param sequence  The sequence to push.
+ *
+ * @return  since always successful, always 0.
+ */
+static int customPushFadeChaserSequence(LedSequence_t *seq)
+{
+  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
+  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
+  zassert_equal(expectedSeq.isInverted, seq->isInverted, "bad sequence pushed.");
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
+    "bad sequence pushed.");
+
+  return 0;
+}
+
 #define SECTION_CONVERT_TEST_COUNT                  3
 /**
  * @test  isSectionValid must return false if the convertion fails.
@@ -309,6 +329,54 @@ ZTEST(seqCommand_suite, test_pushBreatherSequence_success)
 
   zassert_equal(successRet, pushBreatherSequence(section, &color, length),
     "pushBreatherSequence failed to return the success code.");
+}
+
+/**
+ * @test  pushFadeChaserSequence must return the error if the pushing
+ *        operation fails.
+*/
+ZTEST(seqCommand_suite, test_pushFadeChaserSequence_pushFail)
+{
+  int failRet = -ENOSPC;
+  uint32_t section = 10;
+  Color_t color = {.hexColor = 0xffffff};
+  uint32_t length = 50;
+  bool isInverted = false;
+
+  appMsgPushLedSequence_fake.return_val = failRet;
+
+  zassert_equal(failRet, pushFadeChaserSequence(section, &color, length,
+    isInverted), "pushFadeChaserSequence failed to return the error code.");
+}
+
+#define DIRECTION_TEST_COUNT                          2
+/**
+ * @test  pushFadeChaserSequence must return the success code and push
+ *        the new sequence.
+*/
+ZTEST(seqCommand_suite, test_pushFadeChaserSequence_success)
+{
+  int successRet = 0;
+  uint32_t sections[DIRECTION_TEST_COUNT] = {10, 2};
+  Color_t colors[DIRECTION_TEST_COUNT] = {{.hexColor = 0xffffff},
+                                          {.hexColor = 0x00aa00}};
+  uint32_t lengths[DIRECTION_TEST_COUNT] = {50, 100};
+  bool isInverted[DIRECTION_TEST_COUNT] = {true, false};
+
+  appMsgPushLedSequence_fake.custom_fake = customPushFadeChaserSequence;
+
+  for(uint8_t i = 0; i < DIRECTION_TEST_COUNT; ++i)
+  {
+    expectedSeq.seqType = SEQ_FADE_CHASER;
+    expectedSeq.sectionId = sections[i];
+    expectedSeq.startColor.hexColor = colors[i].hexColor;
+    expectedSeq.timeBase = lengths[i];
+    expectedSeq.timeUnit = SECONDS;
+    expectedSeq.isInverted = isInverted[i];
+
+    zassert_equal(successRet, pushFadeChaserSequence(sections[i], colors + i,
+      lengths[i], isInverted[i]), "pushFadeChaserSequence failed to return the success code.");
+  }
 }
 
 /** @} */
