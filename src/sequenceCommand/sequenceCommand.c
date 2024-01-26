@@ -42,9 +42,14 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
 #define SEQ_BREATHER_USAGE  "Set a breather sequence: sequence breather <section> <HEX color> <sequence length (sec)>."
 
 /**
- * @brief The breather sequence command usage.
+ * @brief The fade chaser sequence command usage.
 */
 #define SEQ_FADE_CHASER_USAGE  "Set a fade chaser sequence: sequence fade_chaser <section> <HEX color> <sequence length (sec)> <direction>."
+
+/**
+ * @brief The color range sequence command usage.
+*/
+#define SEQ_COLOR_RANGE_USAGE  "Set a color range sequence: sequence range <section> <HEX start color> <HEX end color> <sequence length (sec)>."
 
 /**
  * @brief The solid color sequence argment count
@@ -60,6 +65,11 @@ LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
  * @brief The fade chaser sequence argument count
 */
 #define FADE_CHASER_SEQ_ARG_CNT             4
+
+/**
+ * @brief The color range sequence argument count
+*/
+#define COLOR_RANGE_SEQ_ARG_CNT             4
 
 /**
  * @brief The normal direction argument value.
@@ -216,12 +226,36 @@ static int pushFadeChaserSequence(uint32_t section, Color_t *color,
                                   uint32_t length, bool isinverted)
 {
   LedSequence_t sequence = {.sectionId = section,
-                            .seqType = SEQ_FADE_CHASER,
                             .timeBase = length,
-                            .timeUnit = SECONDS,
-                            .isInverted = isinverted};
+                            .timeUnit = SECONDS};
+
+  sequence.seqType = isinverted ? SEQ_INVERT_FADE_CHASER : SEQ_FADE_CHASER;
 
   sequence.startColor.hexColor = color->hexColor;
+
+  return appMsgPushLedSequence(&sequence);
+}
+
+/**
+ * @brief   Push a color range sequence in the sequence queue.
+ *
+ * @param section       The LED strip section.
+ * @param startClr      The range start color.
+ * @param endClr        The range end color.
+ * @param length        The full range time length.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int pushColorRangeSequence(uint32_t section, Color_t *startClr,
+                                  Color_t *endClr, uint32_t length)
+{
+  LedSequence_t sequence = {.sectionId = section,
+                            .seqType = SEQ_COLOR_RANGE,
+                            .timeBase = length,
+                            .timeUnit = SECONDS};
+
+  sequence.startColor.hexColor = startClr->hexColor;
+  sequence.endColor.hexColor = endClr->hexColor;
 
   return appMsgPushLedSequence(&sequence);
 }
@@ -325,8 +359,44 @@ static int execFadeChaserSeq(const struct shell *shell, size_t argc, char **argv
     return 0;
   }
 
-  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s",
-    argv[0], argv[1], argv[2]);
+  shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s, direction %s",
+    argv[0], argv[1], argv[2], argv[3]);
+
+  return -EINVAL;
+}
+
+/**
+ * @brief   Execute the colorange sequence command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execRangeSeq(const struct shell *shell, size_t argc, char **argv)
+{
+  int rc;
+  uint32_t section;
+  Color_t startClr;
+  Color_t endClr;
+  uint32_t length;
+
+  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &startClr) &&
+    isColorValid(argv[2], &endClr) && isLengthValid(argv[3], &length))
+  {
+    rc = pushColorRangeSequence(section, &startClr, &endClr, length);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to push the breather sequence");
+      return rc;
+    }
+    shell_print(shell, "OK");
+    return 0;
+  }
+
+  shell_print(shell, "FAILED: Invalid arguments. section: %s, start color: %s, end color: %s, length %s",
+    argv[0], argv[1], argv[2], argv[3]);
 
   return -EINVAL;
 }
@@ -338,6 +408,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(seq_sub,
                 BREATHER_SEQ_ARG_CNT, 0),
   SHELL_CMD_ARG(fade_chaser, NULL, SEQ_FADE_CHASER_USAGE, execFadeChaserSeq,
                 FADE_CHASER_SEQ_ARG_CNT, 0),
+  SHELL_CMD_ARG(range, NULL, SEQ_COLOR_RANGE_USAGE, execRangeSeq,
+                COLOR_RANGE_SEQ_ARG_CNT, 0),
 	SHELL_SUBCMD_SET_END);
 SHELL_CMD_REGISTER(sequence, &seq_sub, SEQ_USAGE,	NULL);
 
