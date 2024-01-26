@@ -110,6 +110,29 @@ static int custompushColorRangeSequence(LedSequence_t *seq)
   zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
   zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
     "bad sequence pushed.");
+  zassert_equal(expectedSeq.endColor.hexColor, seq->endColor.hexColor,
+    "bad sequence pushed.");
+
+  return 0;
+}
+
+/**
+ * @brief   The custom push color range chaser sequence mock.
+ *
+ * @param sequence  The sequence to push.
+ *
+ * @return  since always successful, always 0.
+ */
+static int custompushRangeChaserSequence(LedSequence_t *seq)
+{
+  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
+  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
+    "bad sequence pushed.");
+  zassert_equal(expectedSeq.endColor.hexColor, seq->endColor.hexColor,
+    "bad sequence pushed.");
 
   return 0;
 }
@@ -437,6 +460,58 @@ ZTEST(seqCommand_suite, test_pushColorRangeSequence_success)
 
   zassert_equal(successRet, pushColorRangeSequence(section, &startClr, &endClr,
     length), "pushColorRangeSequence failed to return the success code.");
+}
+
+/**
+ * @test  pushRangeChaserSequence must return the error if the pushing
+ *        operation fails.
+*/
+ZTEST(seqCommand_suite, test_pushRangeChaserSequence_pushFail)
+{
+  int failRet = -ENOSPC;
+  uint32_t section = 10;
+  Color_t startClr = {.hexColor = 0xffffff};
+  Color_t endClr = {.hexColor = 0x00ee00};
+  uint32_t length = 50;
+  bool isInverted = false;
+
+  appMsgPushLedSequence_fake.return_val = failRet;
+
+  zassert_equal(failRet, pushRangeChaserSequence(section, &startClr, &endClr,
+    length, isInverted), "pushRangeChaserSequence failed to return the error code.");
+}
+
+#define DIRECTION_TEST_COUNT                          2
+/**
+ * @test  pushRangeChaserSequence must return the success code and push
+ *        the new sequence.
+*/
+ZTEST(seqCommand_suite, test_pushRangeChaserSequence_success)
+{
+  int successRet = 0;
+  uint32_t sections[DIRECTION_TEST_COUNT] = {10, 2};
+  Color_t startClrs[DIRECTION_TEST_COUNT] = {{.hexColor = 0xffffff},
+                                             {.hexColor = 0x00aa00}};
+  Color_t endClrs[DIRECTION_TEST_COUNT] = {{.hexColor = 0x00bb00},
+                                           {.hexColor = 0xffccff}};
+  uint32_t lengths[DIRECTION_TEST_COUNT] = {50, 100};
+  bool isInverted[DIRECTION_TEST_COUNT] = {true, false};
+
+  appMsgPushLedSequence_fake.custom_fake = custompushRangeChaserSequence;
+
+  for(uint8_t i = 0; i < DIRECTION_TEST_COUNT; ++i)
+  {
+    expectedSeq.seqType = isInverted[i] ? SEQ_INVERT_RANGE_CHASER : SEQ_RANGE_CHASER;
+    expectedSeq.sectionId = sections[i];
+    expectedSeq.startColor.hexColor = startClrs[i].hexColor;
+    expectedSeq.endColor.hexColor = endClrs[i].hexColor;
+    expectedSeq.timeBase = lengths[i];
+    expectedSeq.timeUnit = SECONDS;
+
+    zassert_equal(successRet, pushRangeChaserSequence(sections[i],
+      startClrs + i, endClrs + i, lengths[i], isInverted[i]),
+      "pushRangeChaserSequence failed to return the success code.");
+  }
 }
 
 /** @} */
