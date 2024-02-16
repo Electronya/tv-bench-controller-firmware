@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2023 by Electronya
  *
- * @file      colorManager.h
+ * @file      colorManager.c
  * @author    jbacon
  * @date      2023-12-08
  * @brief     Color Manager Module
