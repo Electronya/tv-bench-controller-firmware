@@ -22,6 +22,19 @@
 /* Setting module logging */
 LOG_MODULE_REGISTER(CONFIGURATOR_MODULE_NAME);
 
+/**
+ * @brief The configuration data structure.
+*/
+typedef struct
+{
+  bool isReady;
+} Configuration_t;
 
+static Configuration_t config = {.isReady = false};
+
+bool configuratorIsReady(void)
+{
+  return config.isReady;
+}
 
 /** @} */

@@ -16,7 +16,13 @@
 #ifndef CONFIGURATOR
 #define CONFIGURATOR
 
-
+/**
+ * @brief   Check if the configuration was uploaded by the Pi and
+ *          is ready to use.
+ *
+ * @return  true if the configuration is ready, false otherwise.
+ */
+bool configuratorIsReady(void);
 
 #endif    /* CONFIGURATOR */
 

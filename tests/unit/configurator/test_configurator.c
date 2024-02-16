@@ -30,11 +30,24 @@ ZTEST_SUITE(configurator_suite, NULL, NULL, configuratorCaseSetup,
   NULL, NULL);
 
 /**
- * @test  colorMngrSetSingle must set the pixels to the sequence color.
+ * @test  configuratorIsReady must return false when the configuration was
+ *        not yet loaded by the Pi and the configuration is not ready to
+ *        be used.
 */
-ZTEST(configurator_suite, test_colorMngrSetSingle_SetColor)
+ZTEST(configurator_suite, test_configuratorIsReady_NotReady)
 {
-  zassert_false(0);
+  zassert_false(configuratorIsReady());
+}
+
+/**
+ * @test  configuratorIsReady must return true when the configuration was
+ *        loaded by the Pi and the configuration is ready to be used.
+*/
+ZTEST(configurator_suite, test_configuratorIsReady_Ready)
+{
+  config.isReady = true;
+
+  zassert_true(configuratorIsReady());
 }
 
 /** @} */
