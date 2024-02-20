@@ -76,6 +76,15 @@ void configuratorSetAsReady(void);
  */
 int configuratorSetActiveLedCount(uint8_t activeLedCount);
 
+/**
+ * @brief   Set the section count.
+ *
+ * @param seqCount        The section count.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorSetSectionCount(uint8_t seqCount);
+
 #endif    /* CONFIGURATOR */
 
 /** @} */

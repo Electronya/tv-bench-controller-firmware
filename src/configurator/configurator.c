@@ -55,4 +55,14 @@ int configuratorSetActiveLedCount(uint8_t activeLedCount)
   return 0;
 }
 
+int configuratorSetSectionCount(uint8_t seqCount)
+{
+  if(seqCount == 0 || seqCount > MAX_SECTION_COUNT)
+    return -EINVAL;
+
+  config.dynamicConfig.sectionCount = seqCount;
+
+  return 0;
+}
+
 /** @} */

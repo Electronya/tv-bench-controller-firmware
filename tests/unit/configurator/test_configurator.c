@@ -139,5 +139,35 @@ ZTEST(configurator_suite, test_configuratorSetActiveLedCount_Success)
   }
 }
 
+#define SECTION_COUNT_TEST_COUNT                      2
+/**
+ * @test  configuratorSetSectionCount must return an invalid parameter
+ *        error when the new section count is 0 or greater than the max
+ *        section count.
+*/
+ZTEST(configurator_suite, test_configuratorSetSectionCount_BadSectionCount)
+{
+  int failRet = -EINVAL;
+  uint8_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {0, MAX_SECTION_COUNT + 1};
+
+  for(uint8_t i = 0; i < SECTION_COUNT_TEST_COUNT; ++i)
+    zassert_equal(failRet, configuratorSetSectionCount(sectionCounts[i]));
+}
+
+/**
+ * @test  configuratorSetSectionCount must return success and save the new
+ *        section count when it's in range.
+*/
+ZTEST(configurator_suite, test_configuratorSetSectionCount_Success)
+{
+  int successRet = 0;
+  uint8_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {1, MAX_SECTION_COUNT};
+
+  for(uint8_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
+  {
+    zassert_equal(successRet, configuratorSetSectionCount(sectionCounts[i]));
+    zassert_equal(sectionCounts[i], config.dynamicConfig.sectionCount);
+  }
+}
 
 /** @} */
