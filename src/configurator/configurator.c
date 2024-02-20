@@ -16,6 +16,7 @@
 #include <zephyr/logging/log.h>
 
 #include "configurator.h"
+#include "zephyrLedStrip.h"
 
 #define CONFIGURATOR_MODULE_NAME configurator_module
 
@@ -23,18 +24,25 @@
 LOG_MODULE_REGISTER(CONFIGURATOR_MODULE_NAME);
 
 /**
- * @brief The configuration data structure.
+ * @brief The configuration
 */
-typedef struct
-{
-  bool isReady;
-} Configuration_t;
-
-static Configuration_t config = {.isReady = false};
+static Configuration_t config =
+  {.isReady = false,
+#ifndef CONFIG_ZTEST
+   .maxLedCount = DT_PROP(DT_ALIAS(led_strip), chain_length),
+#else
+   .maxLedCount = 18,
+#endif
+  };
 
 bool configuratorIsReady(void)
 {
   return config.isReady;
+}
+
+void configuratorSetAsReady(void)
+{
+  config.isReady = true;
 }
 
 /** @} */
