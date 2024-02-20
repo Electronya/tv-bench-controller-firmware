@@ -67,6 +67,15 @@ bool configuratorIsReady(void);
  */
 void configuratorSetAsReady(void);
 
+/**
+ * @brief   Set the active LED count.
+ *
+ * @param activeLedCount  The active LED count.
+ *
+ * @return  o if successful, the error codeotherwise.
+ */
+int configuratorSetActiveLedCount(uint8_t activeLedCount);
+
 #endif    /* CONFIGURATOR */
 
 /** @} */

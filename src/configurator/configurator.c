@@ -45,4 +45,14 @@ void configuratorSetAsReady(void)
   config.isReady = true;
 }
 
+int configuratorSetActiveLedCount(uint8_t activeLedCount)
+{
+  if(activeLedCount == 0 || activeLedCount > config.maxLedCount)
+    return -EINVAL;
+
+  config.dynamicConfig.activeLedCount = activeLedCount;
+
+  return 0;
+}
+
 /** @} */
