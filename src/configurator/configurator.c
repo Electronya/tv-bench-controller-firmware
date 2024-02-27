@@ -28,6 +28,8 @@ LOG_MODULE_REGISTER(CONFIGURATOR_MODULE_NAME);
 */
 static Configuration_t config =
   {.isReady = false,
+   .dynamicConfig.activeLedCount = 0,
+   .dynamicConfig.sectionCount = 0,
 #ifndef CONFIG_ZTEST
    .maxLedCount = DT_PROP(DT_ALIAS(led_strip), chain_length),
 #else
@@ -61,6 +63,20 @@ int configuratorSetSectionCount(uint8_t seqCount)
     return -EINVAL;
 
   config.dynamicConfig.sectionCount = seqCount;
+
+  return 0;
+}
+
+int configuratorSetSectionConfig(uint8_t index, LedSection_t *section)
+{
+  if(config.dynamicConfig.sectionCount == 0)
+    return -EPERM;
+
+  if(index >= config.dynamicConfig.sectionCount ||
+     section->switchId >= MAX_SWITCH_COUNT)
+    return -EINVAL;
+
+  memcpy(config.dynamicConfig.sections + index, section, sizeof(LedSection_t));
 
   return 0;
 }

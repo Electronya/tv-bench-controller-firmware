@@ -24,6 +24,11 @@
 #define MAX_SECTION_COUNT                         10
 
 /**
+ * @brief The maximum switch count
+*/
+#define MAX_SWITCH_COUNT                          3
+
+/**
  * @brief The LED section data structure.
 */
 typedef struct
@@ -84,6 +89,16 @@ int configuratorSetActiveLedCount(uint8_t activeLedCount);
  * @return  0 if successful, the error code otherwise.
  */
 int configuratorSetSectionCount(uint8_t seqCount);
+
+/**
+ * @brief   Set the section at index configuration
+ *
+ * @param index           The section index.
+ * @param section         The section configuration.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorSetSectionConfig(uint8_t index, LedSection_t *section);
 
 #endif    /* CONFIGURATOR */
 
