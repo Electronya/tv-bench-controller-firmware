@@ -81,4 +81,9 @@ int configuratorSetSectionConfig(uint8_t index, LedSection_t *section)
   return 0;
 }
 
+int8_t configuratorGetMaxLedCount(void)
+{
+  return 0;
+}
+
 /** @} */

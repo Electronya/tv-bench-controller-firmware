@@ -100,6 +100,13 @@ int configuratorSetSectionCount(uint8_t seqCount);
  */
 int configuratorSetSectionConfig(uint8_t index, LedSection_t *section);
 
+/**
+ * @brief   Get the maximum number of LED in the strip.
+ *
+ * @return  The maximum allowed count of LED in the strip.
+ */
+int8_t configuratorGetMaxLedCount(void);
+
 #endif    /* CONFIGURATOR */
 
 /** @} */
