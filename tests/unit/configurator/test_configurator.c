@@ -26,6 +26,11 @@ DEFINE_FFF_GLOBALS;
 */
 #define TEST_MAX_LED_COUNT                  18
 
+/**
+ * @brief The test active LED count.
+*/
+#define TEST_ACTIVE_LED                     12
+
 struct configurator_suite_fixture
 {
   Configuration_t config;
@@ -57,7 +62,8 @@ static void configuratorCaseSetup(void *f)
   memset(&config, 0, sizeof(Configuration_t));
   config.maxLedCount = TEST_MAX_LED_COUNT;
 
-  config.dynamicConfig.activeLedCount = 12;
+  config.isReady = true;
+  config.dynamicConfig.activeLedCount = TEST_ACTIVE_LED;
   config.dynamicConfig.sectionCount = 4;
   ledPerSection = config.dynamicConfig.activeLedCount /
     config.dynamicConfig.sectionCount;
@@ -82,6 +88,8 @@ ZTEST_SUITE(configurator_suite, NULL, configurationSuiteSetup,
 */
 ZTEST(configurator_suite, test_configuratorIsReady_NotReady)
 {
+  config.isReady = false;
+
   zassert_false(configuratorIsReady());
 }
 
@@ -91,8 +99,6 @@ ZTEST(configurator_suite, test_configuratorIsReady_NotReady)
 */
 ZTEST(configurator_suite, test_configuratorIsReady_Ready)
 {
-  config.isReady = true;
-
   zassert_true(configuratorIsReady());
 }
 
@@ -270,6 +276,42 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_Success)
   zassert_equal(section.switchId, config.dynamicConfig.sections[sectionIdx].switchId);
   zassert_equal(section.switchSeq.seqType, config.dynamicConfig.sections[sectionIdx].switchSeq.seqType);
   zassert_equal(section.switchSeq.startColor.hexColor, config.dynamicConfig.sections[sectionIdx].switchSeq.startColor.hexColor);
+}
+
+/**
+ * @test  configuratorGetMaxLedCount must return the maximal number of LED
+ *        in the strip.
+*/
+ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
+{
+  zassert_equal(TEST_MAX_LED_COUNT, configuratorGetMaxLedCount());
+}
+
+/**
+ * @test  configuratorGetActiveLedCount must return an operation not permitted
+ *        if the configuration is not ready.
+*/
+ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
+{
+  int failRet = -EPERM;
+  uint8_t activeLedCount;
+
+  config.isReady = false;
+
+  zassert_equal(failRet, configuratorGetActiveLedCount(&activeLedCount));
+}
+
+/**
+ * @test  configuratorGetActiveLedCount must return the success code and the
+ *        active LED count in the strip if the configuration is ready.
+*/
+ZTEST(configurator_suite, test_configuratorGetActiveLedCount_Ready)
+{
+  int successRet = 0;
+  uint8_t activeLedCount = 0;
+
+  zassert_equal(successRet, configuratorGetActiveLedCount(&activeLedCount));
+  zassert_equal(TEST_ACTIVE_LED, activeLedCount);
 }
 
 /** @} */

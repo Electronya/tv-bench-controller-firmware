@@ -83,6 +83,16 @@ int configuratorSetSectionConfig(uint8_t index, LedSection_t *section)
 
 int8_t configuratorGetMaxLedCount(void)
 {
+  return config.maxLedCount;
+}
+
+int configuratorGetActiveLedCount(uint8_t *activeLedCount)
+{
+  if(!config.isReady)
+    return -EPERM;
+
+  *activeLedCount = config.dynamicConfig.activeLedCount;
+
   return 0;
 }
 

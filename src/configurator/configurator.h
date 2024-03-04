@@ -107,6 +107,15 @@ int configuratorSetSectionConfig(uint8_t index, LedSection_t *section);
  */
 int8_t configuratorGetMaxLedCount(void);
 
+/**
+ * @brief   Get the active LED count in the strip.
+ *
+ * @param activeLedCount  The active LED count in the strip.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorGetActiveLedCount(uint8_t *activeLedCount);
+
 #endif    /* CONFIGURATOR */
 
 /** @} */
