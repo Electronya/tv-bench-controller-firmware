@@ -116,6 +116,16 @@ int8_t configuratorGetMaxLedCount(void);
  */
 int configuratorGetActiveLedCount(uint8_t *activeLedCount);
 
+/**
+ * @brief   Get a specific section configuration.
+ *
+ * @param index           The section index.
+ * @param section         The section configuration.
+ *
+ * @return  0 if successful, the erroro code otherwise.
+ */
+int configuratorGetSection(uint8_t index, LedSection_t **section);
+
 #endif    /* CONFIGURATOR */
 
 /** @} */

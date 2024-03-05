@@ -314,4 +314,50 @@ ZTEST(configurator_suite, test_configuratorGetActiveLedCount_Ready)
   zassert_equal(TEST_ACTIVE_LED, activeLedCount);
 }
 
+/**
+ * @test  configuratorGetSection must return an operation not permitted
+ *        if the configuration is not ready.
+*/
+ZTEST(configurator_suite, test_configuratorGetSection_NotReady)
+{
+  int failRet = -EPERM;
+  LedSection_t *section = NULL;
+
+  config.isReady = false;
+
+  zassert_equal(failRet, configuratorGetSection(0, &section));
+}
+
+#define GET_SECTION_ERROR_TEST_CNT                  2
+/**
+ * @test  configuratorGetSection must return an invalid parameter error
+ *        when the requested section does not exist.
+*/
+ZTEST(configurator_suite, test_configuratorGetSection_BadSection)
+{
+  int failRet = -EINVAL;
+  LedSection_t *section = NULL;
+  uint8_t sectionIdxes[GET_SECTION_ERROR_TEST_CNT] =
+    {config.dynamicConfig.sectionCount, config.dynamicConfig.sectionCount + 10};
+
+  for(uint8_t i = 0; i < GET_SECTION_ERROR_TEST_CNT; i++)
+    zassert_equal(failRet, configuratorGetSection(sectionIdxes[i], &section));
+}
+
+/**
+ * @test  configuratorGetSection must return the success code and the requested
+ *        LED section configuration.
+*/
+ZTEST(configurator_suite, test_configuratorGetSection_Success)
+{
+  int successRet = 0;
+  LedSection_t *section = NULL;
+
+  for( uint8_t i = 0; i < config.dynamicConfig.sectionCount; i++)
+  {
+    zassert_equal(successRet, configuratorGetSection(i, &section));
+    zassert_equal(config.dynamicConfig.sections + i, section);
+  }
+}
+
 /** @} */

@@ -96,4 +96,17 @@ int configuratorGetActiveLedCount(uint8_t *activeLedCount)
   return 0;
 }
 
+int configuratorGetSection(uint8_t index, LedSection_t **section)
+{
+  if(!config.isReady)
+    return -EPERM;
+
+  if(index >= config.dynamicConfig.sectionCount)
+    return -EINVAL;
+
+  *section = config.dynamicConfig.sections + index;
+
+  return 0;
+}
+
 /** @} */
