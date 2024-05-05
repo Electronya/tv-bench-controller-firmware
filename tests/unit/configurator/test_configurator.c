@@ -360,6 +360,4 @@ ZTEST(configurator_suite, test_configuratorGetSection_Success)
   }
 }
 
-/* small change to test cicd */
-
 /** @} */
