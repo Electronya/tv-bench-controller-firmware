@@ -25,6 +25,12 @@ LOG_MODULE_REGISTER(MAIN_MODULE_NAME);
 int main(void)
 {
   int rc;
+  LedSequence_t seq = {
+    .startColor.hexColor = 0xff0000,
+    .seqType = SEQ_SOLID,
+    .timeBase = ZEPHYR_TIME_FOREVER,
+    .timeUnit = MILLI_SEC,
+  };
 
   LOG_INF("booting tv bench controller");
 
@@ -41,6 +47,8 @@ int main(void)
     LOG_ERR("unable to initialize the LED manager.");
     return rc;
   }
+
+  appMsgPushLedSequence( &seq );
 
   return 0;
 }
