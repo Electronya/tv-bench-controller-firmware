@@ -34,7 +34,7 @@ LOG_MODULE_REGISTER(LED_MNGR_MODULE_NAME);
 /**
  * @brief The thread stack size.
 */
-#define LED_MNGR_STACK_SIZE                         256
+#define LED_MNGR_STACK_SIZE                         512
 
 /**
  * @brief The thread priority.
@@ -134,6 +134,13 @@ static void ledMngrThread(void *p1, void *p2, void *p3)
         LOG_ERR("unsupported sequence type");
         return;
       break;
+    }
+
+    rc = zephyrLedStripUpdate(&ledStrip);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to update LED strip");
+      return;
     }
 
     /* TODO calculate the sleep from the sequence time base */
