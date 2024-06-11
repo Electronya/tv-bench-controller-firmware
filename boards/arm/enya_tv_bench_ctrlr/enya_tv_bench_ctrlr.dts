@@ -112,7 +112,7 @@
 		frame-format = <32768>; /* SPI_FRAME_FORMAT_TI */
 
 		/* LED strip */
-		chain-length = <18>; /* arbitrary; change at will */
+		chain-length = <8>; /* arbitrary; change at will */
 		spi-one-frame = <ONE_FRAME>;
 		spi-zero-frame = <ZERO_FRAME>;
 		color-mapping = <LED_COLOR_ID_GREEN
