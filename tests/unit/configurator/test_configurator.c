@@ -31,33 +31,10 @@ DEFINE_FFF_GLOBALS;
 */
 #define TEST_ACTIVE_LED                     12
 
-struct configurator_suite_fixture
-{
-  Configuration_t config;
-};
-
-static void *configurationSuiteSetup(void)
-{
-  struct configurator_suite_fixture *fixture =
-    k_malloc(sizeof(struct configurator_suite_fixture));
-    printk("fixture address: %p", fixture);
-  zassume_not_null(fixture, NULL);
-
-  return (void *)fixture;
-}
-
-static void configuratorUiteTeardown(void *f)
-{
-  k_free(f);
-}
-
 static void configuratorCaseSetup(void *f)
 {
   uint8_t startLed;
   uint8_t ledPerSection;
-  // TODO: clean up if not used.
-  // struct configurator_suite_fixture *fixture =
-  //   (struct configurator_suite_fixture *)f;
 
   memset(&config, 0, sizeof(Configuration_t));
   config.maxLedCount = TEST_MAX_LED_COUNT;
@@ -78,8 +55,7 @@ static void configuratorCaseSetup(void *f)
   }
 }
 
-ZTEST_SUITE(configurator_suite, NULL, configurationSuiteSetup,
-  configuratorCaseSetup, NULL, configuratorUiteTeardown);
+ZTEST_SUITE(configurator_suite, NULL, NULL, configuratorCaseSetup, NULL, NULL);
 
 /**
  * @test  configuratorIsReady must return false when the configuration was
