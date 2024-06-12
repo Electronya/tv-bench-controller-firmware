@@ -40,6 +40,7 @@ FAKE_VOID_FUNC(seqMngrUpdateColorRangeFrame, Color_t*, Color_t*, bool,
 FAKE_VOID_FUNC(seqMngrUpdateColorRangeChaserFrame, Color_t*, Color_t*, bool,
   bool, ZephyrRgbPixel_t*, size_t);
 FAKE_VALUE_FUNC(int, zephyrLedStripInit, ZephyrLedStrip_t*, const uint32_t);
+FAKE_VALUE_FUNC(int, zephyrLedStripUpdate, ZephyrLedStrip_t*);
 FAKE_VOID_FUNC(zephyrThreadCreate, ZephyrThread_t*, char*, uint32_t,
   ZephyrTimeUnit_t);
 FAKE_VALUE_FUNC(uint32_t, zephyrThreadSleep, uint32_t, ZephyrTimeUnit_t);
