@@ -90,6 +90,42 @@ ZTEST(configurator_suite, test_configuratorSetAsReady_SetAsReady)
   zassert_true(config.isReady);
 }
 
+/**
+ * @test  configuratorGetMaxLedCount must return the maximal number of LED
+ *        in the strip.
+*/
+ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
+{
+  zassert_equal(TEST_MAX_LED_COUNT, configuratorGetMaxLedCount());
+}
+
+/**
+ * @test  configuratorGetActiveLedCount must return an operation not permitted
+ *        if the configuration is not ready.
+*/
+ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
+{
+  int failRet = -EPERM;
+  size_t activeLedCount;
+
+  config.isReady = false;
+
+  zassert_equal(failRet, configuratorGetActiveLedCount(&activeLedCount));
+}
+
+/**
+ * @test  configuratorGetActiveLedCount must return the success code and the
+ *        active LED count in the strip if the configuration is ready.
+*/
+ZTEST(configurator_suite, test_configuratorGetActiveLedCount_Ready)
+{
+  int successRet = 0;
+  size_t activeLedCount = 0;
+
+  zassert_equal(successRet, configuratorGetActiveLedCount(&activeLedCount));
+  zassert_equal(TEST_ACTIVE_LED, activeLedCount);
+}
+
 #define ACTIVE_LED_COUNT_TEST_COUNT                   2
 /**
  * @test  configuratorSetActiveLedCount must return an invalid parameter
@@ -149,6 +185,52 @@ ZTEST(configurator_suite, test_configuratorSetSectionCount_Success)
   {
     zassert_equal(successRet, configuratorSetSectionCount(sectionCounts[i]));
     zassert_equal(sectionCounts[i], config.dynamicConfig.sectionCount);
+  }
+}
+
+/**
+ * @test  configuratorGetSection must return an operation not permitted
+ *        if the configuration is not ready.
+*/
+ZTEST(configurator_suite, test_configuratorGetSection_NotReady)
+{
+  int failRet = -EPERM;
+  LedSection_t *section = NULL;
+
+  config.isReady = false;
+
+  zassert_equal(failRet, configuratorGetSection(0, &section));
+}
+
+#define GET_SECTION_ERROR_TEST_CNT                  2
+/**
+ * @test  configuratorGetSection must return an invalid parameter error
+ *        when the requested section does not exist.
+*/
+ZTEST(configurator_suite, test_configuratorGetSection_BadSection)
+{
+  int failRet = -EINVAL;
+  LedSection_t *section = NULL;
+  size_t sectionIdxes[GET_SECTION_ERROR_TEST_CNT] =
+    {config.dynamicConfig.sectionCount, config.dynamicConfig.sectionCount + 10};
+
+  for(size_t i = 0; i < GET_SECTION_ERROR_TEST_CNT; i++)
+    zassert_equal(failRet, configuratorGetSection(sectionIdxes[i], &section));
+}
+
+/**
+ * @test  configuratorGetSection must return the success code and the requested
+ *        LED section configuration.
+*/
+ZTEST(configurator_suite, test_configuratorGetSection_Success)
+{
+  int successRet = 0;
+  LedSection_t *section = NULL;
+
+  for( size_t i = 0; i < config.dynamicConfig.sectionCount; i++)
+  {
+    zassert_equal(successRet, configuratorGetSection(i, &section));
+    zassert_equal(config.dynamicConfig.sections + i, section);
   }
 }
 
@@ -252,88 +334,6 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_Success)
   zassert_equal(section.switchId, config.dynamicConfig.sections[sectionIdx].switchId);
   zassert_equal(section.switchSeq.seqType, config.dynamicConfig.sections[sectionIdx].switchSeq.seqType);
   zassert_equal(section.switchSeq.startColor.hexColor, config.dynamicConfig.sections[sectionIdx].switchSeq.startColor.hexColor);
-}
-
-/**
- * @test  configuratorGetMaxLedCount must return the maximal number of LED
- *        in the strip.
-*/
-ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
-{
-  zassert_equal(TEST_MAX_LED_COUNT, configuratorGetMaxLedCount());
-}
-
-/**
- * @test  configuratorGetActiveLedCount must return an operation not permitted
- *        if the configuration is not ready.
-*/
-ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
-{
-  int failRet = -EPERM;
-  size_t activeLedCount;
-
-  config.isReady = false;
-
-  zassert_equal(failRet, configuratorGetActiveLedCount(&activeLedCount));
-}
-
-/**
- * @test  configuratorGetActiveLedCount must return the success code and the
- *        active LED count in the strip if the configuration is ready.
-*/
-ZTEST(configurator_suite, test_configuratorGetActiveLedCount_Ready)
-{
-  int successRet = 0;
-  size_t activeLedCount = 0;
-
-  zassert_equal(successRet, configuratorGetActiveLedCount(&activeLedCount));
-  zassert_equal(TEST_ACTIVE_LED, activeLedCount);
-}
-
-/**
- * @test  configuratorGetSection must return an operation not permitted
- *        if the configuration is not ready.
-*/
-ZTEST(configurator_suite, test_configuratorGetSection_NotReady)
-{
-  int failRet = -EPERM;
-  LedSection_t *section = NULL;
-
-  config.isReady = false;
-
-  zassert_equal(failRet, configuratorGetSection(0, &section));
-}
-
-#define GET_SECTION_ERROR_TEST_CNT                  2
-/**
- * @test  configuratorGetSection must return an invalid parameter error
- *        when the requested section does not exist.
-*/
-ZTEST(configurator_suite, test_configuratorGetSection_BadSection)
-{
-  int failRet = -EINVAL;
-  LedSection_t *section = NULL;
-  size_t sectionIdxes[GET_SECTION_ERROR_TEST_CNT] =
-    {config.dynamicConfig.sectionCount, config.dynamicConfig.sectionCount + 10};
-
-  for(size_t i = 0; i < GET_SECTION_ERROR_TEST_CNT; i++)
-    zassert_equal(failRet, configuratorGetSection(sectionIdxes[i], &section));
-}
-
-/**
- * @test  configuratorGetSection must return the success code and the requested
- *        LED section configuration.
-*/
-ZTEST(configurator_suite, test_configuratorGetSection_Success)
-{
-  int successRet = 0;
-  LedSection_t *section = NULL;
-
-  for( size_t i = 0; i < config.dynamicConfig.sectionCount; i++)
-  {
-    zassert_equal(successRet, configuratorGetSection(i, &section));
-    zassert_equal(config.dynamicConfig.sections + i, section);
-  }
 }
 
 /** @} */

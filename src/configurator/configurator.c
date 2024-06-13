@@ -47,6 +47,21 @@ void configuratorSetAsReady(void)
   config.isReady = true;
 }
 
+size_t configuratorGetMaxLedCount(void)
+{
+  return config.maxLedCount;
+}
+
+int configuratorGetActiveLedCount(size_t *activeLedCount)
+{
+  if(!config.isReady)
+    return -EPERM;
+
+  *activeLedCount = config.dynamicConfig.activeLedCount;
+
+  return 0;
+}
+
 int configuratorSetActiveLedCount(size_t activeLedCount)
 {
   if(activeLedCount == 0 || activeLedCount > config.maxLedCount)
@@ -67,6 +82,19 @@ int configuratorSetSectionCount(size_t seqCount)
   return 0;
 }
 
+int configuratorGetSection(size_t index, LedSection_t **section)
+{
+  if(!config.isReady)
+    return -EPERM;
+
+  if(index >= config.dynamicConfig.sectionCount)
+    return -EINVAL;
+
+  *section = config.dynamicConfig.sections + index;
+
+  return 0;
+}
+
 int configuratorSetSectionConfig(size_t index, LedSection_t *section)
 {
   if(config.dynamicConfig.sectionCount == 0)
@@ -77,34 +105,6 @@ int configuratorSetSectionConfig(size_t index, LedSection_t *section)
     return -EINVAL;
 
   memcpy(config.dynamicConfig.sections + index, section, sizeof(LedSection_t));
-
-  return 0;
-}
-
-size_t configuratorGetMaxLedCount(void)
-{
-  return config.maxLedCount;
-}
-
-int configuratorGetActiveLedCount(size_t *activeLedCount)
-{
-  if(!config.isReady)
-    return -EPERM;
-
-  *activeLedCount = config.dynamicConfig.activeLedCount;
-
-  return 0;
-}
-
-int configuratorGetSection(size_t index, LedSection_t **section)
-{
-  if(!config.isReady)
-    return -EPERM;
-
-  if(index >= config.dynamicConfig.sectionCount)
-    return -EINVAL;
-
-  *section = config.dynamicConfig.sections + index;
 
   return 0;
 }

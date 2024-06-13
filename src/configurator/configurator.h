@@ -73,6 +73,22 @@ bool configuratorIsReady(void);
 void configuratorSetAsReady(void);
 
 /**
+ * @brief   Get the maximum number of LED in the strip.
+ *
+ * @return  The maximum allowed count of LED in the strip.
+ */
+size_t configuratorGetMaxLedCount(void);
+
+/**
+ * @brief   Get the active LED count in the strip.
+ *
+ * @param activeLedCount  The active LED count in the strip.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorGetActiveLedCount(size_t *activeLedCount);
+
+/**
  * @brief   Set the active LED count.
  *
  * @param activeLedCount  The active LED count.
@@ -91,32 +107,6 @@ int configuratorSetActiveLedCount(size_t activeLedCount);
 int configuratorSetSectionCount(size_t seqCount);
 
 /**
- * @brief   Set the section at index configuration
- *
- * @param index           The section index.
- * @param section         The section configuration.
- *
- * @return  0 if successful, the error code otherwise.
- */
-int configuratorSetSectionConfig(size_t index, LedSection_t *section);
-
-/**
- * @brief   Get the maximum number of LED in the strip.
- *
- * @return  The maximum allowed count of LED in the strip.
- */
-size_t configuratorGetMaxLedCount(void);
-
-/**
- * @brief   Get the active LED count in the strip.
- *
- * @param activeLedCount  The active LED count in the strip.
- *
- * @return  0 if successful, the error code otherwise.
- */
-int configuratorGetActiveLedCount(size_t *activeLedCount);
-
-/**
  * @brief   Get a specific section configuration.
  *
  * @param index           The section index.
@@ -125,6 +115,16 @@ int configuratorGetActiveLedCount(size_t *activeLedCount);
  * @return  0 if successful, the erroro code otherwise.
  */
 int configuratorGetSection(size_t index, LedSection_t **section);
+
+/**
+ * @brief   Set the section at index configuration
+ *
+ * @param index           The section index.
+ * @param section         The section configuration.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorSetSectionConfig(size_t index, LedSection_t *section);
 
 #endif    /* CONFIGURATOR */
 
