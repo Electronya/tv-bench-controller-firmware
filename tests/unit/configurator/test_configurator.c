@@ -33,8 +33,8 @@ DEFINE_FFF_GLOBALS;
 
 static void configuratorCaseSetup(void *f)
 {
-  uint8_t startLed;
-  uint8_t ledPerSection;
+  size_t startLed;
+  size_t ledPerSection;
 
   memset(&config, 0, sizeof(Configuration_t));
   config.maxLedCount = TEST_MAX_LED_COUNT;
@@ -44,7 +44,7 @@ static void configuratorCaseSetup(void *f)
   config.dynamicConfig.sectionCount = 4;
   ledPerSection = config.dynamicConfig.activeLedCount /
     config.dynamicConfig.sectionCount;
-  for(uint8_t i = 0; i < config.dynamicConfig.sectionCount; ++i)
+  for(size_t i = 0; i < config.dynamicConfig.sectionCount; ++i)
   {
     startLed = i * ledPerSection;
     config.dynamicConfig.sections[i].firstLed = startLed;
@@ -99,9 +99,9 @@ ZTEST(configurator_suite, test_configuratorSetAsReady_SetAsReady)
 ZTEST(configurator_suite, test_configuratorSetActiveLedCount_BadLedCount)
 {
   int failRet = -EINVAL;
-  uint8_t ledCounts[ACTIVE_LED_COUNT_TEST_COUNT] = {0, TEST_MAX_LED_COUNT + 1};
+  size_t ledCounts[ACTIVE_LED_COUNT_TEST_COUNT] = {0, TEST_MAX_LED_COUNT + 1};
 
-  for(uint8_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
+  for(size_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
     zassert_equal(failRet, configuratorSetActiveLedCount(ledCounts[i]));
 }
 
@@ -112,9 +112,9 @@ ZTEST(configurator_suite, test_configuratorSetActiveLedCount_BadLedCount)
 ZTEST(configurator_suite, test_configuratorSetActiveLedCount_Success)
 {
   int successRet = 0;
-  uint8_t ledCounts[ACTIVE_LED_COUNT_TEST_COUNT] = {1, TEST_MAX_LED_COUNT};
+  size_t ledCounts[ACTIVE_LED_COUNT_TEST_COUNT] = {1, TEST_MAX_LED_COUNT};
 
-  for(uint8_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
+  for(size_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
   {
     zassert_equal(successRet, configuratorSetActiveLedCount(ledCounts[i]));
     zassert_equal(ledCounts[i], config.dynamicConfig.activeLedCount);
@@ -130,9 +130,9 @@ ZTEST(configurator_suite, test_configuratorSetActiveLedCount_Success)
 ZTEST(configurator_suite, test_configuratorSetSectionCount_BadSectionCount)
 {
   int failRet = -EINVAL;
-  uint8_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {0, MAX_SECTION_COUNT + 1};
+  size_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {0, MAX_SECTION_COUNT + 1};
 
-  for(uint8_t i = 0; i < SECTION_COUNT_TEST_COUNT; ++i)
+  for(size_t i = 0; i < SECTION_COUNT_TEST_COUNT; ++i)
     zassert_equal(failRet, configuratorSetSectionCount(sectionCounts[i]));
 }
 
@@ -143,9 +143,9 @@ ZTEST(configurator_suite, test_configuratorSetSectionCount_BadSectionCount)
 ZTEST(configurator_suite, test_configuratorSetSectionCount_Success)
 {
   int successRet = 0;
-  uint8_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {1, MAX_SECTION_COUNT};
+  size_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {1, MAX_SECTION_COUNT};
 
-  for(uint8_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
+  for(size_t i = 0; i < ACTIVE_LED_COUNT_TEST_COUNT; ++i)
   {
     zassert_equal(successRet, configuratorSetSectionCount(sectionCounts[i]));
     zassert_equal(sectionCounts[i], config.dynamicConfig.sectionCount);
@@ -160,12 +160,12 @@ ZTEST(configurator_suite, test_configuratorSetSectionCount_Success)
 ZTEST(configurator_suite, test_configuratorSetSectionConfig_CountNotInit)
 {
   int failRet = -EPERM;
-  uint8_t indexes[SET_SECTION_ERROR_TEST_COUNT] = {1, 6, MAX_SECTION_COUNT};
+  size_t indexes[SET_SECTION_ERROR_TEST_COUNT] = {1, 6, MAX_SECTION_COUNT};
   LedSection_t section;
 
   config.dynamicConfig.sectionCount = 0;
 
-  for(uint8_t i = 0; i < SET_SECTION_ERROR_TEST_COUNT; ++i)
+  for(size_t i = 0; i < SET_SECTION_ERROR_TEST_COUNT; ++i)
   {
     zassert_equal(failRet, configuratorSetSectionConfig(indexes[i], &section));
   }
@@ -178,12 +178,12 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_CountNotInit)
 ZTEST(configurator_suite, test_configuratorSetSectionConfig_IndexOutOfRange)
 {
   int failRet = -EINVAL;
-  uint8_t sectionCounts[SET_SECTION_ERROR_TEST_COUNT] =
+  size_t sectionCounts[SET_SECTION_ERROR_TEST_COUNT] =
     {1, 4, MAX_SECTION_COUNT};
   LedSection_t section;
-  uint8_t index;
+  size_t index;
 
-  for(uint8_t i = 0; i < SET_SECTION_ERROR_TEST_COUNT; ++i)
+  for(size_t i = 0; i < SET_SECTION_ERROR_TEST_COUNT; ++i)
   {
     config.dynamicConfig.sectionCount = sectionCounts[i];
     index = sectionCounts[i] + i;
@@ -200,16 +200,16 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_IndexOutOfRange)
 ZTEST(configurator_suite, test_configuratorSetSectionConfig_BadLedLimit)
 {
   int failRet = -EINVAL;
-  uint8_t sectionIdx = 2;
-  uint8_t firstLeds[SECTION_LED_LIMIT_TEST_CNT] =
+  size_t sectionIdx = 2;
+  size_t firstLeds[SECTION_LED_LIMIT_TEST_CNT] =
     {config.dynamicConfig.activeLedCount + 1,
      config.dynamicConfig.sections[sectionIdx].firstLed, 10};
-  uint8_t lastLeds[SECTION_LED_LIMIT_TEST_CNT] =
+  size_t lastLeds[SECTION_LED_LIMIT_TEST_CNT] =
     {config.dynamicConfig.activeLedCount + 1,
      config.dynamicConfig.sections[sectionIdx].lastLed, 9};
   LedSection_t section;
 
-  for(uint8_t i = 0; i < SECTION_LED_LIMIT_TEST_CNT; ++i)
+  for(size_t i = 0; i < SECTION_LED_LIMIT_TEST_CNT; ++i)
   {
     section.firstLed = firstLeds[i];
     section.lastLed = lastLeds[i];
@@ -239,7 +239,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_BadSwitch)
 ZTEST(configurator_suite, test_configuratorSetSectionConfig_Success)
 {
   int successRet = 0;
-  uint8_t sectionIdx = config.dynamicConfig.sectionCount - 1;
+  size_t sectionIdx = config.dynamicConfig.sectionCount - 1;
   LedSection_t section =
     {.firstLed = config.dynamicConfig.sections[sectionIdx].firstLed - 1,
      .lastLed = config.dynamicConfig.sections[sectionIdx].lastLed - 1,
@@ -270,7 +270,7 @@ ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
 ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
 {
   int failRet = -EPERM;
-  uint8_t activeLedCount;
+  size_t activeLedCount;
 
   config.isReady = false;
 
@@ -284,7 +284,7 @@ ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
 ZTEST(configurator_suite, test_configuratorGetActiveLedCount_Ready)
 {
   int successRet = 0;
-  uint8_t activeLedCount = 0;
+  size_t activeLedCount = 0;
 
   zassert_equal(successRet, configuratorGetActiveLedCount(&activeLedCount));
   zassert_equal(TEST_ACTIVE_LED, activeLedCount);
@@ -313,10 +313,10 @@ ZTEST(configurator_suite, test_configuratorGetSection_BadSection)
 {
   int failRet = -EINVAL;
   LedSection_t *section = NULL;
-  uint8_t sectionIdxes[GET_SECTION_ERROR_TEST_CNT] =
+  size_t sectionIdxes[GET_SECTION_ERROR_TEST_CNT] =
     {config.dynamicConfig.sectionCount, config.dynamicConfig.sectionCount + 10};
 
-  for(uint8_t i = 0; i < GET_SECTION_ERROR_TEST_CNT; i++)
+  for(size_t i = 0; i < GET_SECTION_ERROR_TEST_CNT; i++)
     zassert_equal(failRet, configuratorGetSection(sectionIdxes[i], &section));
 }
 
@@ -329,7 +329,7 @@ ZTEST(configurator_suite, test_configuratorGetSection_Success)
   int successRet = 0;
   LedSection_t *section = NULL;
 
-  for( uint8_t i = 0; i < config.dynamicConfig.sectionCount; i++)
+  for( size_t i = 0; i < config.dynamicConfig.sectionCount; i++)
   {
     zassert_equal(successRet, configuratorGetSection(i, &section));
     zassert_equal(config.dynamicConfig.sections + i, section);

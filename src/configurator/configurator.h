@@ -33,9 +33,9 @@
 */
 typedef struct
 {
-  uint8_t firstLed;
-  uint8_t lastLed;
-  uint8_t switchId;
+  size_t firstLed;
+  size_t lastLed;
+  size_t switchId;
   LedSequence_t switchSeq;
 } LedSection_t;
 
@@ -44,8 +44,8 @@ typedef struct
 */
 typedef struct
 {
-  uint8_t activeLedCount;
-  uint8_t sectionCount;
+  size_t activeLedCount;
+  size_t sectionCount;
   LedSection_t sections[MAX_SECTION_COUNT];
 } DynamicConfig_t;
 
@@ -55,7 +55,7 @@ typedef struct
 typedef struct
 {
   bool isReady;
-  uint8_t maxLedCount;
+  size_t maxLedCount;
   DynamicConfig_t dynamicConfig;
 } Configuration_t;
 
@@ -77,9 +77,9 @@ void configuratorSetAsReady(void);
  *
  * @param activeLedCount  The active LED count.
  *
- * @return  o if successful, the error codeotherwise.
+ * @return  o if successful, the error code otherwise.
  */
-int configuratorSetActiveLedCount(uint8_t activeLedCount);
+int configuratorSetActiveLedCount(size_t activeLedCount);
 
 /**
  * @brief   Set the section count.
@@ -88,7 +88,7 @@ int configuratorSetActiveLedCount(uint8_t activeLedCount);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int configuratorSetSectionCount(uint8_t seqCount);
+int configuratorSetSectionCount(size_t seqCount);
 
 /**
  * @brief   Set the section at index configuration
@@ -98,14 +98,14 @@ int configuratorSetSectionCount(uint8_t seqCount);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int configuratorSetSectionConfig(uint8_t index, LedSection_t *section);
+int configuratorSetSectionConfig(size_t index, LedSection_t *section);
 
 /**
  * @brief   Get the maximum number of LED in the strip.
  *
  * @return  The maximum allowed count of LED in the strip.
  */
-int8_t configuratorGetMaxLedCount(void);
+size_t configuratorGetMaxLedCount(void);
 
 /**
  * @brief   Get the active LED count in the strip.
@@ -114,7 +114,7 @@ int8_t configuratorGetMaxLedCount(void);
  *
  * @return  0 if successful, the error code otherwise.
  */
-int configuratorGetActiveLedCount(uint8_t *activeLedCount);
+int configuratorGetActiveLedCount(size_t *activeLedCount);
 
 /**
  * @brief   Get a specific section configuration.
@@ -124,7 +124,7 @@ int configuratorGetActiveLedCount(uint8_t *activeLedCount);
  *
  * @return  0 if successful, the erroro code otherwise.
  */
-int configuratorGetSection(uint8_t index, LedSection_t **section);
+int configuratorGetSection(size_t index, LedSection_t **section);
 
 #endif    /* CONFIGURATOR */
 

@@ -47,7 +47,7 @@ void configuratorSetAsReady(void)
   config.isReady = true;
 }
 
-int configuratorSetActiveLedCount(uint8_t activeLedCount)
+int configuratorSetActiveLedCount(size_t activeLedCount)
 {
   if(activeLedCount == 0 || activeLedCount > config.maxLedCount)
     return -EINVAL;
@@ -57,7 +57,7 @@ int configuratorSetActiveLedCount(uint8_t activeLedCount)
   return 0;
 }
 
-int configuratorSetSectionCount(uint8_t seqCount)
+int configuratorSetSectionCount(size_t seqCount)
 {
   if(seqCount == 0 || seqCount > MAX_SECTION_COUNT)
     return -EINVAL;
@@ -67,7 +67,7 @@ int configuratorSetSectionCount(uint8_t seqCount)
   return 0;
 }
 
-int configuratorSetSectionConfig(uint8_t index, LedSection_t *section)
+int configuratorSetSectionConfig(size_t index, LedSection_t *section)
 {
   if(config.dynamicConfig.sectionCount == 0)
     return -EPERM;
@@ -81,12 +81,12 @@ int configuratorSetSectionConfig(uint8_t index, LedSection_t *section)
   return 0;
 }
 
-int8_t configuratorGetMaxLedCount(void)
+size_t configuratorGetMaxLedCount(void)
 {
   return config.maxLedCount;
 }
 
-int configuratorGetActiveLedCount(uint8_t *activeLedCount)
+int configuratorGetActiveLedCount(size_t *activeLedCount)
 {
   if(!config.isReady)
     return -EPERM;
@@ -96,7 +96,7 @@ int configuratorGetActiveLedCount(uint8_t *activeLedCount)
   return 0;
 }
 
-int configuratorGetSection(uint8_t index, LedSection_t **section)
+int configuratorGetSection(size_t index, LedSection_t **section)
 {
   if(!config.isReady)
     return -EPERM;
