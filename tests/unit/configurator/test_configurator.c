@@ -31,6 +31,11 @@ DEFINE_FFF_GLOBALS;
 */
 #define TEST_ACTIVE_LED                     12
 
+/**
+ * @brief The test section count.
+ */
+#define TEST_SECTION_COUNT                  4
+
 static void configuratorCaseSetup(void *f)
 {
   size_t startLed;
@@ -41,7 +46,7 @@ static void configuratorCaseSetup(void *f)
 
   config.isReady = true;
   config.dynamicConfig.activeLedCount = TEST_ACTIVE_LED;
-  config.dynamicConfig.sectionCount = 4;
+  config.dynamicConfig.sectionCount = TEST_SECTION_COUNT;
   ledPerSection = config.dynamicConfig.activeLedCount /
     config.dynamicConfig.sectionCount;
   for(size_t i = 0; i < config.dynamicConfig.sectionCount; ++i)
@@ -101,7 +106,7 @@ ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
 
 /**
  * @test  configuratorGetActiveLedCount must return an operation not permitted
- *        if the configuration is not ready.
+ *        code if the configuration is not ready.
 */
 ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
 {
@@ -155,6 +160,42 @@ ZTEST(configurator_suite, test_configuratorSetActiveLedCount_Success)
     zassert_equal(successRet, configuratorSetActiveLedCount(ledCounts[i]));
     zassert_equal(ledCounts[i], config.dynamicConfig.activeLedCount);
   }
+}
+
+/**
+ * @test  configuratorGetMaxSectionCount must return the maximum allowed section
+ *        count.
+ */
+ZTEST(configurator_suite, test_configuratorGetMaxSectionCount_MaxCount)
+{
+  zassert_equal(10, configuratorGetMaxSectionCount());
+}
+
+/**
+ * @test  configuratorGetSectionCount must return an operation not permitted
+ *        code if the configuration is not ready.
+ */
+ZTEST(configurator_suite, test_configuratorGetSectionCount_NotReady)
+{
+  int failRet = -EPERM;
+  size_t sectionCount;
+
+  config.isReady = false;
+
+  zassert_equal(failRet, configuratorGetSectionCount(&sectionCount));
+}
+
+/**
+ * @test  configuratorGetSectionCount must return the success code and the
+ *        current section count when the operation succeeds.
+ */
+ZTEST(configurator_suite, test_configuratorGetSectionCount_SectionCount)
+{
+  int successRet = 0;
+  size_t sectionCount;
+
+  zassert_equal(successRet, configuratorGetSectionCount(&sectionCount));
+  zassert_equal(TEST_SECTION_COUNT, sectionCount);
 }
 
 #define SECTION_COUNT_TEST_COUNT                      2
