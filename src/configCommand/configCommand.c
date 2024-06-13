@@ -295,6 +295,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(section_sub,
 
 SHELL_STATIC_SUBCMD_SET_CREATE(config_sub,
 	SHELL_CMD(activeLed, &activeLed_sub, CONFIG_USAGE, NULL),
+  SHELL_CMD(section, &section_sub, SECTION_USAGE, NULL),
 	SHELL_SUBCMD_SET_END);
 SHELL_CMD_REGISTER(config, &config_sub, CONFIG_USAGE,	NULL);
 
