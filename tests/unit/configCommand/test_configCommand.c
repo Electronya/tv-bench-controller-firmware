@@ -25,6 +25,7 @@ DEFINE_FFF_GLOBALS;
 FAKE_VALUE_FUNC(size_t, configuratorGetMaxLedCount);
 FAKE_VALUE_FUNC(int, configuratorGetActiveLedCount, size_t*);
 FAKE_VALUE_FUNC(int, configuratorSetActiveLedCount, size_t);
+FAKE_VALUE_FUNC(size_t, configuratorGetMaxSectionCount);
 
 static void configCommandCaseSetup(void *f)
 {
@@ -84,6 +85,60 @@ ZTEST(configCommand_suite, test_isActiveLedCountValid_Valid)
   for(uint32_t i = 0; i < ACTIVE_LED_TEST_CNT; ++i)
   {
     zassert_true(isActiveLedCountValid(arguments[i], &ledCount));
+    zassert_equal(expectedCounts[i], ledCount);
+  }
+}
+
+#define SECTION_COUNT_TEST_CNT      4
+/**
+ * @test  isSectionCountValid must return false when the section count is
+ *        not a number.
+ */
+ZTEST(configCommand_suite, test_isSectionCountValid_NoNumber)
+{
+  char *arguments[SECTION_COUNT_TEST_CNT] = {"afefaf", "12afefwe", "3afe4", "afe12"};
+  size_t sectionCount;
+
+  for(uint32_t i = 0; i < SECTION_COUNT_TEST_CNT; ++i)
+  {
+    zassert_false(isSectionCountValid(arguments[i], &sectionCount));
+  }
+}
+
+/**
+ * @test  isSectionCountValid must return false if the section count is
+ *        greater than the max section count.
+ */
+ZTEST(configCommand_suite, test_isSectionCountValid_GreaterThanMaxSectionCount)
+{
+  char *arguments[SECTION_COUNT_TEST_CNT] = {"19", "45", "100", "150"};
+  size_t maxSectionCounts[SECTION_COUNT_TEST_CNT] = {18, 30, 99, 148};
+  size_t ledCount;
+
+  SET_RETURN_SEQ(configuratorGetMaxSectionCount, maxSectionCounts, SECTION_COUNT_TEST_CNT);
+
+  for(uint32_t i = 0; i < SECTION_COUNT_TEST_CNT; ++i)
+  {
+    zassert_false(isSectionCountValid(arguments[i], &ledCount));
+  }
+}
+
+/**
+ * @test  isSectionCountValid must return true and the converted LED count if
+ *        this one is valid.
+ */
+ZTEST(configCommand_suite, test_isSectionCountValid_Valid)
+{
+  char *arguments[SECTION_COUNT_TEST_CNT] = {"19", "45", "100", "150"};
+  size_t maxSectionCounts[SECTION_COUNT_TEST_CNT] = {20, 50, 150, 151};
+  size_t expectedCounts[SECTION_COUNT_TEST_CNT] = {19, 45, 100, 150};
+  size_t ledCount;
+
+  SET_RETURN_SEQ(configuratorGetMaxSectionCount, maxSectionCounts, SECTION_COUNT_TEST_CNT);
+
+  for(uint32_t i = 0; i < SECTION_COUNT_TEST_CNT; ++i)
+  {
+    zassert_true(isSectionCountValid(arguments[i], &ledCount));
     zassert_equal(expectedCounts[i], ledCount);
   }
 }
