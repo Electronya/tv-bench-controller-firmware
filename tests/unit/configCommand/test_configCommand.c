@@ -26,6 +26,8 @@ FAKE_VALUE_FUNC(size_t, configuratorGetMaxLedCount);
 FAKE_VALUE_FUNC(int, configuratorGetActiveLedCount, size_t*);
 FAKE_VALUE_FUNC(int, configuratorSetActiveLedCount, size_t);
 FAKE_VALUE_FUNC(size_t, configuratorGetMaxSectionCount);
+FAKE_VALUE_FUNC(int, configuratorGetSectionCount, size_t*);
+FAKE_VALUE_FUNC(int, configuratorSetSectionCount, size_t);
 
 static void configCommandCaseSetup(void *f)
 {
