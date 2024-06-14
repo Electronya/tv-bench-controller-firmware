@@ -97,6 +97,33 @@ int configuratorSetSectionCount(size_t seqCount)
   return 0;
 }
 
+int configuratorGetSectionLeds(size_t sectionId, size_t *firstLed,
+                               size_t *ledCount)
+{
+  if(!config.isReady)
+    return -EPERM;
+
+  if(sectionId >= config.dynamicConfig.sectionCount)
+    return -ERANGE;
+
+  *firstLed = config.dynamicConfig.sections[sectionId].firstLed;
+  *ledCount = config.dynamicConfig.sections[sectionId].ledCount;
+
+  return 0;
+}
+
+int configuratorSetSectionLeds(size_t sectionId, size_t firstLed,
+                               size_t ledCount)
+{
+  if(sectionId >= config.dynamicConfig.sectionCount)
+    return -ERANGE;
+
+  config.dynamicConfig.sections[sectionId].firstLed = firstLed;
+  config.dynamicConfig.sections[sectionId].ledCount = ledCount;
+
+  return 0;
+}
+
 int configuratorGetSection(size_t index, LedSection_t **section)
 {
   if(!config.isReady)

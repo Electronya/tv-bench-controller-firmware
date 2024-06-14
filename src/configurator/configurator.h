@@ -123,6 +123,30 @@ int configuratorGetSectionCount(size_t *sectionCount);
 int configuratorSetSectionCount(size_t seqCount);
 
 /**
+ * @brief   Get the LEDs used by a given section.
+ *
+ * @param sectionId       The section ID.
+ * @param firstLed        The section first LED.
+ * @param ledCount        The section LED count.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorGetSectionLeds(size_t sectionId, size_t *firstLed,
+                               size_t *ledCount);
+
+/**
+ * @brief   Set the LEDs used by the given section.
+ *
+ * @param sectionId       The section ID.
+ * @param firstLed        The section first LED.
+ * @param ledCount        The section LED count.
+ *
+ * @return  0 fi successful, the error code otherwise.
+ */
+int configuratorSetSectionLeds(size_t sectionId, size_t firstLed,
+                               size_t ledCount);
+
+/**
  * @brief   Get a specific section configuration.
  *
  * @param index           The section index.
