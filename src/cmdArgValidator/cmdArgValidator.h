@@ -21,6 +21,17 @@
 
 #include "appMsg.h"
 
+
+/**
+ * @brief   Validate the active LED count argument.
+ *
+ * @param arg       The active LED count argument.
+ * @param ledCount  The converted active LED count.
+ *
+ * @return  true if the active LED count is valid, false otherwise.
+ */
+bool isActiveLedCountValid(char *arg, size_t *ledCount);
+
 /**
  * @brief   Convert and check validity of the section ID.
  *
@@ -30,6 +41,16 @@
  * @return  true if the section is valid, false otherwise.
  */
 bool isSectionIdValid(char *arg, uint32_t *section);
+
+/**
+ * @brief   Validate the section count argument.
+ *
+ * @param arg           The section count argument.
+ * @param sectionCount  The converted section count.
+ *
+ * @return  true if the section count is valid, false otherwise.
+ */
+bool isSectionCountValid(char *arg, size_t *sectionCount);
 
 /**
  * @brief   Convert and check the validity of the color.

@@ -35,6 +35,20 @@ LOG_MODULE_REGISTER(CMD_ARG_VALIDATOR_MODULE_NAME);
 */
 #define INVERTED_DIRECTION                  "inverted"
 
+bool isActiveLedCountValid(char *arg, size_t *ledCount)
+{
+  int rc = 0;
+
+  *ledCount = shell_strtoul(arg, 10, &rc);
+  if(rc < 0)
+    return false;
+
+  if(*ledCount > configuratorGetMaxLedCount())
+    return false;
+
+  return true;
+}
+
 bool isSectionIdValid(char *arg, uint32_t *section)
 {
   int rc = 0;
@@ -44,6 +58,20 @@ bool isSectionIdValid(char *arg, uint32_t *section)
     return false;
 
   if(*section >= configuratorGetSectionCount())
+    return false;
+
+  return true;
+}
+
+bool isSectionCountValid(char *arg, size_t *sectionCount)
+{
+  int rc = 0;
+
+  *sectionCount = shell_strtoul(arg, 10, &rc);
+  if(rc < 0)
+    return false;
+
+  if(*sectionCount > configuratorGetMaxSectionCount())
     return false;
 
   return true;

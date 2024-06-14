@@ -20,6 +20,7 @@
 
 #include <string.h>
 
+#include "cmdArgValidator.h"
 #include "configurator.h"
 
 #define CONFIG_CMD_MODULE_NAME config_COMMAND_module
@@ -87,42 +88,6 @@ LOG_MODULE_REGISTER(CONFIG_CMD_MODULE_NAME);
 #define SECTION_SET_COUNT_ARG_CNT   2
 
 /**
- * @brief   Validate the active LED count argument.
- *
- * @param arg       The active LED count argument.
- * @param ledCount  The converted active LED count.
- *
- * @return  true if the active LED count is valid, false otherwise.
- */
-static bool isActiveLedCountValid(char *arg, size_t *ledCount)
-{
-  int rc = 0;
-
-  *ledCount = shell_strtoul(arg, 10, &rc);
-  if(rc < 0)
-    return false;
-
-  if(*ledCount > configuratorGetMaxLedCount())
-    return false;
-
-  return true;
-}
-
-static bool isSectionCountValid(char *arg, size_t *sectionCount)
-{
-  int rc = 0;
-
-  *sectionCount = shell_strtoul(arg, 10, &rc);
-  if(rc < 0)
-    return false;
-
-  if(*sectionCount > configuratorGetMaxSectionCount())
-    return false;
-
-  return true;
-}
-
-/**
  * @brief   Execute the max LED get command.
  *
  * @param shell     The shell instance.
@@ -131,7 +96,8 @@ static bool isSectionCountValid(char *arg, size_t *sectionCount)
  *
  * @return  0 if successful, the error code otherwise.
  */
-static int execGetMaxLedCount(const struct shell *shell, size_t argc, char **argv)
+static int execGetMaxLedCount(const struct shell *shell,
+                              size_t argc, char **argv)
 {
   size_t maxLedCount;
 
@@ -151,17 +117,12 @@ static int execGetMaxLedCount(const struct shell *shell, size_t argc, char **arg
  *
  * @return  0 if successful, the error code otherwise.
  */
-static int execGetActiveLedCount(const struct shell *shell, size_t argc, char **argv)
+static int execGetActiveLedCount(const struct shell *shell,
+                                 size_t argc, char **argv)
 {
-  int rc;
   size_t ledCount;
 
-  rc = configuratorGetActiveLedCount(&ledCount);
-  if(rc < 0)
-  {
-    shell_print(shell, "FAILED: Unable to retrieve the active LED count. error: %d", rc);
-    return rc;
-  }
+  ledCount = configuratorGetActiveLedCount();
 
   shell_print(shell, "OK: active LED count: %u", ledCount);
 
@@ -177,7 +138,8 @@ static int execGetActiveLedCount(const struct shell *shell, size_t argc, char **
  *
  * @return  0 if successful, the error code otherwise.
  */
-static int execSetActiveLedCount(const struct shell *shell, size_t argc, char **argv)
+static int execSetActiveLedCount(const struct shell *shell,
+                                 size_t argc, char **argv)
 {
   int rc;
   size_t ledCount;
@@ -216,7 +178,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(activeLed_sub,
  *
  * @return  0 if successful, the error code otherwise.
  */
-static int execGetMaxSectionCount(const struct shell *shell, size_t argc, char **argv)
+static int execGetMaxSectionCount(const struct shell *shell,
+                                  size_t argc, char **argv)
 {
   size_t maxSectionCount;
 
@@ -238,16 +201,12 @@ static int execGetMaxSectionCount(const struct shell *shell, size_t argc, char *
  */
 static int execGetSectionCount(const struct shell *shell, size_t argc, char **argv)
 {
-  int rc;
   size_t sectionCount;
 
-  rc = configuratorGetSectionCount(&sectionCount);
-  if(rc < 0)
-  {
-    shell_print(shell, "FAILED: Unable to retrieve section count. error: %d", rc);
-  }
+  sectionCount = configuratorGetSectionCount();
 
   shell_print(shell, "OK: section count: %u", sectionCount);
+
   return 0;
 }
 
