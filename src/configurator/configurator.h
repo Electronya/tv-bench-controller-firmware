@@ -34,7 +34,7 @@
 typedef struct
 {
   size_t firstLed;
-  size_t lastLed;
+  size_t ledCount;
   size_t switchId;
   LedSequence_t switchSeq;
 } LedSection_t;
