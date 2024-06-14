@@ -105,30 +105,12 @@ ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
 }
 
 /**
- * @test  configuratorGetActiveLedCount must return an operation not permitted
- *        code if the configuration is not ready.
- */
-ZTEST(configurator_suite, test_configuratorGetActiveLedCount_NotReady)
-{
-  int failRet = -EPERM;
-  size_t activeLedCount;
-
-  config.isReady = false;
-
-  zassert_equal(failRet, configuratorGetActiveLedCount(&activeLedCount));
-}
-
-/**
  * @test  configuratorGetActiveLedCount must return the success code and the
- *        active LED count in the strip if the configuration is ready.
+ *        active LED count in the strip.
  */
-ZTEST(configurator_suite, test_configuratorGetActiveLedCount_Ready)
+ZTEST(configurator_suite, test_configuratorGetActiveLedCount_LedCount)
 {
-  int successRet = 0;
-  size_t activeLedCount = 0;
-
-  zassert_equal(successRet, configuratorGetActiveLedCount(&activeLedCount));
-  zassert_equal(TEST_ACTIVE_LED, activeLedCount);
+  zassert_equal(TEST_ACTIVE_LED, configuratorGetActiveLedCount());
 }
 
 #define ACTIVE_LED_COUNT_TEST_COUNT                   2
@@ -172,30 +154,12 @@ ZTEST(configurator_suite, test_configuratorGetMaxSectionCount_MaxCount)
 }
 
 /**
- * @test  configuratorGetSectionCount must return an operation not permitted
- *        code if the configuration is not ready.
- */
-ZTEST(configurator_suite, test_configuratorGetSectionCount_NotReady)
-{
-  int failRet = -EPERM;
-  size_t sectionCount;
-
-  config.isReady = false;
-
-  zassert_equal(failRet, configuratorGetSectionCount(&sectionCount));
-}
-
-/**
  * @test  configuratorGetSectionCount must return the success code and the
- *        current section count when the operation succeeds.
+ *        current section count.
  */
 ZTEST(configurator_suite, test_configuratorGetSectionCount_SectionCount)
 {
-  int successRet = 0;
-  size_t sectionCount;
-
-  zassert_equal(successRet, configuratorGetSectionCount(&sectionCount));
-  zassert_equal(TEST_SECTION_COUNT, sectionCount);
+  zassert_equal(TEST_SECTION_COUNT, configuratorGetSectionCount());
 }
 
 #define SECTION_COUNT_TEST_COUNT                      2

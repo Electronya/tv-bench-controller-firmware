@@ -52,14 +52,9 @@ size_t configuratorGetMaxLedCount(void)
   return config.maxLedCount;
 }
 
-int configuratorGetActiveLedCount(size_t *activeLedCount)
+size_t configuratorGetActiveLedCount(void)
 {
-  if(!config.isReady)
-    return -EPERM;
-
-  *activeLedCount = config.dynamicConfig.activeLedCount;
-
-  return 0;
+  return config.dynamicConfig.activeLedCount;
 }
 
 int configuratorSetActiveLedCount(size_t activeLedCount)
@@ -77,14 +72,9 @@ size_t configuratorGetMaxSectionCount(void)
   return MAX_SECTION_COUNT;
 }
 
-int configuratorGetSectionCount(size_t *sectionCount)
+size_t configuratorGetSectionCount(void)
 {
-  if(!config.isReady)
-    return -EPERM;
-
-  *sectionCount = config.dynamicConfig.sectionCount;
-
-  return 0;
+  return config.dynamicConfig.sectionCount;
 }
 
 int configuratorSetSectionCount(size_t seqCount)

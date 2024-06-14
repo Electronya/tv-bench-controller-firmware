@@ -82,11 +82,9 @@ size_t configuratorGetMaxLedCount(void);
 /**
  * @brief   Get the active LED count in the strip.
  *
- * @param activeLedCount  The active LED count in the strip.
- *
- * @return  0 if successful, the error code otherwise.
+ * @return  The active LED count.
  */
-int configuratorGetActiveLedCount(size_t *activeLedCount);
+size_t configuratorGetActiveLedCount(void);
 
 /**
  * @brief   Set the active LED count.
@@ -107,11 +105,9 @@ size_t configuratorGetMaxSectionCount(void);
 /**
  * @brief   Get the section count.
  *
- * @param sectionCount    The section count.
- *
- * @return  0 if successful, the error code otherwise.
+ * @return  The section count.
  */
-int configuratorGetSectionCount(size_t *sectionCount);
+size_t configuratorGetSectionCount(void);
 
 /**
  * @brief   Set the section count.
