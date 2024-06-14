@@ -21,10 +21,10 @@
 
 #include "appMsg.h"
 
-#define SEQUENCEL_COMMAND_MODULE_NAME sequence_command_module
+#define SEQUENCE_COMMAND_MODULE_NAME sequence_command_module
 
 /* Setting module logging */
-LOG_MODULE_REGISTER(SEQUENCEL_COMMAND_MODULE_NAME);
+LOG_MODULE_REGISTER(SEQUENCE_COMMAND_MODULE_NAME);
 
 /**
  * @brief The sequence command usage.
@@ -186,7 +186,7 @@ static bool isDirectionValid(char *arg, bool *isInverted)
  * @param section     The LED strip section.
  * @param color       The solid color.
  *
- * @return  0 if successful, the error code othewise.
+ * @return  0 if successful, the error code otherwise.
  */
 static int pushSolidColorSequence(uint32_t section, Color_t *color)
 {
@@ -312,7 +312,7 @@ static int execSolidSeq(const struct shell *shell, size_t argc, char **argv)
   uint32_t section;
   Color_t color;
 
-  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color))
+  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &color))
   {
     rc = pushSolidColorSequence(section, &color);
     if(rc < 0)
@@ -326,7 +326,7 @@ static int execSolidSeq(const struct shell *shell, size_t argc, char **argv)
   }
 
   shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s",
-    argv[0], argv[1]);
+    argv[1], argv[2]);
 
   return -EINVAL;
 }
@@ -347,8 +347,8 @@ static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
   Color_t color;
   uint32_t length;
 
-  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color) &&
-    isLengthValid(argv[2], &length))
+  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &color) &&
+    isLengthValid(argv[3], &length))
   {
     rc = pushBreatherSequence(section, &color, length);
     if(rc < 0)
@@ -361,7 +361,7 @@ static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
   }
 
   shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s",
-    argv[0], argv[1], argv[2]);
+    argv[1], argv[2], argv[3]);
 
   return -EINVAL;
 }
@@ -383,8 +383,8 @@ static int execFadeChaserSeq(const struct shell *shell, size_t argc, char **argv
   uint32_t length;
   bool isInverted;
 
-  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &color) &&
-    isLengthValid(argv[2], &length) && isDirectionValid(argv[3], &isInverted))
+  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &color) &&
+    isLengthValid(argv[3], &length) && isDirectionValid(argv[4], &isInverted))
   {
     rc = pushFadeChaserSequence(section, &color, length, isInverted);
     if(rc < 0)
@@ -397,7 +397,7 @@ static int execFadeChaserSeq(const struct shell *shell, size_t argc, char **argv
   }
 
   shell_print(shell, "FAILED: Invalid arguments. section: %s, color: %s, length %s, direction %s",
-    argv[0], argv[1], argv[2], argv[3]);
+    argv[1], argv[2], argv[3], argv[4]);
 
   return -EINVAL;
 }
@@ -419,8 +419,8 @@ static int execRangeSeq(const struct shell *shell, size_t argc, char **argv)
   Color_t endClr;
   uint32_t length;
 
-  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &startClr) &&
-    isColorValid(argv[2], &endClr) && isLengthValid(argv[3], &length))
+  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &startClr) &&
+    isColorValid(argv[3], &endClr) && isLengthValid(argv[4], &length))
   {
     rc = pushColorRangeSequence(section, &startClr, &endClr, length);
     if(rc < 0)
@@ -433,7 +433,7 @@ static int execRangeSeq(const struct shell *shell, size_t argc, char **argv)
   }
 
   shell_print(shell, "FAILED: Invalid arguments. section: %s, start color: %s, end color: %s, length %s",
-    argv[0], argv[1], argv[2], argv[3]);
+    argv[1], argv[2], argv[3], argv[4]);
 
   return -EINVAL;
 }
@@ -456,9 +456,9 @@ static int execRangeChaserSeq(const struct shell *shell, size_t argc, char **arg
   uint32_t length;
   bool isInverted;
 
-  if(isSectionValid(argv[0], &section) && isColorValid(argv[1], &startClr) &&
-    isColorValid(argv[2], &endClr) && isLengthValid(argv[3], &length) &&
-    isDirectionValid(argv[4], &isInverted))
+  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &startClr) &&
+    isColorValid(argv[3], &endClr) && isLengthValid(argv[4], &length) &&
+    isDirectionValid(argv[5], &isInverted))
   {
     rc = pushRangeChaserSequence(section, &startClr, &endClr, length, isInverted);
     if(rc < 0)
@@ -471,7 +471,7 @@ static int execRangeChaserSeq(const struct shell *shell, size_t argc, char **arg
   }
 
   shell_print(shell, "FAILED: Invalid arguments. section: %s, start color: %s, end color: %s, length %s, direction: %s",
-    argv[0], argv[1], argv[2], argv[3], argv[4]);
+    argv[1], argv[2], argv[3], argv[4], argv[5]);
 
   return -EINVAL;
 }

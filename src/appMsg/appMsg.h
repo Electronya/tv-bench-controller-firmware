@@ -44,7 +44,7 @@ typedef union
   {
     uint8_t b;                          /**< The blue value. */
     uint8_t g;                          /**< The green value. */
-    uint8_t r;                          /**< The red vaue. */
+    uint8_t r;                          /**< The red value. */
     uint8_t unused;                     /**< The unused byte */
   };
 } Color_t;
@@ -63,7 +63,7 @@ typedef struct
 } LedSequence_t;
 
 /**
- * @brief   Intialize the message queues.
+ * @brief   Initialize the message queues.
  *
  * @return  o if successful, the error code otherwise.
  */
