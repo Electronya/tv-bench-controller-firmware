@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include "appMsg.h"
+#include "cmdArgValidator.h"
 
 #define SEQUENCE_COMMAND_MODULE_NAME sequence_command_module
 
@@ -77,108 +78,9 @@ LOG_MODULE_REGISTER(SEQUENCE_COMMAND_MODULE_NAME);
 #define COLOR_RANGE_SEQ_ARG_CNT             4
 
 /**
- * @brief The color range chser sequence argument count
+ * @brief The color range chaser sequence argument count
 */
 #define RANGE_CHASER_SEQ_ARG_CNT             5
-
-/**
- * @brief The normal direction argument value.
-*/
-#define NORMAL_DIRECTION                    "normal"
-
-/**
- * @brief The inverted direction argument value.
-*/
-#define INVERTED_DIRECTION                  "inverted"
-
-/**
- * @brief   Convert and check validity of the section.
- *
- * @param arg         The section string argument value.
- * @param section     The converted section.
- *
- * @return  true if the section is valid, false otherwise.
- */
-static bool isSectionValid(char *arg, uint32_t *section)
-{
-  int rc = 0;
-
-  *section = shell_strtoul(arg, 10, &rc);
-  if(rc < 0)
-    return false;
-
-  // TODO: validate with settings.
-  return true;
-}
-
-/**
- * @brief   Convert and check the validity of the color.
- *
- * @param arg       The color string argument.
- * @param color     The converted color.
- *
- * @return  true if the color is valid, false otherwise.
- */
-static bool isColorValid(char *arg, Color_t *color)
-{
-  int rc = 0;
-  uint32_t convertColor;
-
-  convertColor = shell_strtoul(arg, 16, &rc);
-  if(rc < 0)
-    return false;
-
-  if(convertColor > 0xffffff)
-    return false;
-
-  color->hexColor = convertColor;
-
-  return true;
-}
-
-/**
- * @brief   Convert and check the validity of the sequence length.
- *
- * @param arg         The sequence length string argument.
- * @param length      The converted sequence length.
- *
- * @return  true if the sequence length is valid, false otherwise.
- */
-static bool isLengthValid(char *arg, uint32_t *length)
-{
-  int rc = 0;
-
-  *length = shell_strtoul(arg, 10, &rc);
-  if(rc < 0)
-    return false;
-
-  return true;
-}
-
-/**
- * @brief   Convert and check the validity of the sequence direction.
- *
- * @param arg         The sequence direction string argument.
- * @param isInverted  The converted direction flag.
- *
- * @return  true if the sequence direction is valid, false otherwise.
- */
-static bool isDirectionValid(char *arg, bool *isInverted)
-{
-  if(strcmp(arg, NORMAL_DIRECTION) == 0)
-  {
-    *isInverted = false;
-    return true;
-  }
-
-  if(strcmp(arg, INVERTED_DIRECTION) == 0)
-  {
-    *isInverted = true;
-    return true;
-  }
-
-  return false;
-}
 
 /**
  * @brief   Push a solid color sequence in the sequence queue.
@@ -312,7 +214,7 @@ static int execSolidSeq(const struct shell *shell, size_t argc, char **argv)
   uint32_t section;
   Color_t color;
 
-  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &color))
+  if(isSectionIdValid(argv[1], &section) && isColorValid(argv[2], &color))
   {
     rc = pushSolidColorSequence(section, &color);
     if(rc < 0)
@@ -347,8 +249,8 @@ static int execBreatherSeq(const struct shell *shell, size_t argc, char **argv)
   Color_t color;
   uint32_t length;
 
-  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &color) &&
-    isLengthValid(argv[3], &length))
+  if(isSectionIdValid(argv[1], &section) && isColorValid(argv[2], &color) &&
+    isSeqLengthValid(argv[3], &length))
   {
     rc = pushBreatherSequence(section, &color, length);
     if(rc < 0)
@@ -383,8 +285,9 @@ static int execFadeChaserSeq(const struct shell *shell, size_t argc, char **argv
   uint32_t length;
   bool isInverted;
 
-  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &color) &&
-    isLengthValid(argv[3], &length) && isDirectionValid(argv[4], &isInverted))
+  if(isSectionIdValid(argv[1], &section) && isColorValid(argv[2], &color) &&
+    isSeqLengthValid(argv[3], &length) &&
+    isSeqDirectionValid(argv[4], &isInverted))
   {
     rc = pushFadeChaserSequence(section, &color, length, isInverted);
     if(rc < 0)
@@ -419,8 +322,8 @@ static int execRangeSeq(const struct shell *shell, size_t argc, char **argv)
   Color_t endClr;
   uint32_t length;
 
-  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &startClr) &&
-    isColorValid(argv[3], &endClr) && isLengthValid(argv[4], &length))
+  if(isSectionIdValid(argv[1], &section) && isColorValid(argv[2], &startClr) &&
+    isColorValid(argv[3], &endClr) && isSeqLengthValid(argv[4], &length))
   {
     rc = pushColorRangeSequence(section, &startClr, &endClr, length);
     if(rc < 0)
@@ -456,9 +359,9 @@ static int execRangeChaserSeq(const struct shell *shell, size_t argc, char **arg
   uint32_t length;
   bool isInverted;
 
-  if(isSectionValid(argv[1], &section) && isColorValid(argv[2], &startClr) &&
-    isColorValid(argv[3], &endClr) && isLengthValid(argv[4], &length) &&
-    isDirectionValid(argv[5], &isInverted))
+  if(isSectionIdValid(argv[1], &section) && isColorValid(argv[2], &startClr) &&
+    isColorValid(argv[3], &endClr) && isSeqLengthValid(argv[4], &length) &&
+    isSeqDirectionValid(argv[5], &isInverted))
   {
     rc = pushRangeChaserSequence(section, &startClr, &endClr, length, isInverted);
     if(rc < 0)

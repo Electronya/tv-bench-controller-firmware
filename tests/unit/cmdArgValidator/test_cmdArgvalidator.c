@@ -22,12 +22,178 @@
 
 DEFINE_FFF_GLOBALS;
 
+FAKE_VALUE_FUNC(size_t, configuratorGetSectionCount);
+
 static void cmdArgValidatorCaseSetup(void *f)
 {
   // TODO: clean up if not needed.
 }
 
-ZTEST_SUITE(configurator_suite, NULL, NULL, cmdArgValidatorCaseSetup,
+ZTEST_SUITE(cmdArgValidator_suite, NULL, NULL, cmdArgValidatorCaseSetup,
   NULL, NULL);
+
+#define SECTION_ID_VALID_TEST_COUNT                 3
+/**
+ * @test  isSectionIdValid must return false if the conversion fails.
+*/
+ZTEST(cmdArgValidator_suite, test_isSectionIdValid_convertFail)
+{
+  uint32_t section;
+  char *args[SECTION_ID_VALID_TEST_COUNT] = {"a", "1a", "a1"};
+
+  for(uint8_t i = 0; i < SECTION_ID_VALID_TEST_COUNT; ++i)
+  {
+    zassert_false(isSectionIdValid(args[i], &section));
+  }
+}
+
+/**
+ * @test  isSectionIdValid must return false if the section ID is out of range.
+ */
+ZTEST(cmdArgValidator_suite, test_isSectionIdValid_idOutOfRange)
+{
+  uint32_t section;
+  char *args[SECTION_ID_VALID_TEST_COUNT] = {"1", "14", "60"};
+  size_t sectionCounts[SECTION_ID_VALID_TEST_COUNT] = {1, 10, 60};
+
+  for(uint32_t i = 0; i < SECTION_ID_VALID_TEST_COUNT; ++i)
+  {
+    configuratorGetSectionCount_fake.return_val = sectionCounts[i];
+
+    zassert_false(isSectionIdValid(args[i], &section));
+  }
+}
+
+/**
+ * @test  isSectionIdValid must return true if the conversion succeeds and
+ *        the converted value is valid.
+*/
+ZTEST(cmdArgValidator_suite, test_isSectionIdValid_success)
+{
+  uint32_t section;
+  char *args[SECTION_ID_VALID_TEST_COUNT] = {"1", "54", "100"};
+  size_t sectionCounts[SECTION_ID_VALID_TEST_COUNT] = {2, 100, 101};
+  uint32_t expectedVals[SECTION_ID_VALID_TEST_COUNT] = {1, 54, 100};
+
+  for(uint8_t i = 0; i < SECTION_ID_VALID_TEST_COUNT; ++i)
+  {
+    configuratorGetSectionCount_fake.return_val = sectionCounts[i];
+
+    zassert_true(isSectionIdValid(args[i], &section));
+    zassert_equal(expectedVals[i], section);
+  }
+}
+
+#define COLOR_CONVERT_TEST_COUNT                    3
+/**
+ * @test  isColorValid must return false if the conversion fails.
+*/
+ZTEST(cmdArgValidator_suite, test_isColorValid_convertFail)
+{
+  Color_t color;
+  char *args[COLOR_CONVERT_TEST_COUNT] = {"oiuj", "1kj", "lk1"};
+
+  for(uint8_t i = 0; i < COLOR_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_false(isColorValid(args[i], &color));
+  }
+}
+
+/**
+ * @test  isColorValid must return false if the converted color value
+ *        is out of range.
+*/
+ZTEST(cmdArgValidator_suite, test_isColorValid_colorOutOfRange)
+{
+  Color_t color;
+  char *args[COLOR_CONVERT_TEST_COUNT] = {"01000000", "55deff90", "ffffffff"};
+
+  for(uint8_t i = 0; i < COLOR_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_false(isColorValid(args[i], &color));
+  }
+}
+
+/**
+ * @test  isColorValid must return true if the converted color value.
+*/
+ZTEST(cmdArgValidator_suite, test_isColorValid_colorValid)
+{
+  Color_t color;
+  Color_t expectedColor[COLOR_CONVERT_TEST_COUNT] = {{.hexColor = 0xffffff},
+                                                     {.hexColor = 0xdeff90},
+                                                     {.hexColor = 0x000000}};
+  char *args[COLOR_CONVERT_TEST_COUNT] = {"ffffff", "deff90", "000000"};
+
+  for(uint8_t i = 0; i < COLOR_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_true(isColorValid(args[i], &color));
+    zassert_equal(expectedColor[i].hexColor, color.hexColor);
+  }
+}
+
+#define SEQ_LENGTH_CONVERT_TEST_COUNT              3
+/**
+ * @test  isSeqLengthValid must return false if the conversion fails.
+*/
+ZTEST(cmdArgValidator_suite, test_isSeqLengthValid_convertFail)
+{
+  uint32_t length;
+  char *args[SEQ_LENGTH_CONVERT_TEST_COUNT] = {"a", "1a", "a1"};
+
+  for(uint8_t i = 0; i < SEQ_LENGTH_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_false(isSeqLengthValid(args[i], &length));
+  }
+}
+
+/**
+ * @test  isSeqLengthValid must return true if the conversion succeeds and
+ *        the converted value.
+*/
+ZTEST(cmdArgValidator_suite, test_isSeqLengthValid_success)
+{
+  uint32_t length;
+  char *args[SEQ_LENGTH_CONVERT_TEST_COUNT] = {"1", "54", "100"};
+  uint32_t expectedVals[SEQ_LENGTH_CONVERT_TEST_COUNT] = {1, 54, 100};
+
+  for(uint8_t i = 0; i < SEQ_LENGTH_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_true(isSeqLengthValid(args[i], &length));
+    zassert_equal(expectedVals[i], length);
+  }
+}
+
+#define SEQ_DIRECTION_CONVERT_TEST_COUNT              2
+/**
+ * @test  isSeqDirectionValid must return false if the conversion fails.
+*/
+ZTEST(cmdArgValidator_suite, test_isSeqDirectionValid_convertFail)
+{
+  bool isInverted;
+  char *args[SEQ_DIRECTION_CONVERT_TEST_COUNT] = {"norma", "inverte"};
+
+  for(uint8_t i = 0; i < SEQ_DIRECTION_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_false(isSeqDirectionValid(args[i], &isInverted));
+  }
+}
+
+/**
+ * @test  isSeqDirectionValid must return true if the conversion succeeds and
+ *        the converted value.
+*/
+ZTEST(cmdArgValidator_suite, test_isSeqDirectionValid_success)
+{
+  bool isInverted;
+  char *args[SEQ_DIRECTION_CONVERT_TEST_COUNT] = {"normal", "inverted"};
+  bool expectedVals[SEQ_DIRECTION_CONVERT_TEST_COUNT] = {false, true};
+
+  for(uint8_t i = 0; i < SEQ_DIRECTION_CONVERT_TEST_COUNT; ++i)
+  {
+    zassert_true(isSeqDirectionValid(args[i], &isInverted));
+    zassert_equal(expectedVals[i], isInverted);
+  }
+}
 
 /** @} */
