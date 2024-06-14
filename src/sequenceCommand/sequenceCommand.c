@@ -228,18 +228,18 @@ static int pushBreatherSequence(uint32_t section, Color_t *color,
  * @param section       The LED strip section.
  * @param color         The chaser color.
  * @param length        The chaser full travel time length.
- * @param isinverted    The inversion flag.
+ * @param isInverted    The inversion flag.
  *
  * @return  0 if successful, the error code otherwise.
  */
 static int pushFadeChaserSequence(uint32_t section, Color_t *color,
-                                  uint32_t length, bool isinverted)
+                                  uint32_t length, bool isInverted)
 {
   LedSequence_t sequence = {.sectionId = section,
                             .timeBase = length,
                             .timeUnit = SECONDS};
 
-  sequence.seqType = isinverted ? SEQ_INVERT_FADE_CHASER : SEQ_FADE_CHASER;
+  sequence.seqType = isInverted ? SEQ_INVERT_FADE_CHASER : SEQ_FADE_CHASER;
 
   sequence.startColor.hexColor = color->hexColor;
 
@@ -277,19 +277,19 @@ static int pushColorRangeSequence(uint32_t section, Color_t *startClr,
  * @param startClr      The start color of the range.
  * @param endClr        The end color of the range.
  * @param length        The full chaser travel time length.
- * @param isinverted    The inversion flag.
+ * @param isInverted    The inversion flag.
  *
  * @return  0 if successful, the error code otherwise.
  */
 static int pushRangeChaserSequence(uint32_t section, Color_t *startClr,
                                    Color_t *endClr, uint32_t length,
-                                   bool isinverted)
+                                   bool isInverted)
 {
   LedSequence_t sequence = {.sectionId = section,
                             .timeBase = length,
                             .timeUnit = SECONDS};
 
-  sequence.seqType = isinverted ? SEQ_INVERT_RANGE_CHASER : SEQ_RANGE_CHASER;
+  sequence.seqType = isInverted ? SEQ_INVERT_RANGE_CHASER : SEQ_RANGE_CHASER;
 
   sequence.startColor.hexColor = startClr->hexColor;
   sequence.endColor.hexColor = endClr->hexColor;

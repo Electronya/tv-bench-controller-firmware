@@ -100,7 +100,7 @@ int configuratorSetActiveLedCount(size_t activeLedCount);
 /**
  * @brief   Get the maximum section count.
  *
- * @return  The maximum sectoin count.
+ * @return  The maximum section count.
  */
 size_t configuratorGetMaxSectionCount(void);
 
@@ -109,7 +109,7 @@ size_t configuratorGetMaxSectionCount(void);
  *
  * @param sectionCount    The section count.
  *
- * @return  0 if successful, the error code otherwsie.
+ * @return  0 if successful, the error code otherwise.
  */
 int configuratorGetSectionCount(size_t *sectionCount);
 
@@ -128,7 +128,7 @@ int configuratorSetSectionCount(size_t seqCount);
  * @param index           The section index.
  * @param section         The section configuration.
  *
- * @return  0 if successful, the erroro code otherwise.
+ * @return  0 if successful, the error code otherwise.
  */
 int configuratorGetSection(size_t index, LedSection_t **section);
 
