@@ -129,6 +129,25 @@ int configuratorGetSectionSwitches(size_t sectionId, size_t *switchId,
   return 0;
 }
 
+int configuratorSetSectionSwitches(size_t sectionId, size_t switchId,
+                                   Color_t color)
+{
+  if(sectionId >= config.dynamicConfig.sectionCount)
+    return -ERANGE;
+
+  if(switchId >= MAX_SWITCH_COUNT)
+    return -ERANGE;
+
+  config.dynamicConfig.sections[sectionId].switchId = switchId;
+  config.dynamicConfig.sections[sectionId].switchSeq.sectionId = sectionId;
+  config.dynamicConfig.sections[sectionId].switchSeq.seqType = SEQ_SOLID;
+  config.dynamicConfig.sections[sectionId].switchSeq.timeUnit = SECONDS;
+  config.dynamicConfig.sections[sectionId].switchSeq.timeBase = ZEPHYR_TIME_FOREVER;
+  config.dynamicConfig.sections[sectionId].switchSeq.startColor.hexColor = color.hexColor;
+
+  return 0;
+}
+
 int configuratorGetSection(size_t index, LedSection_t **section)
 {
   if(!config.isReady)

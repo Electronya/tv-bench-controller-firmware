@@ -375,6 +375,78 @@ ZTEST(configurator_suite, test_configuratorGetSectionSwitches_success)
 }
 
 /**
+ * @test  configuratorSetSectionSwitches must return an out of range code when
+ *        the section ID is out of the active section count.
+ */
+ZTEST(configurator_suite, test_configuratorSetSectionSwitches_sectionOutOfRange)
+{
+  int failRet = -ERANGE;
+  size_t sectionIds[SECTION_OUT_OF_RANGE_TEST_CNT] = {TEST_SECTION_COUNT,
+                                                      TEST_SECTION_COUNT + 1,
+                                                      500};
+  size_t switchId = 0;
+  Color_t color = {.hexColor = 0x00000000};
+
+  for(uint32_t i = 0; i < SECTION_OUT_OF_RANGE_TEST_CNT; ++i)
+  {
+    zassert_equal(failRet, configuratorSetSectionSwitches(sectionIds[i],
+      switchId, color));
+  }
+}
+
+/**
+ * @test  configuratorSetSectionSwitches must return an out of range code when
+ *        the switch ID is out of the switch count.
+ */
+ZTEST(configurator_suite, test_configuratorSetSectionSwitches_switchOutOfRange)
+{
+  int failRet = -ERANGE;
+  size_t sectionId = 0;
+  size_t switchIds[SECTION_SW_INFO_TEST_CNT] = {MAX_SWITCH_COUNT,
+                                                MAX_SWITCH_COUNT + 1,
+                                                500};
+  Color_t color = {.hexColor = 0x00000000};
+
+  for(uint32_t i = 0; i < SECTION_SW_INFO_TEST_CNT; ++i)
+  {
+    zassert_equal(failRet, configuratorSetSectionSwitches(sectionId,
+      switchIds[i], color));
+  }
+}
+
+/**
+ * @test  configuratorSetSectionSwitches must return the success code and
+ *        save the section switch configuration when the operation succeeds.
+ */
+ZTEST(configurator_suite, test_configuratorSetSectionSwitches_success)
+{
+  int successRet = 0;
+  size_t sectionIds[SECTION_SW_INFO_TEST_CNT] = {0, 2, 3};
+  size_t switchIds[SECTION_SW_INFO_TEST_CNT] = {2, 1, 0};
+  Color_t colors[SECTION_SW_INFO_TEST_CNT] = {{.hexColor = 0x00ffffff},
+                                              {.hexColor = 0x00555555},
+                                              {.hexColor = 0x00aaaaaa}};
+
+  for(uint32_t i = 0; i < SECTION_SW_INFO_TEST_CNT; ++i)
+  {
+    zassert_equal(successRet, configuratorSetSectionSwitches(sectionIds[i],
+      switchIds[i], colors[i]));
+    zassert_equal(switchIds[i],
+      config.dynamicConfig.sections[sectionIds[i]].switchId);
+    zassert_equal(sectionIds[i],
+      config.dynamicConfig.sections[sectionIds[i]].switchSeq.sectionId);
+    zassert_equal(SEQ_SOLID,
+      config.dynamicConfig.sections[sectionIds[i]].switchSeq.seqType);
+    zassert_equal(ZEPHYR_TIME_FOREVER,
+      config.dynamicConfig.sections[sectionIds[i]].switchSeq.timeBase);
+    zassert_equal(SECONDS,
+      config.dynamicConfig.sections[sectionIds[i]].switchSeq.timeUnit);
+    zassert_equal(colors[i].hexColor,
+      config.dynamicConfig.sections[sectionIds[i]].switchSeq.startColor.hexColor);
+  }
+}
+
+/**
  * @test  configuratorGetSection must return an operation not permitted
  *        if the configuration is not ready.
  */
