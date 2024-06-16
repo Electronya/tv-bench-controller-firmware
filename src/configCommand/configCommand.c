@@ -31,61 +31,91 @@ LOG_MODULE_REGISTER(CONFIG_CMD_MODULE_NAME);
 /**
  * @brief The config command usage.
  */
-#define CONFIG_USAGE                "get or set the dynamic configuration."
+#define CONFIG_USAGE                  "Get or set the dynamic configuration."
 
 /**
  * @brief The max LED count command usage.
  */
-#define MAX_LED_USAGE               "Get the max LED count."
+#define MAX_LED_USAGE                 "Get the max LED count."
 
 /**
  * @brief The active LED command usage.
  */
-#define ACTIVE_LED_USAGE            "Get or set the active LED count."
+#define ACTIVE_LED_USAGE              "Get or set the active LED count."
 /**
  * @brief The active LED get command usage.
  */
-#define ACTIVE_LED_GET_USAGE        "Get the active LED count: config activeLed get."
+#define ACTIVE_LED_GET_USAGE          "Get the active LED count: config activeLed get."
 
 /**
  * @brief The active LED set command usage.
  */
-#define ACTIVE_LED_SET_USAGE        "Set the active LED count: config activeLed set <active LED count>."
+#define ACTIVE_LED_SET_USAGE          "Set the active LED count: config activeLed set <active LED count>."
 
 /**
  * @brief The section command usage.
  */
-#define SECTION_USAGE               "Get or set a section configuration."
+#define SECTION_USAGE                 "Get or set a section configuration."
 
 /**
  * @brief The section count command usage.
  */
-#define SECTION_COUNT_USAGE         "Get or set the section count."
+#define SECTION_COUNT_USAGE           "Get or set the section count."
 
 /**
  * @brief The get section max count command usage.
  */
-#define SECTION_MAX_COUNT_USAGE     "Get the maximum section count."
+#define SECTION_MAX_COUNT_USAGE       "Get the maximum section count."
 
 /**
  * @brief The get section count command usage.
  */
-#define SECTION_GET_COUNT_USAGE     "Get the current section count."
+#define SECTION_GET_COUNT_USAGE       "Get the current section count."
 
 /**
  * @brief The set section count command usage.
  */
-#define SECTION_SET_COUNT_USAGE     "Set the section count: section count set <section count>."
+#define SECTION_SET_COUNT_USAGE       "Set the section count: section count set <section count>."
+
+/**
+ * @brief The section configuration command usage.
+ */
+#define SECTION_CONF_USAGE            "Get or set a section configuration."
+
+/**
+ * @brief The section LED configuration command usage.
+ */
+#define SECTION_CONF_LED_USAGE        "Get or set a section LED configuration."
+
+/**
+ * @brief The get section LED configuration command usage.
+ */
+#define SECTION_GET_CONF_LED_USAGE    "Get a section LED configuration: section conf leds get <section ID>."
+
+/**
+ * @brief The set section LED configuration command usage.
+ */
+#define SECTION_SET_CONF_LED_USAGE    "Set a section LED configuration: section conf leds set <section ID> <first LED ID> <led count>."
 
 /**
  * @brief The active LED set command argument count.
  */
-#define ACTIVE_LED_SET_ARG_CNT      2
+#define ACTIVE_LED_SET_ARG_CNT        2
 
 /**
  * @brief The active LED set command argument count.
  */
-#define SECTION_SET_COUNT_ARG_CNT   2
+#define SECTION_SET_COUNT_ARG_CNT     2
+
+/**
+ * @brief The section LED configuration get command argument count.
+ */
+#define SECTION_GET_CONF_LED_ARG_CNT  2
+
+/**
+ * @brief The section LED configuration set command argument count.
+ */
+#define SECTION_SET_CONF_LED_ARG_CNT  4
 
 /**
  * @brief   Execute the max LED get command.
@@ -199,7 +229,8 @@ static int execGetMaxSectionCount(const struct shell *shell,
  *
  * @return  0 if successful, the error code otherwise.
  */
-static int execGetSectionCount(const struct shell *shell, size_t argc, char **argv)
+static int execGetSectionCount(const struct shell *shell,
+                               size_t argc, char **argv)
 {
   size_t sectionCount;
 
@@ -219,7 +250,8 @@ static int execGetSectionCount(const struct shell *shell, size_t argc, char **ar
  *
  * @return  0 if successful, the error code otherwise.
  */
-static int execSetSectionCount(const struct shell *shell, size_t argc, char **argv)
+static int execSetSectionCount(const struct shell *shell,
+                               size_t argc, char **argv)
 {
   int rc = 0;
   size_t sectionCount;
@@ -248,8 +280,94 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sectionCount_sub,
                 SECTION_SET_COUNT_ARG_CNT, 0),
   SHELL_SUBCMD_SET_END);
 
+/**
+ * @brief   Execute the get section LEDs command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execGetSectionLeds(const struct shell *shell,
+                              size_t *argc, char **argv)
+{
+  int rc;
+  size_t sectionId;
+  size_t firstLed;
+  size_t ledCount;
+
+  if(isSectionIdValid(argv[1], &sectionId))
+  {
+    rc = configuratorGetSectionLeds(sectionId, &firstLed, &ledCount);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to get section %u LEDs", sectionId);
+      shell_print(shell, "FAILED: Unable to get LEDs info for section: %u",
+        sectionId);
+      return -EINVAL;
+    }
+
+    shell_print(shell, "OK: section %u LED info: first LED: %u, LED count: %u",
+      sectionId, firstLed, ledCount);
+    return 0;
+  }
+
+  shell_print(shell, "FAILED: Invalid section ID: %s", argv[1]);
+  return -EINVAL;
+}
+
+/**
+ * @brief   Execute the set section LEDs command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execSetSectionLeds(const struct shell *shell,
+                              size_t *argc, char **argv)
+{
+  int rc;
+  size_t sectionId;
+  size_t firstLed;
+  size_t ledCount;
+
+  if(isSectionIdValid(argv[1], &sectionId) &&
+     isSectionLedsValid(argv + 2, &firstLed, &ledCount))
+    {
+      rc = configuratorSetSectionLeds(sectionId, firstLed, ledCount);
+      if(rc < 0)
+      {
+        LOG_ERR("unable to set section %u LED info of first LED: %u, LED count: %u",
+          sectionId, firstLed, ledCount);
+        shell_print(shell,
+          "FAILED: Unable to set section %u LED info: first LED: %u, LED count: %u",
+          sectionId, firstLed, ledCount);
+        return -EINVAL;
+      }
+
+      shell_print(shell, "OK");
+      return 0;
+    }
+
+  shell_print(shell,
+    "FAILED: Invalid arguments: section ID: %s, first LED: %s, LED count: %s",
+    argv[1], argv[2], argv[3]);
+  return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(sectionLeds_sub,
+  SHELL_CMD_ARG(get, NULL, SECTION_GET_CONF_LED_USAGE, execGetSectionLeds,
+    SECTION_GET_CONF_LED_ARG_CNT, 0),
+	SHELL_CMD_ARG(set, NULL, SECTION_SET_CONF_LED_USAGE, execSetSectionLeds,
+    SECTION_SET_CONF_LED_ARG_CNT, 0),
+  SHELL_SUBCMD_SET_END);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(section_sub,
   SHELL_CMD(count, &sectionCount_sub, SECTION_COUNT_USAGE, NULL),
+  SHELL_CMD(conf, &sectionConf_sub, SECTION_CONF_USAGE, NULL),
   SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(config_sub,
