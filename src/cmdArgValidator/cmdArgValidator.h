@@ -64,6 +64,16 @@ bool isSectionCountValid(char *arg, size_t *sectionCount);
 bool isSectionLedsValid(char **argv, size_t *firstLed, size_t *ledCount);
 
 /**
+ * @brief   Validate the section switch argument.
+ *
+ * @param arg           The section switch argument.
+ * @param switchId      The converted switch ID.
+ *
+ * @return  true if the section switch is valid, false otherwise.
+ */
+bool isSectionSwitchValid(char *arg, size_t *switchId);
+
+/**
  * @brief   Convert and check the validity of the color.
  *
  * @param arg       The color string argument.

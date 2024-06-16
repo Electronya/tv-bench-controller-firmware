@@ -263,7 +263,7 @@ ZTEST(cmdArgValidator_suite, test_isSectionCountValid_valid)
 
 #define SECTION_LED_VALID_TEST_COUNT                4
 /**
- * @test  isSectionLedsValid must return false when the section count is
+ * @test  isSectionLedsValid must return false when the section LEDs info are
  *        not a number.
  */
 ZTEST(cmdArgValidator_suite, test_isSectionLedsValid_noNumber)
@@ -425,6 +425,55 @@ ZTEST_F(cmdArgValidator_suite, test_isSectionLedsValid_success)
     RESET_FAKE(configuratorGetActiveLedCount);
     RESET_FAKE(configuratorGetSectionCount);
     RESET_FAKE(configuratorGetSection);
+  }
+}
+
+#define SECTION_SW_VALID_TEST_COUNT                 4
+/**
+ * @test  isSectionSwitchValid must return false when the switch ID is
+ *        not a number.
+ */
+ZTEST(cmdArgValidator_suite, test_isSectionSwitchValid_noNumber)
+{
+  char *args[SECTION_SW_VALID_TEST_COUNT] = {"afefaf", "12afefwe",
+                                             "3afe4", "afe12"};
+  size_t switchId;
+
+  for(uint32_t i = 0; i < SECTION_SW_VALID_TEST_COUNT; ++i)
+  {
+    zassert_false(isSectionSwitchValid(args[i], &switchId));
+  }
+}
+
+/**
+ * @test  isSectionSwitchValid must return false when the switch ID is
+ *        out side of the switches range.
+ */
+ZTEST(cmdArgValidator_suite, test_isSectionSwitchValid_outOfRange)
+{
+  char *args[SECTION_SW_VALID_TEST_COUNT] = {"3", "12", "34", "120"};
+  size_t switchId;
+
+  for(uint32_t i = 0; i < SECTION_SW_VALID_TEST_COUNT; ++i)
+  {
+    zassert_false(isSectionSwitchValid(args[i], &switchId));
+  }
+}
+
+/**
+ * @test  isSectionSwitchValid must return true and the converted switch ID
+ *        when it's a valid.
+ */
+ZTEST(cmdArgValidator_suite, test_isSectionSwitchValid_success)
+{
+  char *args[SECTION_SW_VALID_TEST_COUNT] = {"0", "1", "2", "0"};
+  size_t expectedSwitchIds[SECTION_SW_VALID_TEST_COUNT] = {0, 1, 2, 0};
+  size_t switchId;
+
+  for(uint32_t i = 0; i < SECTION_SW_VALID_TEST_COUNT; ++i)
+  {
+    zassert_true(isSectionSwitchValid(args[i], &switchId));
+    zassert_equal(expectedSwitchIds[i], switchId);
   }
 }
 

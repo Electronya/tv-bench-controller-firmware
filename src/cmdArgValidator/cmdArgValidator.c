@@ -118,6 +118,20 @@ bool isSectionLedsValid(char **argv, size_t *firstLed, size_t *ledCount)
   return true;
 }
 
+bool isSectionSwitchValid(char *arg, size_t *switchId)
+{
+  int rc = 0;
+
+  *switchId = shell_strtoul(arg, 10, &rc);
+  if(rc < 0)
+    return false;
+
+  if(*switchId >= MAX_SWITCH_COUNT)
+    return false;
+
+  return true;
+}
+
 bool isColorValid(char *arg, Color_t *color)
 {
   int rc = 0;
