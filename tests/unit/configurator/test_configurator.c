@@ -67,7 +67,7 @@ ZTEST_SUITE(configurator_suite, NULL, NULL, configuratorCaseSetup, NULL, NULL);
  *        not yet loaded by the Pi and the configuration is not ready to
  *        be used.
  */
-ZTEST(configurator_suite, test_configuratorIsReady_NotReady)
+ZTEST(configurator_suite, test_configuratorIsReady_notReady)
 {
   config.isReady = false;
 
@@ -78,7 +78,7 @@ ZTEST(configurator_suite, test_configuratorIsReady_NotReady)
  * @test  configuratorIsReady must return true when the configuration was
  *        loaded by the Pi and the configuration is ready to be used.
  */
-ZTEST(configurator_suite, test_configuratorIsReady_Ready)
+ZTEST(configurator_suite, test_configuratorIsReady_ready)
 {
   zassert_true(configuratorIsReady());
 }
@@ -86,7 +86,7 @@ ZTEST(configurator_suite, test_configuratorIsReady_Ready)
 /**
  * @test  configuratorSetAsReady must set the configuration as ready.
  */
-ZTEST(configurator_suite, test_configuratorSetAsReady_SetAsReady)
+ZTEST(configurator_suite, test_configuratorSetAsReady_setAsReady)
 {
   config.isReady = false;
 
@@ -99,7 +99,7 @@ ZTEST(configurator_suite, test_configuratorSetAsReady_SetAsReady)
  * @test  configuratorGetMaxLedCount must return the maximal number of LED
  *        in the strip.
  */
-ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
+ZTEST(configurator_suite, test_configuratorGetMaxLedCount_maxLedCount)
 {
   zassert_equal(TEST_MAX_LED_COUNT, configuratorGetMaxLedCount());
 }
@@ -108,7 +108,7 @@ ZTEST(configurator_suite, test_configuratorGetMaxLedCount_MaxLedCount)
  * @test  configuratorGetActiveLedCount must return the success code and the
  *        active LED count in the strip.
  */
-ZTEST(configurator_suite, test_configuratorGetActiveLedCount_LedCount)
+ZTEST(configurator_suite, test_configuratorGetActiveLedCount_ledCount)
 {
   zassert_equal(TEST_ACTIVE_LED, configuratorGetActiveLedCount());
 }
@@ -119,7 +119,7 @@ ZTEST(configurator_suite, test_configuratorGetActiveLedCount_LedCount)
  *        error when the requested active LED is greater than the
  *        max LED count or is 0.
  */
-ZTEST(configurator_suite, test_configuratorSetActiveLedCount_BadLedCount)
+ZTEST(configurator_suite, test_configuratorSetActiveLedCount_badLedCount)
 {
   int failRet = -EINVAL;
   size_t ledCounts[ACTIVE_LED_COUNT_TEST_COUNT] = {0, TEST_MAX_LED_COUNT + 1};
@@ -132,7 +132,7 @@ ZTEST(configurator_suite, test_configuratorSetActiveLedCount_BadLedCount)
  * @test  configuratorSetActiveLedCount must return success and save the new
  *        active LED count when it's in range.
  */
-ZTEST(configurator_suite, test_configuratorSetActiveLedCount_Success)
+ZTEST(configurator_suite, test_configuratorSetActiveLedCount_success)
 {
   int successRet = 0;
   size_t ledCounts[ACTIVE_LED_COUNT_TEST_COUNT] = {1, TEST_MAX_LED_COUNT};
@@ -148,7 +148,7 @@ ZTEST(configurator_suite, test_configuratorSetActiveLedCount_Success)
  * @test  configuratorGetMaxSectionCount must return the maximum allowed section
  *        count.
  */
-ZTEST(configurator_suite, test_configuratorGetMaxSectionCount_MaxCount)
+ZTEST(configurator_suite, test_configuratorGetMaxSectionCount_maxCount)
 {
   zassert_equal(10, configuratorGetMaxSectionCount());
 }
@@ -157,7 +157,7 @@ ZTEST(configurator_suite, test_configuratorGetMaxSectionCount_MaxCount)
  * @test  configuratorGetSectionCount must return the success code and the
  *        current section count.
  */
-ZTEST(configurator_suite, test_configuratorGetSectionCount_SectionCount)
+ZTEST(configurator_suite, test_configuratorGetSectionCount_sectionCount)
 {
   zassert_equal(TEST_SECTION_COUNT, configuratorGetSectionCount());
 }
@@ -168,7 +168,7 @@ ZTEST(configurator_suite, test_configuratorGetSectionCount_SectionCount)
  *        error when the new section count is 0 or greater than the max
  *        section count.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionCount_BadSectionCount)
+ZTEST(configurator_suite, test_configuratorSetSectionCount_badSectionCount)
 {
   int failRet = -EINVAL;
   size_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {0, MAX_SECTION_COUNT + 1};
@@ -181,7 +181,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionCount_BadSectionCount)
  * @test  configuratorSetSectionCount must return success and save the new
  *        section count when it's in range.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionCount_Success)
+ZTEST(configurator_suite, test_configuratorSetSectionCount_success)
 {
   int successRet = 0;
   size_t sectionCounts[SECTION_COUNT_TEST_COUNT] = {1, MAX_SECTION_COUNT};
@@ -197,7 +197,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionCount_Success)
  * @test  configuratorGetSectionLeds must return an operation not permitted code
  *        if the configuration is not ready.
  */
-ZTEST(configurator_suite, test_configuratorGetSectionLeds_NotReady)
+ZTEST(configurator_suite, test_configuratorGetSectionLeds_notReady)
 {
   int failRet = -EPERM;
   size_t sectionId = 0;
@@ -215,7 +215,7 @@ ZTEST(configurator_suite, test_configuratorGetSectionLeds_NotReady)
  * @test  configuratorGetSectionLeds must return an out of range code when the
  *        section ID is out of the active section count.
  */
-ZTEST(configurator_suite, test_configuratorGetSectionLeds_SectionOutOfRange)
+ZTEST(configurator_suite, test_configuratorGetSectionLeds_sectionOutOfRange)
 {
   int failRet = -ERANGE;
   size_t sectionIds[SECTION_OUT_OF_RANGE_TEST_CNT] = {TEST_SECTION_COUNT,
@@ -236,7 +236,7 @@ ZTEST(configurator_suite, test_configuratorGetSectionLeds_SectionOutOfRange)
  * @test  configuratorGetSectionLeds must return the success code, the section
  *        first LED and the section LED count when the operation succeeds.
  */
-ZTEST(configurator_suite, test_configuratorGetSectionLeds_Success)
+ZTEST(configurator_suite, test_configuratorGetSectionLeds_success)
 {
   int successRet = 0;
   size_t expectedFirstLed[SECTION_LED_INFO_TEST_CNT] =
@@ -263,7 +263,7 @@ ZTEST(configurator_suite, test_configuratorGetSectionLeds_Success)
  * @test  configuratorSetSectionLeds must return an out of range code when the
  *        section ID is out of the active section count.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionLeds_SectionOutOfRange)
+ZTEST(configurator_suite, test_configuratorSetSectionLeds_sectionOutOfRange)
 {
   int failRet = -ERANGE;
   size_t sectionIds[SECTION_OUT_OF_RANGE_TEST_CNT] = {TEST_SECTION_COUNT,
@@ -283,7 +283,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionLeds_SectionOutOfRange)
  * @test  configuratorSetSectionLeds must return the success code and set the
  *        section first LED and LED count when the operation succeeds.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionLeds_Success)
+ZTEST(configurator_suite, test_configuratorSetSectionLeds_success)
 {
   int successRet = 0;
   size_t expectedFirstLed[SECTION_LED_INFO_TEST_CNT] =
@@ -312,10 +312,73 @@ ZTEST(configurator_suite, test_configuratorSetSectionLeds_Success)
 }
 
 /**
+ * @test  configuratorGetSectionSwitches must return an operation not permitted
+ *        code when the configuration is not ready.
+ */
+ZTEST(configurator_suite, test_configuratorGetSectionSwitches_notRead)
+{
+  int failRet = -EPERM;
+  size_t sectionId = 0;
+  size_t switchId;
+  Color_t color;
+
+  config.isReady = false;
+
+  zassert_equal(failRet, configuratorGetSectionSwitches(sectionId, &switchId,
+    &color));
+}
+
+/**
+ * @test  configuratorGetSectionSwitches must return an out of range code when
+ *        the section ID is out of the active section count.
+ */
+ZTEST(configurator_suite, test_configuratorGetSectionSwitches_sectionOutOfRange)
+{
+  int failRet = -ERANGE;
+  size_t sectionIds[SECTION_OUT_OF_RANGE_TEST_CNT] = {TEST_SECTION_COUNT,
+                                                      TEST_SECTION_COUNT + 1,
+                                                      500};
+  size_t switchId;
+  Color_t color;
+
+  for(uint32_t i = 0; i < SECTION_OUT_OF_RANGE_TEST_CNT; ++i)
+  {
+    zassert_equal(failRet, configuratorGetSectionSwitches(sectionIds[i],
+      &switchId, &color));
+  }
+}
+
+#define SECTION_SW_INFO_TEST_CNT                  3
+/**
+ * @test  configuratorGetSectionSwitches must return the success code and the
+ *        section linked switch and color configuration when the operation
+ *        succeeds.
+ */
+ZTEST(configurator_suite, test_configuratorGetSectionSwitches_success)
+{
+  int successRet = 0;
+  size_t sectionIds[SECTION_SW_INFO_TEST_CNT] = {0, 2, 3};
+  size_t expectedSwitches[SECTION_SW_INFO_TEST_CNT] = {0, 2, 3};
+  Color_t expectedColors[SECTION_SW_INFO_TEST_CNT] = {{.hexColor = 0x00000000},
+                                                      {.hexColor = 0x02020202},
+                                                      {.hexColor = 0x03030303}};
+  size_t switchId;
+  Color_t color;
+
+  for(uint32_t i = 0; i < SECTION_SW_INFO_TEST_CNT; ++i)
+  {
+    zassert_equal(successRet, configuratorGetSectionSwitches(sectionIds[i],
+      &switchId, &color));
+    zassert_equal(expectedSwitches[i], switchId);
+    zassert_equal(expectedColors[i].hexColor, color.hexColor);
+  }
+}
+
+/**
  * @test  configuratorGetSection must return an operation not permitted
  *        if the configuration is not ready.
  */
-ZTEST(configurator_suite, test_configuratorGetSection_NotReady)
+ZTEST(configurator_suite, test_configuratorGetSection_notReady)
 {
   int failRet = -EPERM;
   LedSection_t *section = NULL;
@@ -330,7 +393,7 @@ ZTEST(configurator_suite, test_configuratorGetSection_NotReady)
  * @test  configuratorGetSection must return an invalid parameter error
  *        when the requested section does not exist.
  */
-ZTEST(configurator_suite, test_configuratorGetSection_BadSection)
+ZTEST(configurator_suite, test_configuratorGetSection_badSection)
 {
   int failRet = -EINVAL;
   LedSection_t *section = NULL;
@@ -345,7 +408,7 @@ ZTEST(configurator_suite, test_configuratorGetSection_BadSection)
  * @test  configuratorGetSection must return the success code and the requested
  *        LED section configuration.
  */
-ZTEST(configurator_suite, test_configuratorGetSection_Success)
+ZTEST(configurator_suite, test_configuratorGetSection_success)
 {
   int successRet = 0;
   LedSection_t *section = NULL;
@@ -362,7 +425,7 @@ ZTEST(configurator_suite, test_configuratorGetSection_Success)
  * @test  configuratorSetSectionConfig must return an operation not
  *        permitted of the section count was not initialize first.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionConfig_CountNotInit)
+ZTEST(configurator_suite, test_configuratorSetSectionConfig_countNotInit)
 {
   int failRet = -EPERM;
   size_t indexes[SET_SECTION_ERROR_TEST_COUNT] = {1, 6, MAX_SECTION_COUNT};
@@ -380,7 +443,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_CountNotInit)
  * @test  configuratorSetSectionConfig must return an invalid parameter of the
  *        section index is out of range.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionConfig_IndexOutOfRange)
+ZTEST(configurator_suite, test_configuratorSetSectionConfig_indexOutOfRange)
 {
   int failRet = -EINVAL;
   size_t sectionCounts[SET_SECTION_ERROR_TEST_COUNT] =
@@ -402,7 +465,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_IndexOutOfRange)
  * @test  configuratorSetSectionConfig must return an invalid parameter if the
  *        section configuration use invalid first and last LED.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionConfig_BadLedLimit)
+ZTEST(configurator_suite, test_configuratorSetSectionConfig_badLedLimit)
 {
   int failRet = -EINVAL;
   size_t sectionIdx = 2;
@@ -427,7 +490,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_BadLedLimit)
  * @test  configuratorSetSectionConfig must return an invalid parameter if the
  *        section configuration use a non existing switch.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionConfig_BadSwitch)
+ZTEST(configurator_suite, test_configuratorSetSectionConfig_badSwitch)
 {
   int failRet = -EINVAL;
   LedSection_t section;
@@ -441,7 +504,7 @@ ZTEST(configurator_suite, test_configuratorSetSectionConfig_BadSwitch)
  * @test  configuratorSetSectionConfig must return success and save the new
  *        section configuration at the right index if the operation succeeds.
  */
-ZTEST(configurator_suite, test_configuratorSetSectionConfig_Success)
+ZTEST(configurator_suite, test_configuratorSetSectionConfig_success)
 {
   int successRet = 0;
   size_t sectionIdx = config.dynamicConfig.sectionCount - 1;

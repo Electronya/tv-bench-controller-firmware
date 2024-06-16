@@ -114,6 +114,21 @@ int configuratorSetSectionLeds(size_t sectionId, size_t firstLed,
   return 0;
 }
 
+int configuratorGetSectionSwitches(size_t sectionId, size_t *switchId,
+                                   Color_t *color)
+{
+  if(!config.isReady)
+    return -EPERM;
+
+  if(sectionId >= config.dynamicConfig.sectionCount)
+    return -ERANGE;
+
+  *switchId = config.dynamicConfig.sections[sectionId].switchId;
+  color->hexColor = config.dynamicConfig.sections[sectionId].switchSeq.startColor.hexColor;
+
+  return 0;
+}
+
 int configuratorGetSection(size_t index, LedSection_t **section)
 {
   if(!config.isReady)

@@ -143,6 +143,18 @@ int configuratorSetSectionLeds(size_t sectionId, size_t firstLed,
                                size_t ledCount);
 
 /**
+ * @brief   Get the switches configuration of a given section.
+ *
+ * @param sectionId       The section ID.
+ * @param switchId        The section linked switch.
+ * @param color           The section color when switch is active.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+int configuratorGetSectionSwitches(size_t sectionId, size_t *switchId,
+                                   Color_t *color);
+
+/**
  * @brief   Get a specific section configuration.
  *
  * @param index           The section index.
