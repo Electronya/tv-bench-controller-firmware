@@ -98,6 +98,26 @@ LOG_MODULE_REGISTER(CONFIG_CMD_MODULE_NAME);
 #define SECTION_SET_CONF_LED_USAGE    "Set a section LED configuration: section conf leds set <section ID> <first LED ID> <led count>."
 
 /**
+ * @brief The section switches configuration command usage.
+ */
+#define SECTION_CONF_SWITCHES_USAGE   "Get or set a section switches configuration."
+
+/**
+ * @brief The get section switches configuration command usage.
+ */
+#define SECTION_GET_CONF_SW_USAGE     "Get a section switches configuration: section conf switches get <section ID>."
+
+/**
+ * @brief The set section switches configuration command usage.
+ */
+#define SECTION_SET_CONF_SW_USAGE     "Set a section switches configuration: section conf switches <section ID> <switch ID> <HEX color>."
+
+/**
+ * @brief The set section to no switch configuration command usage.
+ */
+#define SECTION_SET_CONF_NO_SW_USAGE  "Set a section to no switch configuration: section conf switches no."
+
+/**
  * @brief The active LED set command argument count.
  */
 #define ACTIVE_LED_SET_ARG_CNT        2
@@ -116,6 +136,16 @@ LOG_MODULE_REGISTER(CONFIG_CMD_MODULE_NAME);
  * @brief The section LED configuration set command argument count.
  */
 #define SECTION_SET_CONF_LED_ARG_CNT  4
+
+/**
+ * @brief The section switch configuration get command argument count.
+ */
+#define SECTION_GET_CONF_SW_ARG_CNT   2
+
+/**
+ * @brief The section switch configuration set command argument count.
+ */
+#define SECTION_SET_CONF_SW_ARG_CNT   4
 
 /**
  * @brief   Execute the max LED get command.
@@ -363,6 +393,64 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sectionLeds_sub,
     SECTION_GET_CONF_LED_ARG_CNT, 0),
 	SHELL_CMD_ARG(set, NULL, SECTION_SET_CONF_LED_USAGE, execSetSectionLeds,
     SECTION_SET_CONF_LED_ARG_CNT, 0),
+  SHELL_SUBCMD_SET_END);
+
+/**
+ * @brief   Execute the get section switches command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execGetSectionSwitches(const struct shell *shell,
+                                  size_t *argc, char **argv)
+{
+  return 0;
+}
+
+/**
+ * @brief   Execute the set section switches command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execSetSectionSwitches(const struct shell *shell,
+                                  size_t *argc, char **argv)
+{
+  return 0;
+}
+
+/**
+ * @brief   Execute the set section no switches command.
+ *
+ * @param shell     The shell instance.
+ * @param argc      The command argument count.
+ * @param argv      The command argument vector.
+ *
+ * @return  0 if successful, the error code otherwise.
+ */
+static int execSetSectionNoSwitches(const struct shell *shell,
+                                    size_t *argc, char **argv)
+{
+  return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(sectionSwitches_sub,
+  SHELL_CMD_ARG(get, NULL, SECTION_GET_CONF_SW_USAGE, execGetSectionSwitches,
+    SECTION_GET_CONF_LED_ARG_CNT, 0),
+	SHELL_CMD_ARG(set, NULL, SECTION_SET_CONF_SW_USAGE, execSetSectionSwitches,
+    SECTION_SET_CONF_LED_ARG_CNT, 0),
+  SHELL_CMD(no, NULL, SECTION_SET_CONF_NO_SW_USAGE, execSetSectionNoSwitches),
+  SHELL_SUBCMD_SET_END);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(sectionConf_sub,
+  SHELL_CMD(leds, &sectionLeds_sub, SECTION_CONF_LED_USAGE, NULL),
+	SHELL_CMD(switches, &sectionSwitches_sub, SECTION_CONF_SWITCHES_USAGE, NULL),
   SHELL_SUBCMD_SET_END);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(section_sub,
