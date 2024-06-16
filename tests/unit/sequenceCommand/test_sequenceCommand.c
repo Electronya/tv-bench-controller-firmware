@@ -52,12 +52,11 @@ static LedSequence_t expectedSeq;
  */
 static int customPushSolidSequence(LedSequence_t *seq)
 {
-  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
-  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
-  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
-    "bad sequence pushed.");
+  zassert_equal(expectedSeq.seqType, seq->seqType);
+  zassert_equal(expectedSeq.sectionId, seq->sectionId);
+  zassert_equal(expectedSeq.timeBase, seq->timeBase);
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit);
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor);
 
   return 0;
 }
@@ -71,12 +70,11 @@ static int customPushSolidSequence(LedSequence_t *seq)
  */
 static int customPushBreatherSequence(LedSequence_t *seq)
 {
-  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
-  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
-  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
-    "bad sequence pushed.");
+  zassert_equal(expectedSeq.seqType, seq->seqType);
+  zassert_equal(expectedSeq.sectionId, seq->sectionId);
+  zassert_equal(expectedSeq.timeBase, seq->timeBase);
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit);
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor);
 
   return 0;
 }
@@ -90,12 +88,11 @@ static int customPushBreatherSequence(LedSequence_t *seq)
  */
 static int customPushFadeChaserSequence(LedSequence_t *seq)
 {
-  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
-  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
-  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
-    "bad sequence pushed.");
+  zassert_equal(expectedSeq.seqType, seq->seqType);
+  zassert_equal(expectedSeq.sectionId, seq->sectionId);
+  zassert_equal(expectedSeq.timeBase, seq->timeBase);
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit);
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor);
 
   return 0;
 }
@@ -107,16 +104,14 @@ static int customPushFadeChaserSequence(LedSequence_t *seq)
  *
  * @return  since always successful, always 0.
  */
-static int custompushColorRangeSequence(LedSequence_t *seq)
+static int customPushColorRangeSequence(LedSequence_t *seq)
 {
-  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
-  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
-  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
-    "bad sequence pushed.");
-  zassert_equal(expectedSeq.endColor.hexColor, seq->endColor.hexColor,
-    "bad sequence pushed.");
+  zassert_equal(expectedSeq.seqType, seq->seqType);
+  zassert_equal(expectedSeq.sectionId, seq->sectionId);
+  zassert_equal(expectedSeq.timeBase, seq->timeBase);
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit);
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor);
+  zassert_equal(expectedSeq.endColor.hexColor, seq->endColor.hexColor);
 
   return 0;
 }
@@ -128,16 +123,14 @@ static int custompushColorRangeSequence(LedSequence_t *seq)
  *
  * @return  since always successful, always 0.
  */
-static int custompushRangeChaserSequence(LedSequence_t *seq)
+static int customPushRangeChaserSequence(LedSequence_t *seq)
 {
-  zassert_equal(expectedSeq.seqType, seq->seqType, "bad sequence pushed.");
-  zassert_equal(expectedSeq.sectionId, seq->sectionId, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeBase, seq->timeBase, "bad sequence pushed.");
-  zassert_equal(expectedSeq.timeUnit, seq->timeUnit, "bad sequence pushed.");
-  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor,
-    "bad sequence pushed.");
-  zassert_equal(expectedSeq.endColor.hexColor, seq->endColor.hexColor,
-    "bad sequence pushed.");
+  zassert_equal(expectedSeq.seqType, seq->seqType);
+  zassert_equal(expectedSeq.sectionId, seq->sectionId);
+  zassert_equal(expectedSeq.timeBase, seq->timeBase);
+  zassert_equal(expectedSeq.timeUnit, seq->timeUnit);
+  zassert_equal(expectedSeq.startColor.hexColor, seq->startColor.hexColor);
+  zassert_equal(expectedSeq.endColor.hexColor, seq->endColor.hexColor);
 
   return 0;
 }
@@ -154,8 +147,7 @@ ZTEST(seqCommand_suite, test_pushSolidColorSequence_pushFail)
 
   appMsgPushLedSequence_fake.return_val = failRet;
 
-  zassert_equal(failRet, pushSolidColorSequence(section, &color),
-    "pushSolidColorSequence failed to return the error code.");
+  zassert_equal(failRet, pushSolidColorSequence(section, &color));
 }
 
 /**
@@ -176,8 +168,7 @@ ZTEST(seqCommand_suite, test_pushSolidColorSequence_success)
   expectedSeq.timeBase = ZEPHYR_TIME_FOREVER;
   expectedSeq.timeUnit = SECONDS;
 
-  zassert_equal(successRet, pushSolidColorSequence(section, &color),
-    "pushSolidColorSequence failed to return the success code.");
+  zassert_equal(successRet, pushSolidColorSequence(section, &color));
 }
 
 /**
@@ -193,8 +184,7 @@ ZTEST(seqCommand_suite, test_pushBreatherSequence_pushFail)
 
   appMsgPushLedSequence_fake.return_val = failRet;
 
-  zassert_equal(failRet, pushBreatherSequence(section, &color, length),
-    "pushBreatherSequence failed to return the error code.");
+  zassert_equal(failRet, pushBreatherSequence(section, &color, length));
 }
 
 /**
@@ -216,8 +206,7 @@ ZTEST(seqCommand_suite, test_pushBreatherSequence_success)
   expectedSeq.timeBase = length;
   expectedSeq.timeUnit = SECONDS;
 
-  zassert_equal(successRet, pushBreatherSequence(section, &color, length),
-    "pushBreatherSequence failed to return the success code.");
+  zassert_equal(successRet, pushBreatherSequence(section, &color, length));
 }
 
 /**
@@ -235,7 +224,7 @@ ZTEST(seqCommand_suite, test_pushFadeChaserSequence_pushFail)
   appMsgPushLedSequence_fake.return_val = failRet;
 
   zassert_equal(failRet, pushFadeChaserSequence(section, &color, length,
-    isInverted), "pushFadeChaserSequence failed to return the error code.");
+    isInverted));
 }
 
 #define DIRECTION_TEST_COUNT                          2
@@ -263,7 +252,7 @@ ZTEST(seqCommand_suite, test_pushFadeChaserSequence_success)
     expectedSeq.timeUnit = SECONDS;
 
     zassert_equal(successRet, pushFadeChaserSequence(sections[i], colors + i,
-      lengths[i], isInverted[i]), "pushFadeChaserSequence failed to return the success code.");
+      lengths[i], isInverted[i]));
   }
 }
 
@@ -282,7 +271,7 @@ ZTEST(seqCommand_suite, test_pushColorRangeSequence_pushFail)
   appMsgPushLedSequence_fake.return_val = failRet;
 
   zassert_equal(failRet, pushColorRangeSequence(section, &startClr, &endClr,
-    length), "pushColorRangeSequence failed to return the error code.");
+    length));
 }
 
 /**
@@ -297,7 +286,7 @@ ZTEST(seqCommand_suite, test_pushColorRangeSequence_success)
   Color_t endClr = {.hexColor = 0x00ee00};
   uint32_t length = 50;
 
-  appMsgPushLedSequence_fake.custom_fake = custompushColorRangeSequence;
+  appMsgPushLedSequence_fake.custom_fake = customPushColorRangeSequence;
 
   expectedSeq.seqType = SEQ_COLOR_RANGE;
   expectedSeq.sectionId = section;
@@ -307,7 +296,7 @@ ZTEST(seqCommand_suite, test_pushColorRangeSequence_success)
   expectedSeq.timeUnit = SECONDS;
 
   zassert_equal(successRet, pushColorRangeSequence(section, &startClr, &endClr,
-    length), "pushColorRangeSequence failed to return the success code.");
+    length));
 }
 
 /**
@@ -326,7 +315,7 @@ ZTEST(seqCommand_suite, test_pushRangeChaserSequence_pushFail)
   appMsgPushLedSequence_fake.return_val = failRet;
 
   zassert_equal(failRet, pushRangeChaserSequence(section, &startClr, &endClr,
-    length, isInverted), "pushRangeChaserSequence failed to return the error code.");
+    length, isInverted));
 }
 
 #define DIRECTION_TEST_COUNT                          2
@@ -345,7 +334,7 @@ ZTEST(seqCommand_suite, test_pushRangeChaserSequence_success)
   uint32_t lengths[DIRECTION_TEST_COUNT] = {50, 100};
   bool isInverted[DIRECTION_TEST_COUNT] = {true, false};
 
-  appMsgPushLedSequence_fake.custom_fake = custompushRangeChaserSequence;
+  appMsgPushLedSequence_fake.custom_fake = customPushRangeChaserSequence;
 
   for(uint8_t i = 0; i < DIRECTION_TEST_COUNT; ++i)
   {
@@ -357,8 +346,7 @@ ZTEST(seqCommand_suite, test_pushRangeChaserSequence_success)
     expectedSeq.timeUnit = SECONDS;
 
     zassert_equal(successRet, pushRangeChaserSequence(sections[i],
-      startClrs + i, endClrs + i, lengths[i], isInverted[i]),
-      "pushRangeChaserSequence failed to return the success code.");
+      startClrs + i, endClrs + i, lengths[i], isInverted[i]));
   }
 }
 

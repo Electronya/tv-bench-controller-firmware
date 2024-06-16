@@ -86,14 +86,10 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateSolidFrame_SetSolidColor)
 
   seqMngrUpdateSolidFrame(&color, fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(1, colorMngrSetSingle_fake.call_count,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
-  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
-  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
+  zassert_equal(1, colorMngrSetSingle_fake.call_count);
+  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val);
+  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val);
 }
 
 #define BREATHER_TEST_COUNT               3
@@ -111,14 +107,10 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateSingleBreatherFrame_Reset)
     seqMngrUpdateSingleBreatherFrame(&color, steps[i], true, fixture->pixels,
       TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(1, colorMngrSetSingle_fake.call_count,
-      "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
-    zassert_equal(&color, colorMngrSetSingle_fake.arg0_val,
-      "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
-    zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val,
-      "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val,
-      "seqMngrUpdateSolidFrame failed to set the pixel buffer to the desired color.");
+    zassert_equal(1, colorMngrSetSingle_fake.call_count);
+    zassert_equal(&color, colorMngrSetSingle_fake.arg0_val);
+    zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val);
 
     RESET_FAKE(colorMngrSetSingle);
   }
@@ -138,14 +130,10 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateSingleBreatherFrame_ExhaleFade)
     seqMngrUpdateSingleBreatherFrame(&color, steps[i], false, fixture->pixels,
       TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(1, colorMngrApplyFade_fake.call_count,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(steps[i], colorMngrApplyFade_fake.arg0_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(fixture->pixels, colorMngrApplyFade_fake.arg1_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFade_fake.arg2_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(1, colorMngrApplyFade_fake.call_count);
+    zassert_equal(steps[i], colorMngrApplyFade_fake.arg0_val);
+    zassert_equal(fixture->pixels, colorMngrApplyFade_fake.arg1_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFade_fake.arg2_val);
 
     RESET_FAKE(colorMngrApplyFade);
   }
@@ -171,14 +159,10 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateSingleBreatherFrame_InhaleUnfade)
     seqMngrUpdateSingleBreatherFrame(&color, steps[i], false, fixture->pixels,
       TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(1, colorMngrApplyUnfade_fake.call_count,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(steps[i], colorMngrApplyUnfade_fake.arg0_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(fixture->pixels, colorMngrApplyUnfade_fake.arg1_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyUnfade_fake.arg2_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(1, colorMngrApplyUnfade_fake.call_count);
+    zassert_equal(steps[i], colorMngrApplyUnfade_fake.arg0_val);
+    zassert_equal(fixture->pixels, colorMngrApplyUnfade_fake.arg1_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyUnfade_fake.arg2_val);
 
     RESET_FAKE(colorMngrApplyUnfade);
   }
@@ -200,26 +184,16 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_ResetNotInvertedFrame)
   seqMngrUpdateFadeChaserFrame(&color, false, true, fixture->pixels,
     TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(1, colorMngrSetSingle_fake.call_count,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(0, colorMngrApplyFadeTrail_fake.arg1_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(true, colorMngrApplyFadeTrail_fake.arg2_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(1, colorMngrSetSingle_fake.call_count);
+  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val);
+  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val);
+  zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count);
+  zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val);
+  zassert_equal(0, colorMngrApplyFadeTrail_fake.arg1_val);
+  zassert_equal(true, colorMngrApplyFadeTrail_fake.arg2_val);
+  zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val);
 }
 
 /**
@@ -238,26 +212,16 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_ResetInvertedFrame)
   seqMngrUpdateFadeChaserFrame(&color, true, true, fixture->pixels,
     TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(1, colorMngrSetSingle_fake.call_count,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val,
-    "seqMngrUpdateSolidFrame failed to set the pixel buffer to the initial color.");
-  zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT - 1, colorMngrApplyFadeTrail_fake.arg1_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(false, colorMngrApplyFadeTrail_fake.arg2_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
-    "seqMngrUpdateSolidFrame failed to fade the pixels.");
+  zassert_equal(1, colorMngrSetSingle_fake.call_count);
+  zassert_equal(&color, colorMngrSetSingle_fake.arg0_val);
+  zassert_equal(fixture->pixels, colorMngrSetSingle_fake.arg1_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrSetSingle_fake.arg2_val);
+  zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count);
+  zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT - 1, colorMngrApplyFadeTrail_fake.arg1_val);
+  zassert_equal(false, colorMngrApplyFadeTrail_fake.arg2_val);
+  zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val);
 }
 
 /**
@@ -284,18 +248,12 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_NotInvertedWrapFrame)
     seqMngrUpdateFadeChaserFrame(&color, false, false, fixture->pixels,
       TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(chaserPoint, colorMngrApplyFadeTrail_fake.arg1_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(true, colorMngrApplyFadeTrail_fake.arg2_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count);
+    zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val);
+    zassert_equal(chaserPoint, colorMngrApplyFadeTrail_fake.arg1_val);
+    zassert_equal(true, colorMngrApplyFadeTrail_fake.arg2_val);
+    zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val);
 
     ++chaserPoint;
     if(chaserPoint == TEST_MAX_PIXEL_COUNT)
@@ -330,18 +288,12 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_InvertedWrapFrame)
     seqMngrUpdateFadeChaserFrame(&color, true, false, fixture->pixels,
       TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(chaserPoint, colorMngrApplyFadeTrail_fake.arg1_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(false, colorMngrApplyFadeTrail_fake.arg2_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val,
-      "seqMngrUpdateSolidFrame failed to fade the pixels.");
+    zassert_equal(1, colorMngrApplyFadeTrail_fake.call_count);
+    zassert_equal(step, colorMngrApplyFadeTrail_fake.arg0_val);
+    zassert_equal(chaserPoint, colorMngrApplyFadeTrail_fake.arg1_val);
+    zassert_equal(false, colorMngrApplyFadeTrail_fake.arg2_val);
+    zassert_equal(fixture->pixels, colorMngrApplyFadeTrail_fake.arg3_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyFadeTrail_fake.arg4_val);
 
     --chaserPoint;
     if(chaserPoint < 0)
@@ -355,7 +307,7 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateFadeChaserFrame_InvertedWrapFrame)
 #define COLOR_CONVERT_CALL_CNT      2
 /**
  * @test  seqMngrUpdateColorRangeFrame must convert the start and end colors
- *        and update the color range by resetting it if the sequence is resetted.
+ *        and update the color range by resetting it if the sequence is reset.
 */
 ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_Reset)
 {
@@ -368,31 +320,22 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_Reset)
   seqMngrUpdateColorRangeFrame(&startColor, &endColor, true, fixture->pixels,
     TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
-    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
-  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
-    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
-  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
-    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
-  zassert_equal(1, colorMngrUpdateRange_fake.call_count,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(wheelPos[0], colorMngrUpdateRange_fake.arg0_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(wheelPos[1], colorMngrUpdateRange_fake.arg1_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_true(colorMngrUpdateRange_fake.arg2_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(fixture->pixels, colorMngrUpdateRange_fake.arg3_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrUpdateRange_fake.arg4_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count);
+  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0]);
+  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1]);
+  zassert_equal(1, colorMngrUpdateRange_fake.call_count);
+  zassert_equal(wheelPos[0], colorMngrUpdateRange_fake.arg0_val);
+  zassert_equal(wheelPos[1], colorMngrUpdateRange_fake.arg1_val);
+  zassert_true(colorMngrUpdateRange_fake.arg2_val);
+  zassert_equal(fixture->pixels, colorMngrUpdateRange_fake.arg3_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrUpdateRange_fake.arg4_val);
 }
 
 /**
  * @test  seqMngrUpdateColorRangeFrame must convert the start and end colors
- *        and update the color range if the sequence is not resetted.
+ *        and update the color range if the sequence is not reset.
 */
-ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_NotResetted)
+ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_NotReset)
 {
   Color_t startColor = {.hexColor = 0xff0000};
   Color_t endColor = {.hexColor = 0x00ff00};
@@ -403,24 +346,15 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeFrame_NotResetted)
   seqMngrUpdateColorRangeFrame(&startColor, &endColor, false, fixture->pixels,
     TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
-    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
-  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
-    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
-  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
-    "seqMngrUpdateColorRangeFrame failed to convert the start and end colors.");
-  zassert_equal(1, colorMngrUpdateRange_fake.call_count,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(wheelPos[0], colorMngrUpdateRange_fake.arg0_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(wheelPos[1], colorMngrUpdateRange_fake.arg1_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_false(colorMngrUpdateRange_fake.arg2_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(fixture->pixels, colorMngrUpdateRange_fake.arg3_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrUpdateRange_fake.arg4_val,
-    "seqMngrUpdateColorRangeFrame failed to update the color range by reseting it.");
+  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count);
+  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0]);
+  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1]);
+  zassert_equal(1, colorMngrUpdateRange_fake.call_count);
+  zassert_equal(wheelPos[0], colorMngrUpdateRange_fake.arg0_val);
+  zassert_equal(wheelPos[1], colorMngrUpdateRange_fake.arg1_val);
+  zassert_false(colorMngrUpdateRange_fake.arg2_val);
+  zassert_equal(fixture->pixels, colorMngrUpdateRange_fake.arg3_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrUpdateRange_fake.arg4_val);
 }
 
 /**
@@ -440,26 +374,16 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeChaserFrame_ResetNonInverted)
   seqMngrUpdateColorRangeChaserFrame(&startColor, &endColor, false, true,
     fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
-    "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
-    "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
-    "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-  zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(0, colorMngrApplyRangeTrail_fake.arg0_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_true(colorMngrApplyRangeTrail_fake.arg3_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
+  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count);
+  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0]);
+  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1]);
+  zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count);
+  zassert_equal(0, colorMngrApplyRangeTrail_fake.arg0_val);
+  zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val);
+  zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val);
+  zassert_true(colorMngrApplyRangeTrail_fake.arg3_val);
+  zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val);
 }
 
 /**
@@ -479,26 +403,16 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeChaserFrame_ResetInverted)
   seqMngrUpdateColorRangeChaserFrame(&startColor, &endColor, true, true,
     fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
-    "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
-    "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
-    "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-  zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT - 1, colorMngrApplyRangeTrail_fake.arg0_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_false(colorMngrApplyRangeTrail_fake.arg3_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val,
-    "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
+  zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count);
+  zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0]);
+  zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1]);
+  zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count);
+  zassert_equal(TEST_MAX_PIXEL_COUNT - 1, colorMngrApplyRangeTrail_fake.arg0_val);
+  zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val);
+  zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val);
+  zassert_false(colorMngrApplyRangeTrail_fake.arg3_val);
+  zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val);
+  zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val);
 }
 
 /**
@@ -528,26 +442,16 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeChaserFrame_NonInvertedWrap)
     seqMngrUpdateColorRangeChaserFrame(&startColor, &endColor, false, false,
       fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
-      "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-    zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
-      "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-    zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
-      "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-    zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(chaserPoint, colorMngrApplyRangeTrail_fake.arg0_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_true(colorMngrApplyRangeTrail_fake.arg3_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
+    zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count);
+    zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0]);
+    zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1]);
+    zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count);
+    zassert_equal(chaserPoint, colorMngrApplyRangeTrail_fake.arg0_val);
+    zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val);
+    zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val);
+    zassert_true(colorMngrApplyRangeTrail_fake.arg3_val);
+    zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val);
 
     ++chaserPoint;
     if(chaserPoint == TEST_MAX_PIXEL_COUNT)
@@ -582,26 +486,16 @@ ZTEST_F(seqMngr_suite, test_seqMngrUpdateColorRangeChaserFrame_InvertedWrap)
     seqMngrUpdateColorRangeChaserFrame(&startColor, &endColor, true, false,
       fixture->pixels, TEST_MAX_PIXEL_COUNT);
 
-    zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count,
-      "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-    zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0],
-      "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-    zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1],
-      "seqMngrUpdateColorRangeChaserFrame failed to convert the start and end colors.");
-    zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(chaserPoint, colorMngrApplyRangeTrail_fake.arg0_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_false(colorMngrApplyRangeTrail_fake.arg3_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
-    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val,
-      "seqMngrUpdateColorRangeChaserFrame failed to apply the range trail frame.");
+    zassert_equal(COLOR_CONVERT_CALL_CNT, colorMngrConvertColor_fake.call_count);
+    zassert_equal(&startColor, colorMngrConvertColor_fake.arg0_history[0]);
+    zassert_equal(&endColor, colorMngrConvertColor_fake.arg0_history[1]);
+    zassert_equal(1, colorMngrApplyRangeTrail_fake.call_count);
+    zassert_equal(chaserPoint, colorMngrApplyRangeTrail_fake.arg0_val);
+    zassert_equal(wheelPos[0], colorMngrApplyRangeTrail_fake.arg1_val);
+    zassert_equal(wheelPos[1], colorMngrApplyRangeTrail_fake.arg2_val);
+    zassert_false(colorMngrApplyRangeTrail_fake.arg3_val);
+    zassert_equal(fixture->pixels, colorMngrApplyRangeTrail_fake.arg4_val);
+    zassert_equal(TEST_MAX_PIXEL_COUNT, colorMngrApplyRangeTrail_fake.arg5_val);
 
     --chaserPoint;
     if(chaserPoint < 0)
