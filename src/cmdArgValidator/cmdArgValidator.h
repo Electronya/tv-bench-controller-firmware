@@ -53,6 +53,17 @@ bool isSectionIdValid(char *arg, uint32_t *section);
 bool isSectionCountValid(char *arg, size_t *sectionCount);
 
 /**
+ * @brief   Validate the section LEDs arguments.
+ *
+ * @param argv          The section LEDs arguments (first LED, LED count).
+ * @param firstLed      The converted section first LED.
+ * @param ledCount      The converted section LED count.
+ *
+ * @return  true if the section LEDS is valid, false otherwise.
+ */
+bool isSectionLedsValid(char **argv, size_t *firstLed, size_t *ledCount);
+
+/**
  * @brief   Convert and check the validity of the color.
  *
  * @param arg       The color string argument.

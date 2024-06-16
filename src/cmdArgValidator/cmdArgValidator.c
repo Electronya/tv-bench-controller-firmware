@@ -77,6 +77,47 @@ bool isSectionCountValid(char *arg, size_t *sectionCount)
   return true;
 }
 
+bool isSectionLedsValid(char **argv, size_t *firstLed, size_t *ledCount)
+{
+  int rc = 0;
+  size_t activeLedCount;
+  size_t lastLed;
+  size_t sectionCount;
+  size_t sectionLastLed;
+  LedSection_t *section;
+
+  *firstLed = shell_strtoul(argv[0], 10, &rc);
+  if(rc < 0)
+    return false;
+
+  *ledCount = shell_strtoul(argv[1], 10, &rc);
+  if(rc < 0)
+    return false;
+
+  activeLedCount = configuratorGetActiveLedCount();
+  lastLed = *firstLed + *ledCount - 1;
+  if(*firstLed >= activeLedCount || lastLed >= activeLedCount)
+    return false;
+
+  sectionCount = configuratorGetSectionCount();
+  for(uint32_t i = 0; i < sectionCount; ++i)
+  {
+    rc = configuratorGetSection(i, &section);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to get section");
+      return false;
+    }
+
+    sectionLastLed = section->firstLed + section->ledCount - 1;
+    if((*firstLed >= section->firstLed && *firstLed <= sectionLastLed) ||
+       (lastLed >= section->firstLed && lastLed <= sectionLastLed))
+      return false;
+  }
+
+  return true;
+}
+
 bool isColorValid(char *arg, Color_t *color)
 {
   int rc = 0;
