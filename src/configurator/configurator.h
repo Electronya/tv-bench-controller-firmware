@@ -144,6 +144,8 @@ int configuratorSetSectionLeds(size_t sectionId, size_t firstLed,
 
 /**
  * @brief   Get the switches configuration of a given section.
+ * @note    If the switch ID is equal to the switch count, that means no
+ *          switch is linked to the section.
  *
  * @param sectionId       The section ID.
  * @param switchId        The section linked switch.
@@ -156,6 +158,8 @@ int configuratorGetSectionSwitches(size_t sectionId, size_t *switchId,
 
 /**
  * @brief   Set the switch configuration of the given section.
+ * @note    If the switch ID is equal to the switch count, that means no
+ *          switch is linked to the section.
  *
  * @param sectionId       The section ID.
  * @param switchId        The section linked switch.

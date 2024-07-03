@@ -397,13 +397,15 @@ ZTEST(configurator_suite, test_configuratorSetSectionSwitches_sectionOutOfRange)
 /**
  * @test  configuratorSetSectionSwitches must return an out of range code when
  *        the switch ID is out of the switch count.
+ * @note  Having the switch ID equal to the switch count means no switch is
+ *        linked to the section.
  */
 ZTEST(configurator_suite, test_configuratorSetSectionSwitches_switchOutOfRange)
 {
   int failRet = -ERANGE;
   size_t sectionId = 0;
-  size_t switchIds[SECTION_SW_INFO_TEST_CNT] = {MAX_SWITCH_COUNT,
-                                                MAX_SWITCH_COUNT + 1,
+  size_t switchIds[SECTION_SW_INFO_TEST_CNT] = {MAX_SWITCH_COUNT + 1,
+                                                MAX_SWITCH_COUNT + 5,
                                                 500};
   Color_t color = {.hexColor = 0x00000000};
 

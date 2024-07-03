@@ -135,7 +135,7 @@ int configuratorSetSectionSwitches(size_t sectionId, size_t switchId,
   if(sectionId >= config.dynamicConfig.sectionCount)
     return -ERANGE;
 
-  if(switchId >= MAX_SWITCH_COUNT)
+  if(switchId > MAX_SWITCH_COUNT)
     return -ERANGE;
 
   config.dynamicConfig.sections[sectionId].switchId = switchId;
