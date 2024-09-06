@@ -217,7 +217,7 @@ static int execSetActiveLedCount(const struct shell *shell,
     return 0;
   }
 
-  shell_print(shell, "FAILED: Invalid argument. LED count: %s.", argv[1]);
+  shell_print(shell, "FAILED: Invalid argument. LED count: %s", argv[1]);
 
   return -EINVAL;
 }
@@ -299,7 +299,7 @@ static int execSetSectionCount(const struct shell *shell,
     return 0;
   }
 
-  shell_print(shell, "FAILED: Invalid argument. Section count: %s.", argv[1]);
+  shell_print(shell, "FAILED: Invalid argument. Section count: %s", argv[1]);
   return -EINVAL;
 }
 
@@ -335,7 +335,7 @@ static int execGetSectionLeds(const struct shell *shell,
       LOG_ERR("unable to get section %u LEDs", sectionId);
       shell_print(shell, "FAILED: Unable to get LEDs info for section: %u",
         sectionId);
-      return -EINVAL;
+      return rc;
     }
 
     shell_print(shell, "OK: section %u LED info: first LED: %u, LED count: %u",
@@ -375,7 +375,7 @@ static int execSetSectionLeds(const struct shell *shell,
         shell_print(shell,
           "FAILED: Unable to set section %u LED info: first LED: %u, LED count: %u",
           sectionId, firstLed, ledCount);
-        return -EINVAL;
+        return rc;
       }
 
       shell_print(shell, "OK");
@@ -407,7 +407,30 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sectionLeds_sub,
 static int execGetSectionSwitches(const struct shell *shell,
                                   size_t *argc, char **argv)
 {
-  return 0;
+  int rc;
+  size_t sectionId;
+  size_t switchId;
+  Color_t color;
+
+  if(isSectionIdValid(argv[1], &sectionId))
+  {
+    rc = configuratorGetSectionSwitches(sectionId, &switchId, &color);
+    if(rc < 0)
+    {
+      LOG_ERR("unable to get switch configuration of section %u", sectionId);
+      shell_print(shell,
+        "FAILED: unable to get switch configuration of section %u", sectionId);
+      return rc;
+    }
+
+    shell_print(shell,
+      "OK: section %u switch config: switch ID: %u, color: 0x%06x", sectionId,
+      switchId, color.hexColor);
+    return 0;
+  }
+
+  shell_print(shell, "FAILED: Invalid section ID: %s", argv[1]);
+  return -EINVAL;
 }
 
 /**
@@ -422,7 +445,33 @@ static int execGetSectionSwitches(const struct shell *shell,
 static int execSetSectionSwitches(const struct shell *shell,
                                   size_t *argc, char **argv)
 {
-  return 0;
+  int rc;
+  size_t sectionId;
+  size_t switchId;
+  Color_t color;
+
+  if(isSectionIdValid(argv[1], &sectionId) &&
+     isSectionSwitchValid(argv[2], &switchId) && isColorValid(argv[3], &color))
+    {
+      rc = configuratorSetSectionSwitches(sectionId, switchId, color);
+      if(rc < 0)
+      {
+        LOG_ERR("unable to set section %u switch configuration: switch ID: %d, color: 0x%06x",
+          sectionId, switchId, color.hexColor);
+        shell_print(shell,
+          "FAILED: Unable to set section %u switch configuration: switch ID: %d, color: 0x%06x",
+          sectionId, switchId, color.hexColor);
+        return rc;
+      }
+
+      shell_print(shell, "OK");
+      return 0;
+    }
+
+  shell_print(shell,
+    "FAILED: Invalid arguments: section ID: %s, switch ID: %s, color: %s",
+    argv[1], argv[2], argv[3]);
+  return -EINVAL;
 }
 
 /**
@@ -437,7 +486,31 @@ static int execSetSectionSwitches(const struct shell *shell,
 static int execSetSectionNoSwitches(const struct shell *shell,
                                     size_t *argc, char **argv)
 {
-  return 0;
+  int rc;
+  size_t sectionId;
+  size_t switchId = MAX_SWITCH_COUNT;
+  Color_t color = {.hexColor = 0xffffff};
+
+  if(isSectionIdValid(argv[1], &sectionId))
+  {
+    rc = configuratorSetSectionSwitches(sectionId, switchId, color);
+      if(rc < 0)
+      {
+        LOG_ERR("unable to set section %u switch configuration: no switch",
+          sectionId);
+        shell_print(shell,
+          "FAILED: Unable to set section %u switch configuration: no switch",
+          sectionId);
+        return rc;
+      }
+
+      shell_print(shell, "OK");
+      return 0;
+  }
+
+  shell_print(shell,
+    "FAILED: Invalid arguments: section ID: %s",argv[1]);
+  return -EINVAL;
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sectionSwitches_sub,

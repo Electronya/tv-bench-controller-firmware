@@ -57,7 +57,7 @@ typedef struct
   bool isReady;
   size_t maxLedCount;
   DynamicConfig_t dynamicConfig;
-} Configuration_t;
+} Configuration_t staticConfig;
 
 /**
  * @brief   Check if the configuration was uploaded by the Pi and
